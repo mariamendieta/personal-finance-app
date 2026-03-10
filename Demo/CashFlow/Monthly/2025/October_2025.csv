@@ -1,0 +1,67 @@
+date,post_date,description,original_category,amount,account,account_type,source_file,month_folder,flow_type,category,subcategory,transaction_date
+2025-10-01,2025-10-01,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,2423.32,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,income,Income,Michael Salary,2025-10-01
+2025-10-01,2025-10-01,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1510.65,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,income,Income,Viviana Salary,2025-10-01
+2025-10-03,2025-10-03,PANERA BREAD #4567,Food & Drink,-41.07,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-01
+2025-10-03,2025-10-03,STARBUCKS #12345,Food & Drink,-41.25,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Restaurants,,2025-10-01
+2025-10-04,2025-10-04,APPLE.COM/BILL,Phone/Cable,-8.54,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Subscriptions,,2025-10-03
+2025-10-05,2025-10-05,IKEA SEATTLE,Shopping,-90.36,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Shopping,,2025-10-03
+2025-10-05,2025-10-05,JPMORGAN CHASE,DIRECT_PAY,-2435.33,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Mortgage & Student Loans,Shorewood Mortgage,2025-10-05
+2025-10-05,2025-10-05,Zelle Payment to Alex,ZELLE,-152.05,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-05
+2025-10-05,2025-10-05,PHO BAC SUP SHOP,Dining,-31.82,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-02
+2025-10-05,2025-10-05,MCDONALDS F12345,Dining,-28.91,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-03
+2025-10-06,2025-10-06,MUSEUM OF POP CULTURE,Entertainment,-10.44,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Fun & Entertainment,,2025-10-03
+2025-10-07,2025-10-07,WHOLEFDS MKT #10567,Groceries,-15.21,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-05
+2025-10-08,2025-10-08,SKECHERS USA 456,Merchandise,-12.86,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Shopping,,2025-10-05
+2025-10-08,2025-10-08,ALDI STORE 09876,Groceries,-82.17,AmazonPrime,credit_card,AmazonPrime_Oct25.CSV,Oct25,spending,Groceries,,2025-10-06
+2025-10-08,2025-10-08,YMCA OF GREATER SEATTLE,Health & Wellness,-44.57,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Childcare,YMCA Kids Programs,2025-10-07
+2025-10-09,2025-10-09,CLAUDE.AI SUBSCRIPTION,Bills & Utilities,-14.8,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Subscriptions,AI Subscriptions,2025-10-06
+2025-10-10,2025-10-10,MOD PIZZA SEATTLE,Food & Drink,-8.64,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-08
+2025-10-10,2025-10-10,From Checking - 1234,OTHER,810.82,SoFi-JointSavings,savings,SOFI-JointSavings_Oct25.csv,Oct25,internal_transfer,internal_transfer,,2025-10-10
+2025-10-10,2025-10-10,STARBUCKS #12345,Food & Drink,-21.75,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Restaurants,,2025-10-08
+2025-10-10,2025-10-10,JPMORGAN CHASE,DIRECT_PAY,-286.5,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Car,Subaru Lease,2025-10-10
+2025-10-11,2025-10-11,DOMINOS PIZZA 6789,,-16.48,Alaska,credit_card,Alaska_Oct25.csv,Oct25,spending,Unclassified,,2025-10-11
+2025-10-11,2025-10-11,DOMINOS PIZZA 6789,Food & Drink,-11.12,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-10
+2025-10-12,2025-10-12,MOD PIZZA SEATTLE,Dining,-31.31,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-10
+2025-10-12,2025-10-12,STARBUCKS #12345,Dining,-19.77,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-11
+2025-10-12,2025-10-12,MCDONALDS F12345,Food & Drink,-37.87,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-10
+2025-10-13,2025-10-13,QFC #5678,Groceries,-88.45,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-12
+2025-10-13,2025-10-13,QFC #5678,Groceries,-71.24,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-12
+2025-10-14,2025-10-14,AMAZON.COM*1A2B3C,Shopping,-48.64,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Shopping,,2025-10-12
+2025-10-15,2025-10-15,MOD PIZZA SEATTLE,Dining,-20.76,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-14
+2025-10-15,2025-10-15,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1748.13,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,income,Income,Viviana Salary,2025-10-15
+2025-10-15,2025-10-15,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,2567.44,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,income,Income,Michael Salary,2025-10-15
+2025-10-15,2025-10-15,DROPBOX*PLAN,Bills & Utilities,-13.1,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Subscriptions,,2025-10-12
+2025-10-15,2025-10-15,THAI BAMBOO REST,Food & Drink,-27.08,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-14
+2025-10-16,2025-10-16,CHIPOTLE 2345,Dining,-9.15,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-14
+2025-10-16,2025-10-16,NETFLIX.COM,Phone/Cable,-10.97,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Subscriptions,,2025-10-13
+2025-10-17,2025-10-17,ONLINE TRANSFER,,-25.11,BoA-Checking,checking,BoA-Checking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-17
+2025-10-18,2025-10-18,CHIPOTLE 2345,Food & Drink,-44.05,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Restaurants,,2025-10-16
+2025-10-19,2025-10-19,REI #45 SEATTLE,,-67.77,Alaska,credit_card,Alaska_Oct25.csv,Oct25,spending,Shopping,,2025-10-19
+2025-10-19,2025-10-19,SEATTLE AQUARIUM,Entertainment,-40.65,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Fun & Entertainment,,2025-10-16
+2025-10-19,2025-10-19,SKECHERS USA 456,Shopping,-37.12,AmazonPrime,credit_card,AmazonPrime_Oct25.CSV,Oct25,spending,Shopping,,2025-10-17
+2025-10-20,2025-10-20,CAPITAL ONE MOBILE PMT,DIRECT_PAY,-1157.02,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,cc_payment,cc_payment,,2025-10-20
+2025-10-21,2025-10-21,THAI BAMBOO REST,Food & Drink,-10.67,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-18
+2025-10-21,2025-10-21,ONLINE TRANSFER,,-97.72,BoA-Checking,checking,BoA-Checking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-21
+2025-10-22,2025-10-22,DROPBOX*PLAN,Bills & Utilities,-6.16,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Subscriptions,,2025-10-21
+2025-10-23,2025-10-23,CHASE CREDIT CRD AUTOPAY,DIRECT_PAY,-1301.65,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,cc_payment,cc_payment,,2025-10-23
+2025-10-23,2025-10-23,PHO BAC SUP SHOP,Dining,-27.55,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Restaurants,,2025-10-21
+2025-10-23,2025-10-23,Zelle Payment to Alex,ZELLE,-178.5,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-23
+2025-10-23,2025-10-23,ATM WITHDRAWAL,,-112.15,BoA-Checking,checking,BoA-Checking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-23
+2025-10-23,2025-10-23,MCDONALDS F12345,Food & Drink,-11.78,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Unclassified,,2025-10-21
+2025-10-24,2025-10-24,QFC #5678,Groceries,-47.66,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-21
+2025-10-25,2025-10-25,TRADER JOES #123,Groceries,-85.67,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-22
+2025-10-26,2025-10-26,VENMO PAYMENT,DIRECT_PAY,-210.32,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-26
+2025-10-26,2025-10-26,WHOLEFDS MKT #10567,Groceries,-60.77,AmazonPrime,credit_card,AmazonPrime_Oct25.CSV,Oct25,spending,Groceries,,2025-10-24
+2025-10-27,2025-10-27,REI #45 SEATTLE,Merchandise,-114.76,VentureX,credit_card,VentureX_Oct25.csv,Oct25,spending,Shopping,,2025-10-24
+2025-10-28,2025-10-28,INTEREST PAYMENT,,2.16,BoA-Checking,checking,BoA-Checking_Oct25.csv,Oct25,income,Income,Other Income,2025-10-28
+2025-10-28,2025-10-28,IKEA SEATTLE,Shopping,-40.76,AmazonPrime,credit_card,AmazonPrime_Oct25.CSV,Oct25,spending,Shopping,,2025-10-25
+2025-10-28,2025-10-28,H&M US ONLINE,Shopping,-107.73,AmazonPrime,credit_card,AmazonPrime_Oct25.CSV,Oct25,spending,Shopping,,2025-10-26
+2025-10-28,2025-10-28,INTEREST PAYMENT,INTEREST_EARNED,13.36,SoFi-JointSavings,savings,SOFI-JointSavings_Oct25.csv,Oct25,income,Income,Other Income,2025-10-28
+2025-10-28,2025-10-28,INTEREST PAYMENT,,4.25,BoA-Savings,savings,BoA-Savings_Oct25.csv,Oct25,income,Income,Other Income,2025-10-28
+2025-10-29,2025-10-29,GOODWILL RETAIL #89,Shopping,-39.33,AmazonPrime,credit_card,AmazonPrime_Oct25.CSV,Oct25,spending,Shopping,,2025-10-28
+2025-10-29,2025-10-29,QFC #5678,Groceries,-17.75,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-26
+2025-10-29,2025-10-29,QFC #5678,Groceries,-87.37,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Groceries,,2025-10-27
+2025-10-29,2025-10-29,DIRECT_PAY UTILITIES,DIRECT_PAY,-299.26,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-29
+2025-10-30,2025-10-30,DIRECT_PAY UTILITIES,DIRECT_PAY,-84.05,SoFi-JointChecking,checking,SOFI-JointChecking_Oct25.csv,Oct25,spending,Unclassified,,2025-10-30
+2025-10-30,2025-10-30,AMAZON.COM*1A2B3C,Shopping,-79.56,Aeroplan,credit_card,Aeroplan_Oct25.CSV,Oct25,spending,Shopping,,2025-10-28
+2025-10-31,2025-10-31,GOODWILL RETAIL #89,,-50.29,Alaska,credit_card,Alaska_Oct25.csv,Oct25,spending,Shopping,,2025-10-31

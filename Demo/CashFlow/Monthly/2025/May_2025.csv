@@ -1,0 +1,74 @@
+date,post_date,description,original_category,amount,account,account_type,source_file,month_folder,flow_type,category,subcategory,transaction_date
+2025-05-01,2025-05-01,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1345.71,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,income,Income,Viviana Salary,2025-05-01
+2025-05-01,2025-05-01,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,2932.89,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,income,Income,Michael Salary,2025-05-01
+2025-05-03,2025-05-03,VENMO PAYMENT,DIRECT_PAY,-33.42,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Unclassified,,2025-05-03
+2025-05-04,2025-05-04,WHOLEFDS MKT #10567,Groceries,-59.19,AmazonPrime,credit_card,AmazonPrime_May25.CSV,May25,spending,Groceries,,2025-05-02
+2025-05-05,2025-05-05,JPMORGAN CHASE,DIRECT_PAY,-2490.47,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Mortgage & Student Loans,Shorewood Mortgage,2025-05-05
+2025-05-06,2025-05-06,ROSS STORES #567,Shopping,-35.03,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Shopping,,2025-05-03
+2025-05-06,2025-05-06,LINKEDIN PREMIUM,Bills & Utilities,-11.88,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-05
+2025-05-07,2025-05-07,ALDI STORE 09876,Groceries,-86.7,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-05
+2025-05-08,2025-05-08,UNITED AIRLINES 0161234,Travel,-303.05,VentureX,credit_card,VentureX_May25.csv,May25,spending,Travel,Flights,2025-05-06
+2025-05-08,2025-05-08,MCDONALDS F12345,Dining,-16.02,VentureX,credit_card,VentureX_May25.csv,May25,spending,Restaurants,,2025-05-07
+2025-05-08,2025-05-08,CHIPOTLE 2345,Food & Drink,-7.94,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Restaurants,,2025-05-07
+2025-05-09,2025-05-09,PHO BAC SUP SHOP,Food & Drink,-25.53,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-07
+2025-05-09,2025-05-09,QFC #5678,Groceries,-77.71,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-06
+2025-05-09,2025-05-09,LINKEDIN PREMIUM,Bills & Utilities,-14.03,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-07
+2025-05-09,2025-05-09,TARGET 00001234,Merchandise,-95.33,VentureX,credit_card,VentureX_May25.csv,May25,spending,Shopping,,2025-05-06
+2025-05-09,2025-05-09,ROSS STORES #567,Merchandise,-94.13,VentureX,credit_card,VentureX_May25.csv,May25,spending,Shopping,,2025-05-07
+2025-05-10,2025-05-10,JPMORGAN CHASE,DIRECT_PAY,-281.06,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Car,Subaru Lease,2025-05-10
+2025-05-11,2025-05-11,DOMINOS PIZZA 6789,Dining,-41.07,VentureX,credit_card,VentureX_May25.csv,May25,spending,Restaurants,,2025-05-09
+2025-05-12,2025-05-12,DIRECT_PAY UTILITIES,DIRECT_PAY,-208.61,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Unclassified,,2025-05-12
+2025-05-12,2025-05-12,CHIPOTLE 2345,Food & Drink,-18.76,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Restaurants,,2025-05-10
+2025-05-13,2025-05-13,PHO BAC SUP SHOP,Food & Drink,-9.92,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-10
+2025-05-13,2025-05-13,OPENAI *CHATGPT PLUS,Bills & Utilities,-5.62,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Subscriptions,AI Subscriptions,2025-05-11
+2025-05-13,2025-05-13,STARBUCKS #12345,Dining,-38.81,VentureX,credit_card,VentureX_May25.csv,May25,spending,Restaurants,,2025-05-12
+2025-05-14,2025-05-14,CLAUDE.AI SUBSCRIPTION,Bills & Utilities,-9.04,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Subscriptions,AI Subscriptions,2025-05-11
+2025-05-14,2025-05-14,DIRECT_PAY UTILITIES,DIRECT_PAY,-58.5,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Unclassified,,2025-05-14
+2025-05-15,2025-05-15,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1618.32,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,income,Income,Viviana Salary,2025-05-15
+2025-05-15,2025-05-15,IC* INSTACART GROCERIES,Groceries,-77.33,AmazonPrime,credit_card,AmazonPrime_May25.CSV,May25,spending,Groceries,,2025-05-14
+2025-05-15,2025-05-15,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,3147.51,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,income,Income,Michael Salary,2025-05-15
+2025-05-15,2025-05-15,THAI BAMBOO REST,Food & Drink,-16.25,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-13
+2025-05-15,2025-05-15,POS PURCHASE,,-101.18,BoA-Checking,checking,BoA-Checking_May25.csv,May25,spending,Unclassified,,2025-05-15
+2025-05-17,2025-05-17,CHIPOTLE 2345,Dining,-48.0,VentureX,credit_card,VentureX_May25.csv,May25,spending,Restaurants,,2025-05-16
+2025-05-17,2025-05-17,H&M US ONLINE,Shopping,-46.31,AmazonPrime,credit_card,AmazonPrime_May25.CSV,May25,spending,Shopping,,2025-05-16
+2025-05-18,2025-05-18,PANERA BREAD #4567,Food & Drink,-27.47,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-15
+2025-05-18,2025-05-18,ROSS STORES #567,Shopping,-92.45,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Shopping,,2025-05-16
+2025-05-19,2025-05-19,STARBUCKS #12345,Food & Drink,-25.13,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Restaurants,,2025-05-16
+2025-05-19,2025-05-19,STARBUCKS #12345,Dining,-29.69,VentureX,credit_card,VentureX_May25.csv,May25,spending,Restaurants,,2025-05-16
+2025-05-19,2025-05-19,CAPITAL ONE MOBILE PMT,DIRECT_PAY,-1604.37,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,cc_payment,cc_payment,,2025-05-19
+2025-05-19,2025-05-19,IKEA SEATTLE,Shopping,-39.48,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Shopping,,2025-05-17
+2025-05-19,2025-05-19,IC* INSTACART GROCERIES,Groceries,-31.38,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-18
+2025-05-19,2025-05-19,THAI BAMBOO REST,Food & Drink,-19.7,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-17
+2025-05-20,2025-05-20,REI #45 SEATTLE,Shopping,-91.55,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Shopping,,2025-05-18
+2025-05-21,2025-05-21,SAFEWAY STORE 1234,Groceries,-143.26,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-18
+2025-05-21,2025-05-21,POS PURCHASE,,-78.52,BoA-Checking,checking,BoA-Checking_May25.csv,May25,spending,Unclassified,,2025-05-21
+2025-05-21,2025-05-21,AIRBNB * HM1ABC2DE,Travel,-265.06,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Travel,Lodging,2025-05-18
+2025-05-22,2025-05-22,AMC THEATRES #1234,Entertainment,-42.41,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Fun & Entertainment,,2025-05-19
+2025-05-22,2025-05-22,AMAZON.COM*1A2B3C,Shopping,-18.32,AmazonPrime,credit_card,AmazonPrime_May25.CSV,May25,spending,Shopping,,2025-05-19
+2025-05-22,2025-05-22,CHIPOTLE 2345,Dining,-45.88,VentureX,credit_card,VentureX_May25.csv,May25,spending,Restaurants,,2025-05-21
+2025-05-24,2025-05-24,SPOTIFY USA,Bills & Utilities,-9.03,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-23
+2025-05-24,2025-05-24,From Checking - 1234,OTHER,613.05,SoFi-JointSavings,savings,SOFI-JointSavings_May25.csv,May25,internal_transfer,internal_transfer,,2025-05-24
+2025-05-24,2025-05-24,REI #45 SEATTLE,Shopping,-102.3,AmazonPrime,credit_card,AmazonPrime_May25.CSV,May25,spending,Shopping,,2025-05-22
+2025-05-24,2025-05-24,MCDONALDS F12345,Food & Drink,-31.85,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-22
+2025-05-24,2025-05-24,TRADER JOES #123,Groceries,-135.51,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-21
+2025-05-25,2025-05-25,MCDONALDS F12345,Food & Drink,-14.06,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-23
+2025-05-26,2025-05-26,CHASE CREDIT CRD AUTOPAY,DIRECT_PAY,-1008.95,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,cc_payment,cc_payment,,2025-05-26
+2025-05-27,2025-05-27,DIRECT_PAY UTILITIES,DIRECT_PAY,-220.97,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Unclassified,,2025-05-27
+2025-05-28,2025-05-28,INTEREST PAYMENT,,4.04,BoA-Checking,checking,BoA-Checking_May25.csv,May25,income,Income,Other Income,2025-05-28
+2025-05-28,2025-05-28,INTEREST PAYMENT,INTEREST_EARNED,15.53,SoFi-JointSavings,savings,SOFI-JointSavings_May25.csv,May25,income,Income,Other Income,2025-05-28
+2025-05-28,2025-05-28,INTEREST PAYMENT,,5.9,BoA-Savings,savings,BoA-Savings_May25.csv,May25,income,Income,Other Income,2025-05-28
+2025-05-28,2025-05-28,PELOTON MEMBERSHIP,Health & Wellness,-32.31,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-25
+2025-05-29,2025-05-29,MCDONALDS F12345,Food & Drink,-33.67,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-26
+2025-05-29,2025-05-29,PANERA BREAD #4567,Food & Drink,-36.17,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-29
+2025-05-29,2025-05-29,IC* INSTACART GROCERIES,Groceries,-72.39,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-28
+2025-05-29,2025-05-29,WHOLEFDS MKT #10567,Groceries,-127.13,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-29
+2025-05-30,2025-05-30,APPLE.COM/BILL,Phone/Cable,-11.71,VentureX,credit_card,VentureX_May25.csv,May25,spending,Subscriptions,,2025-05-30
+2025-05-30,2025-05-30,ATM WITHDRAWAL,,-95.66,BoA-Checking,checking,BoA-Checking_May25.csv,May25,spending,Unclassified,,2025-05-30
+2025-05-30,2025-05-30,UBER *TRIP,Travel,-373.96,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Travel,Rideshare & Transit,2025-05-28
+2025-05-30,2025-05-30,ROSS STORES #567,Shopping,-94.01,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Shopping,,2025-05-27
+2025-05-31,2025-05-31,PELOTON MEMBERSHIP,Health & Wellness,-40.6,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-31
+2025-05-31,2025-05-31,DOMINOS PIZZA 6789,Food & Drink,-15.43,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Unclassified,,2025-05-31
+2025-05-31,2025-05-31,AMAZON.COM*1A2B3C,Shopping,-109.67,AmazonPrime,credit_card,AmazonPrime_May25.CSV,May25,spending,Shopping,,2025-05-30
+2025-05-31,2025-05-31,VENMO PAYMENT,DIRECT_PAY,-201.61,SoFi-JointChecking,checking,SOFI-JointChecking_May25.csv,May25,spending,Unclassified,,2025-05-31
+2025-05-31,2025-05-31,SPOTIFY USA,Phone/Cable,-14.4,VentureX,credit_card,VentureX_May25.csv,May25,spending,Unclassified,,2025-05-31
+2025-05-31,2025-05-31,QFC #5678,Groceries,-125.03,Aeroplan,credit_card,Aeroplan_May25.CSV,May25,spending,Groceries,,2025-05-29

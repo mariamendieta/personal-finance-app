@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maria Mendieta — Brand Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* === CORE PALETTE === */
+    --warm-white: #FAF6F0;
+    --warm-charcoal: #2A2522;
+    --stone: #6B5E52;
+    --linen: #EDE6DA;
+
+    /* === LATIN-INSPIRED ACCENTS === */
+    --verde-hoja: #2D6A4F;       /* Deep tropical leaf green */
+    --verde-claro: #52B788;       /* Bright leaf green — highlights */
+    --magenta-alebrije: #C9184A;  /* Alebrije magenta — bold accent */
+    --coral-vivo: #E07A5F;        /* Warm living coral */
+    --marigold: #E9A820;          /* Cempasúchil gold */
+    --azul-profundo: #1B4965;     /* Deep blue — grounding accent */
+    --rosa-suave: #D4A0A0;        /* Dusty rose — soft accent */
+
+    /* === TYPOGRAPHY === */
+    --font-display: 'Cormorant Garamond', serif;
+    --font-heading: 'Lora', serif;
+    --font-body: 'Source Sans 3', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--warm-white);
+    color: var(--warm-charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === HERO / BRAND HEADER === */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--warm-white);
+    overflow: hidden;
+  }
+
+  .hero-botanical {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45%;
+    height: 100%;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0;
+    padding: 2rem;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .hero-botanical .motif {
+    opacity: 0.14;
+  }
+
+  /* Background motifs — leaf & ave del paraíso placed sparingly across sections */
+  .bg-motif {
+    position: absolute;
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-accent-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      var(--magenta-alebrije) 0%,
+      var(--coral-vivo) 25%,
+      var(--marigold) 50%,
+      var(--verde-claro) 75%,
+      var(--azul-profundo) 100%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    padding: 4rem;
+    max-width: 700px;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: 4.5rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-tagline {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-description {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--stone);
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  .hero-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--coral-vivo);
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* === SECTION LAYOUT === */
+  section {
+    padding: 5rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--verde-hoja);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    margin-bottom: 2.5rem;
+  }
+
+  /* === COLOR PALETTE === */
+  .palette-section {
+    background: var(--warm-white);
+  }
+
+  .palette-group-label {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--stone);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+
+  .palette-group-label:first-of-type {
+    margin-top: 0;
+  }
+
+  .palette-grid {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .color-card {
+    width: 140px;
+  }
+
+  .color-swatch {
+    width: 100%;
+    height: 90px;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .color-name {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--warm-charcoal);
+  }
+
+  .color-hex {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--stone);
+  }
+
+  .color-usage {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: var(--rosa-suave);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* === TYPOGRAPHY === */
+  .type-section {
+    background: var(--linen);
+  }
+
+  .type-specimen {
+    margin-bottom: 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .type-specimen:last-child {
+    border-bottom: none;
+  }
+
+  .type-role {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--verde-hoja);
+    margin-bottom: 0.5rem;
+  }
+
+  .type-sample-display {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .type-sample-heading {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .type-sample-body {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    line-height: 1.7;
+    max-width: 600px;
+    margin-bottom: 0.5rem;
+  }
+
+  .type-meta {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--stone);
+  }
+
+  /* === ALEBRIJE ACCENT STRIP === */
+  .alebrije-strip {
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--magenta-alebrije) 0%,
+      var(--coral-vivo) 20%,
+      var(--marigold) 40%,
+      var(--verde-claro) 60%,
+      var(--verde-hoja) 80%,
+      var(--azul-profundo) 100%
+    );
+    width: 100%;
+  }
+
+  /* === VOICE & TONE === */
+  .voice-section {
+    background: var(--warm-white);
+  }
+
+  .voice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .voice-card {
+    padding: 1.75rem;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.04);
+    position: relative;
+  }
+
+  .voice-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .voice-card:nth-child(1)::before { background: var(--verde-hoja); }
+  .voice-card:nth-child(2)::before { background: var(--coral-vivo); }
+  .voice-card:nth-child(3)::before { background: var(--marigold); }
+  .voice-card:nth-child(4)::before { background: var(--azul-profundo); }
+
+  .voice-card-trait {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.5rem;
+  }
+
+  .voice-card-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .voice-example {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    padding: 0.75rem 1rem;
+    background: var(--linen);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+  }
+
+  .voice-example-label {
+    font-weight: 600;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--verde-hoja);
+    margin-bottom: 0.25rem;
+  }
+
+  .voice-example p {
+    color: var(--warm-charcoal);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .voice-spectrum {
+    margin-top: 2rem;
+  }
+
+  .spectrum-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  .spectrum-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--stone);
+    width: 100px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .spectrum-bar-container {
+    flex: 1;
+    height: 6px;
+    background: var(--linen);
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .spectrum-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .spectrum-label-end {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--stone);
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  /* Voice principles — dark cards */
+  .principles-banner {
+    background: var(--verde-hoja);
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-top: 3rem;
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+  }
+
+  .principle-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1.5rem 1.25rem;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .principle-icon {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .principle-title {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--warm-white);
+    margin-bottom: 0.5rem;
+  }
+
+  .principle-desc {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: rgba(250, 246, 240, 0.65);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 1024px) {
+    .principles-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .principles-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Alebrije geometric motif */
+  .alebrije-geo {
+    width: 120px;
+    height: 120px;
+    margin: 1rem auto;
+  }
+
+  .alebrije-geo svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* === DESIGN ELEMENTS === */
+  .elements-section {
+    background: var(--warm-white);
+  }
+
+  .elements-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .element-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .element-card-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.5rem;
+  }
+
+  .element-card-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    line-height: 1.6;
+  }
+
+  /* Tropical leaf motif */
+  .leaf-motif {
+    width: 120px;
+    height: 120px;
+    margin: 1rem auto;
+  }
+
+  .leaf-motif svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Alebrije-inspired decorative dot pattern */
+  .alebrije-dots {
+    display: flex;
+    gap: 6px;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+    max-width: 200px;
+  }
+
+  .alebrije-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* === SAMPLE SLIDE MOCKUPS === */
+  .slides-section {
+    background: var(--linen);
+  }
+
+  .slide-mockup {
+    background: var(--warm-white);
+    border-radius: 8px;
+    aspect-ratio: 16/9;
+    padding: 3rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide-mockup-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--stone);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Slide 1 — Title */
+  .slide-title-card {
+    position: relative;
+  }
+
+  .slide-title-card .slide-accent-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      var(--magenta-alebrije),
+      var(--coral-vivo),
+      var(--marigold),
+      var(--verde-claro)
+    );
+    border-radius: 8px 0 0 8px;
+  }
+
+  .slide-title-card .leaf-bg {
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    opacity: 0.05;
+  }
+
+  .slide-title-name {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.25rem;
+  }
+
+  .slide-title-workshop {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--verde-hoja);
+    margin-bottom: 0.75rem;
+  }
+
+  .slide-title-sub {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--stone);
+    font-weight: 300;
+  }
+
+  /* Slide 2 — Content */
+  .slide-content-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .slide-content-card .slide-text h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    margin-bottom: 1rem;
+  }
+
+  .slide-content-card .slide-text p {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    line-height: 1.7;
+  }
+
+  .slide-visual-placeholder {
+    background: var(--linen);
+    border-radius: 10px;
+    height: 100%;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-visual-placeholder .decorative-leaves {
+    opacity: 0.12;
+  }
+
+  /* Slide 3 — Section divider */
+  .slide-divider-card {
+    background: var(--verde-hoja);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .slide-divider-card h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: var(--warm-white);
+  }
+
+  .slide-divider-card p {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: rgba(250, 246, 240, 0.7);
+    margin-top: 0.5rem;
+  }
+
+  .slide-divider-card .corner-motif {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    opacity: 0.1;
+  }
+
+  .slide-divider-card .corner-motif.top-right {
+    top: 20px;
+    right: 20px;
+  }
+
+  .slide-divider-card .corner-motif.bottom-left {
+    bottom: 20px;
+    left: 20px;
+    transform: rotate(180deg);
+  }
+
+  /* Slide 4 — Data / takeaways */
+  .slide-data-card .data-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .data-item {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--linen);
+    border-radius: 10px;
+    position: relative;
+  }
+
+  .data-item .data-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: var(--verde-hoja);
+    line-height: 1;
+  }
+
+  .data-item .data-label {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--stone);
+    margin-top: 0.5rem;
+  }
+
+  .data-item .data-accent-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .slide-data-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+  }
+
+  /* === BRAND RULES === */
+  .rules-section {
+    background: var(--warm-white);
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .rule-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
+
+  .rule-card.do {
+    background: rgba(45, 106, 79, 0.06);
+    border-left: 3px solid var(--verde-hoja);
+  }
+
+  .rule-card.dont {
+    background: rgba(201, 24, 74, 0.04);
+    border-left: 3px solid var(--magenta-alebrije);
+  }
+
+  .rule-card h4 {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .rule-card.do h4 { color: var(--verde-hoja); }
+  .rule-card.dont h4 { color: var(--magenta-alebrije); }
+
+  .rule-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .rule-card ul li {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    padding: 0.3rem 0;
+    line-height: 1.5;
+  }
+
+  .rule-card ul li::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+  }
+
+  .rule-card.do ul li::before { background: var(--verde-hoja); }
+  .rule-card.dont ul li::before { background: var(--magenta-alebrije); }
+
+  /* === FOOTER === */
+  footer {
+    text-align: center;
+    padding: 3rem;
+    background: var(--warm-charcoal);
+    color: var(--linen);
+  }
+
+  footer .footer-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  footer .footer-sub {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  footer .footer-strip {
+    width: 60px;
+    height: 3px;
+    margin: 1rem auto 0;
+    background: linear-gradient(90deg, var(--coral-vivo), var(--marigold), var(--verde-claro));
+    border-radius: 2px;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    section { padding: 3rem 2rem; }
+    .hero-content { padding: 2rem; }
+    .hero-name { font-size: 2.8rem; }
+    .elements-grid { grid-template-columns: 1fr 1fr; }
+    .voice-grid { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .slide-content-card { grid-template-columns: 1fr; }
+    .slide-data-card .data-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- === HERO === -->
+<div class="hero">
+  <div class="hero-accent-bar"></div>
+  <div class="hero-botanical">
+    <!-- Row 1: leaf, ave, leaf -->
+    <div class="motif" style="width: 105px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+    <div class="motif" style="width: 90px;">
+      <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>
+    </div>
+    <div class="motif" style="width: 110px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+
+    <!-- Row 2: leaf, leaf, ave -->
+    <div class="motif" style="width: 100px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+    <div class="motif" style="width: 105px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+    <div class="motif" style="width: 85px;">
+      <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>
+    </div>
+
+    <!-- Row 3: ave, leaf, leaf -->
+    <div class="motif" style="width: 85px; transform: scaleX(-1);">
+      <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>
+    </div>
+    <div class="motif" style="width: 100px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+    <div class="motif" style="width: 110px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+
+    <!-- Row 4: leaf, ave, leaf -->
+    <div class="motif" style="width: 105px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+    <div class="motif" style="width: 90px;">
+      <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>
+    </div>
+    <div class="motif" style="width: 100px;">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/><path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/><path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/><path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width=".8" fill="none"/></svg>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <h1 class="hero-name">Maria Mendieta</h1>
+    <p class="hero-tagline"><span class="hero-dot"></span>Brand Foundation</p>
+    <p class="hero-description">
+      A personal brand system for a technologist solving for sustainability.
+      Rooted in warmth. Informed by data. Inspired by the textures, colors,
+      and bold spirit of Latin design.
+    </p>
+  </div>
+</div>
+
+<div class="alebrije-strip"></div>
+
+<!-- === COLOR PALETTE === -->
+<section class="palette-section">
+  <p class="section-label">01 — Color Palette</p>
+  <h2 class="section-title">Grounded warmth with Latin soul</h2>
+
+  <p class="palette-group-label">Foundation</p>
+  <div class="palette-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #FAF6F0;"></div>
+      <p class="color-name">Warm White</p>
+      <p class="color-hex">#FAF6F0</p>
+      <p class="color-usage">Backgrounds</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #2A2522; "></div>
+      <p class="color-name">Warm Charcoal</p>
+      <p class="color-hex">#2A2522</p>
+      <p class="color-usage">Primary text</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #6B5E52;"></div>
+      <p class="color-name">Stone</p>
+      <p class="color-hex">#6B5E52</p>
+      <p class="color-usage">Secondary text</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #EDE6DA;"></div>
+      <p class="color-name">Linen</p>
+      <p class="color-hex">#EDE6DA</p>
+      <p class="color-usage">Cards, surfaces</p>
+    </div>
+  </div>
+
+  <p class="palette-group-label">Accent — Latin-Inspired</p>
+  <div class="palette-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #2D6A4F;"></div>
+      <p class="color-name">Verde Hoja</p>
+      <p class="color-hex">#2D6A4F</p>
+      <p class="color-usage">Primary accent, headings</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #52B788;"></div>
+      <p class="color-name">Verde Claro</p>
+      <p class="color-hex">#52B788</p>
+      <p class="color-usage">Highlights, charts</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #C9184A;"></div>
+      <p class="color-name">Magenta Alebrije</p>
+      <p class="color-hex">#C9184A</p>
+      <p class="color-usage">Bold pop — sparingly</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #E07A5F;"></div>
+      <p class="color-name">Coral Vivo</p>
+      <p class="color-hex">#E07A5F</p>
+      <p class="color-usage">Warm accent, CTAs</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #E9A820;"></div>
+      <p class="color-name">Marigold</p>
+      <p class="color-hex">#E9A820</p>
+      <p class="color-usage">Energy, emphasis</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #1B4965;"></div>
+      <p class="color-name">Azul Profundo</p>
+      <p class="color-hex">#1B4965</p>
+      <p class="color-usage">Data viz, grounding</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1.25rem; background: var(--linen); border-radius: 10px; max-width: 600px;">
+    <p style="font-family: var(--font-body); font-size: 0.8rem; color: var(--stone); line-height: 1.6;">
+      <strong style="color: var(--warm-charcoal);">Usage rule:</strong> Foundation colors carry 80% of the visual weight.
+      Latin accents appear as small punctuations — a colored dot, an accent bar, an icon fill, a chart highlight.
+      Think: a single tropical leaf in the corner, not a jungle.
+    </p>
+  </div>
+</section>
+
+<div class="alebrije-strip"></div>
+
+<!-- === TYPOGRAPHY === -->
+<section class="type-section" style="background: var(--linen); position: relative; overflow: hidden;">
+  <!-- Leaf motif — bottom right -->
+  <div class="bg-motif" style="bottom: 30px; right: 40px; width: 160px;">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F"/>
+      <path d="M60 20 L60 100" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+      <path d="M60 40 L40 30" stroke="#FAF6F0" stroke-width="0.8" fill="none"/>
+      <path d="M60 40 L80 30" stroke="#FAF6F0" stroke-width="0.8" fill="none"/>
+      <path d="M60 60 L35 48" stroke="#FAF6F0" stroke-width="0.8" fill="none"/>
+      <path d="M60 60 L85 48" stroke="#FAF6F0" stroke-width="0.8" fill="none"/>
+      <path d="M60 80 L38 70" stroke="#FAF6F0" stroke-width="0.8" fill="none"/>
+      <path d="M60 80 L82 70" stroke="#FAF6F0" stroke-width="0.8" fill="none"/>
+    </svg>
+  </div>
+  <p class="section-label">02 — Typography</p>
+  <h2 class="section-title">Three voices, one personality</h2>
+
+  <div class="type-specimen">
+    <p class="type-role">Display — Your Name &amp; Titles</p>
+    <p class="type-sample-display">Maria Mendieta</p>
+    <p class="type-meta">Cormorant Garamond · Regular 400 · Elegant, editorial, distinctive</p>
+  </div>
+
+  <div class="type-specimen">
+    <p class="type-role">Heading — Section Headers &amp; Slide Titles</p>
+    <p class="type-sample-heading">Making powerful tools accessible to everyone</p>
+    <p class="type-meta">Lora · Regular 400 · Warm, professional, readable</p>
+  </div>
+
+  <div class="type-specimen">
+    <p class="type-role">Body — Everything Else</p>
+    <p class="type-sample-body">
+      AI is transforming every industry. But most resources assume you already speak the language.
+      This workshop meets you where you are — with practical skills you can use right away.
+    </p>
+    <p class="type-meta">Source Sans 3 · Regular 400 · Clean, friendly, works at any size</p>
+  </div>
+</section>
+
+<!-- === VOICE & TONE === -->
+<section class="voice-section" style="position: relative; overflow: hidden;">
+  <!-- Ave del paraíso motif — top right -->
+  <div class="bg-motif" style="top: 40px; right: 50px; width: 130px; transform: rotate(10deg);">
+    <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/>
+      <polygon points="42,92 18,42 26,40" fill="#E9A820"/>
+      <polygon points="46,90 30,35 38,32" fill="#E9A820"/>
+      <polygon points="50,88 40,28 48,26" fill="#E07A5F"/>
+      <polygon points="54,87 48,22 56,20" fill="#E07A5F"/>
+      <polygon points="58,86 56,16 64,15" fill="#C9184A"/>
+      <polygon points="62,87 66,24 72,26" fill="#C9184A"/>
+      <path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/>
+    </svg>
+  </div>
+  <p class="section-label">03 — Voice &amp; Tone</p>
+  <h2 class="section-title">How Maria sounds</h2>
+
+  <div class="voice-grid">
+    <div class="voice-card">
+      <p class="voice-card-trait">Warm</p>
+      <p class="voice-card-desc">Human language, never robotic. You speak to people, not at them. Your warmth isn't soft — it's generous and grounded.</p>
+      <div class="voice-example">
+        <p class="voice-example-label">Sounds like</p>
+        <p>"You don't need to be technical to be powerful with AI. Let me show you."</p>
+      </div>
+    </div>
+
+    <div class="voice-card">
+      <p class="voice-card-trait">Bold + Simple</p>
+      <p class="voice-card-desc">Strong ideas, clean delivery. You don't hedge or overcomplicate. You say what you mean with confidence and clarity.</p>
+      <div class="voice-example">
+        <p class="voice-example-label">Sounds like</p>
+        <p>"AI is a tool. Like any tool, it's only as good as the person using it."</p>
+      </div>
+    </div>
+
+    <div class="voice-card">
+      <p class="voice-card-trait">Empowering</p>
+      <p class="voice-card-desc">Everything you create should leave people feeling more capable, not more intimidated. You're the guide, not the gatekeeper.</p>
+      <div class="voice-example">
+        <p class="voice-example-label">Sounds like</p>
+        <p>"By the end of this, you'll have built something real — and you'll know exactly how you did it."</p>
+      </div>
+    </div>
+
+    <div class="voice-card">
+      <p class="voice-card-trait">Intentional</p>
+      <p class="voice-card-desc">Every word earns its place. You don't add filler, you don't over-explain. Calm, focused, purposeful — like a morning coffee.</p>
+      <div class="voice-example">
+        <p class="voice-example-label">Sounds like</p>
+        <p>"Three tools. One framework. That's all you need to start."</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 400; color: var(--warm-charcoal); margin-bottom: 1.5rem;">Tone Spectrum</h3>
+
+  <div class="voice-spectrum">
+    <div class="spectrum-row">
+      <span class="spectrum-label">Formal</span>
+      <div class="spectrum-bar-container">
+        <div class="spectrum-bar-fill" style="width: 30%; background: var(--verde-hoja); opacity: 0.6;"></div>
+      </div>
+      <span class="spectrum-label-end">Conversational</span>
+    </div>
+    <div class="spectrum-row">
+      <span class="spectrum-label">Technical</span>
+      <div class="spectrum-bar-container">
+        <div class="spectrum-bar-fill" style="width: 35%; background: var(--coral-vivo); opacity: 0.6;"></div>
+      </div>
+      <span class="spectrum-label-end">Accessible</span>
+    </div>
+    <div class="spectrum-row">
+      <span class="spectrum-label">Reserved</span>
+      <div class="spectrum-bar-container">
+        <div class="spectrum-bar-fill" style="width: 65%; background: var(--marigold); opacity: 0.6;"></div>
+      </div>
+      <span class="spectrum-label-end">Energizing</span>
+    </div>
+    <div class="spectrum-row">
+      <span class="spectrum-label">Abstract</span>
+      <div class="spectrum-bar-container">
+        <div class="spectrum-bar-fill" style="width: 25%; background: var(--azul-profundo); opacity: 0.6;"></div>
+      </div>
+      <span class="spectrum-label-end">Practical</span>
+    </div>
+  </div>
+
+  <div style="margin-top: 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <div>
+      <p style="font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--verde-hoja); margin-bottom: 0.75rem;">Words to use</p>
+      <p style="font-family: var(--font-body); font-size: 0.85rem; color: var(--stone); line-height: 2;">
+        practical · accessible · build · together · tools · empower · clear · real-world · hands-on · step-by-step · confident · purposeful · impact · actionable
+      </p>
+    </div>
+    <div>
+      <p style="font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--magenta-alebrije); margin-bottom: 0.75rem;">Words to avoid</p>
+      <p style="font-family: var(--font-body); font-size: 0.85rem; color: var(--stone); line-height: 2;">
+        disrupt · leverage · synergy · deep dive · cutting-edge · revolutionary · hack · guru · ninja · simple (when it isn't) · just (dismissive) · obviously
+      </p>
+    </div>
+  </div>
+
+  <!-- Voice Principles -->
+  <div class="principles-banner">
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-icon">&#9889;</div>
+        <p class="principle-title">Direct, not blunt</p>
+        <p class="principle-desc">You say what you mean without softening it into meaninglessness — but never just to show off. Directness in service of clarity.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#127794;</div>
+        <p class="principle-title">Grounded, not dry</p>
+        <p class="principle-desc">Your ideas are rooted in real experience. You earn authority by showing the work, not claiming the title.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#128270;</div>
+        <p class="principle-title">Analytical, not detached</p>
+        <p class="principle-desc">You go deep on ideas but bring people with you. Complexity should open doors, not close them.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#128155;</div>
+        <p class="principle-title">Warm, not performative</p>
+        <p class="principle-desc">You care — about the work, about people, about impact. That comes through without needing to announce it.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#9999;&#65039;</div>
+        <p class="principle-title">Confident, not arrogant</p>
+        <p class="principle-desc">You hold your ideas firmly but stay genuinely open. You've earned confidence through curiosity, not certainty.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#9986;&#65039;</div>
+        <p class="principle-title">Precise, not sparse</p>
+        <p class="principle-desc">You use exactly the right number of words. Not minimalist for its own sake — but nothing wasted either.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="alebrije-strip"></div>
+
+<!-- === DESIGN ELEMENTS === -->
+<section class="elements-section">
+  <p class="section-label">04 — Design Elements</p>
+  <h2 class="section-title">Small details, big identity</h2>
+
+  <div class="elements-grid">
+    <div class="element-card">
+      <p class="element-card-title">Alebrije Accent Bar</p>
+      <p class="element-card-desc">A thin gradient strip using all accent colors. Used at page tops, slide edges, or as section dividers. The signature element.</p>
+      <div style="margin-top: 1rem; height: 4px; border-radius: 2px; background: linear-gradient(90deg, #C9184A, #E07A5F, #E9A820, #52B788, #1B4965);"></div>
+    </div>
+
+    <div class="element-card">
+      <p class="element-card-title">Tropical Leaf Motifs</p>
+      <p class="element-card-desc">Hand-drawn leaf shapes at low opacity as background textures, or as small decorative elements in slide corners.</p>
+      <div class="leaf-motif">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F" opacity="0.15"/>
+          <path d="M60 20 L60 100" stroke="#2D6A4F" stroke-width="1" fill="none" opacity="0.3"/>
+          <path d="M60 40 L40 30" stroke="#2D6A4F" stroke-width="0.8" fill="none" opacity="0.2"/>
+          <path d="M60 40 L80 30" stroke="#2D6A4F" stroke-width="0.8" fill="none" opacity="0.2"/>
+          <path d="M60 60 L35 48" stroke="#2D6A4F" stroke-width="0.8" fill="none" opacity="0.2"/>
+          <path d="M60 60 L85 48" stroke="#2D6A4F" stroke-width="0.8" fill="none" opacity="0.2"/>
+          <path d="M60 80 L38 70" stroke="#2D6A4F" stroke-width="0.8" fill="none" opacity="0.2"/>
+          <path d="M60 80 L82 70" stroke="#2D6A4F" stroke-width="0.8" fill="none" opacity="0.2"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="element-card">
+      <p class="element-card-title">Alebrije Dot Pattern</p>
+      <p class="element-card-desc">Small colored dots inspired by alebrije painting. Used as decorative punctuation — never overwhelming, always intentional.</p>
+      <div class="alebrije-dots">
+        <span style="background: #C9184A;"></span>
+        <span style="background: #E07A5F;"></span>
+        <span style="background: #E9A820;"></span>
+        <span style="background: #52B788;"></span>
+        <span style="background: #2D6A4F;"></span>
+        <span style="background: #1B4965;"></span>
+        <span style="background: #E07A5F; opacity: 0.4;"></span>
+        <span style="background: #E9A820; opacity: 0.4;"></span>
+        <span style="background: #52B788; opacity: 0.4;"></span>
+        <span style="background: #C9184A; opacity: 0.4;"></span>
+        <span style="background: #1B4965; opacity: 0.4;"></span>
+        <span style="background: #2D6A4F; opacity: 0.4;"></span>
+      </div>
+    </div>
+
+    <div class="element-card">
+      <p class="element-card-title">Ave del Paraíso Motif</p>
+      <p class="element-card-desc">A stylized bird of paradise flower — geometric, architectural, bold. The brand's structured counterpart to the organic leaf. Used as a brand mark or accent detail.</p>
+      <div class="alebrije-geo">
+        <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+          <!-- Stem -->
+          <path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+
+          <!-- Bract / sheath — the green boat-shaped base -->
+          <path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F" opacity="0.85"/>
+          <path d="M30 96 C34 93, 48 90, 66 95" stroke="#52B788" stroke-width="0.8" fill="none" opacity="0.5"/>
+
+          <!-- Back petals — marigold/coral fan -->
+          <polygon points="42,92 18,42 26,40" fill="#E9A820" opacity="0.7"/>
+          <polygon points="46,90 30,35 38,32" fill="#E9A820" opacity="0.55"/>
+          <polygon points="50,88 40,28 48,26" fill="#E07A5F" opacity="0.65"/>
+
+          <!-- Front petals — coral/magenta sharp points -->
+          <polygon points="54,87 48,22 56,20" fill="#E07A5F" opacity="0.75"/>
+          <polygon points="58,86 56,16 64,15" fill="#C9184A" opacity="0.55"/>
+          <polygon points="62,87 66,24 72,26" fill="#C9184A" opacity="0.35"/>
+
+          <!-- Central sepal — the blue tongue -->
+          <path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965" opacity="0.6"/>
+          <path d="M46 80 C44 74, 42 66, 40 60" stroke="#52B788" stroke-width="0.6" fill="none" opacity="0.4"/>
+
+          <!-- Accent dots — signature detail -->
+          <circle cx="18" cy="42" r="2" fill="#E9A820" opacity="0.6"/>
+          <circle cx="48" cy="22" r="2" fill="#E07A5F" opacity="0.6"/>
+          <circle cx="56" cy="16" r="1.5" fill="#C9184A" opacity="0.5"/>
+          <circle cx="38" cy="58" r="1.5" fill="#1B4965" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="alebrije-strip"></div>
+
+<!-- === SLIDE MOCKUPS === -->
+<section class="slides-section" style="background: var(--linen);">
+  <p class="section-label">05 — Slide System Preview</p>
+  <h2 class="section-title">How it feels in a deck</h2>
+
+  <!-- Slide 1: Title -->
+  <p class="slide-mockup-label">Slide — Title</p>
+  <div class="slide-mockup slide-title-card">
+    <div class="slide-accent-bar"></div>
+    <div class="leaf-bg" style="position: absolute; right: 30px; bottom: 20px; opacity: 0.05;">
+      <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 10 C60 40, 20 80, 40 140 C50 160, 80 170, 100 190 C120 170, 150 160, 160 140 C180 80, 140 40, 100 10Z" fill="#2D6A4F"/>
+        <path d="M100 30 L100 170" stroke="#FAF6F0" stroke-width="1.5" fill="none"/>
+        <path d="M100 60 L70 45" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+        <path d="M100 60 L130 45" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+        <path d="M100 90 L60 70" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+        <path d="M100 90 L140 70" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+        <path d="M100 120 L55 100" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+        <path d="M100 120 L145 100" stroke="#FAF6F0" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <p class="slide-title-name">Maria Mendieta</p>
+    <p class="slide-title-workshop">Applied AI for Non-Technical People</p>
+    <p class="slide-title-sub">Making AI accessible, one step at a time</p>
+    <div class="alebrije-dots" style="margin-top: 1.5rem;">
+      <span style="background: #C9184A; width: 7px; height: 7px;"></span>
+      <span style="background: #E07A5F; width: 7px; height: 7px;"></span>
+      <span style="background: #E9A820; width: 7px; height: 7px;"></span>
+      <span style="background: #52B788; width: 7px; height: 7px;"></span>
+      <span style="background: #1B4965; width: 7px; height: 7px;"></span>
+    </div>
+  </div>
+
+  <!-- Slide 2: Content -->
+  <p class="slide-mockup-label">Slide — Content with Visual</p>
+  <div class="slide-mockup slide-content-card">
+    <div class="slide-text">
+      <p style="font-family: var(--font-body); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--verde-hoja); margin-bottom: 0.75rem;">Why This Workshop</p>
+      <h3>AI shouldn't feel like it's only for engineers</h3>
+      <p style="margin-top: 0.75rem;">Most AI resources assume you can code. This one doesn't. You'll walk away with practical tools and the confidence to use them — no jargon, no prerequisites.</p>
+    </div>
+    <div class="slide-visual-placeholder">
+      <svg width="80" height="80" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" class="decorative-leaves">
+        <path d="M60 10 C35 30, 15 55, 25 85 C30 95, 45 105, 60 110 C75 105, 90 95, 95 85 C105 55, 85 30, 60 10Z" fill="#2D6A4F" opacity="0.2"/>
+        <path d="M40 25 C20 40, 5 65, 15 85 C20 92, 30 95, 40 100 C50 95, 60 90, 65 80 C75 60, 58 38, 40 25Z" fill="#52B788" opacity="0.12" transform="translate(-5, 10)"/>
+        <path d="M80 20 C95 35, 108 55, 100 80 C97 88, 88 92, 80 96 C72 92, 65 86, 62 78 C55 58, 68 35, 80 20Z" fill="#E9A820" opacity="0.1" transform="translate(5, 8)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Slide 3: Section Divider -->
+  <p class="slide-mockup-label">Slide — Section Divider</p>
+  <div class="slide-mockup slide-divider-card">
+    <svg class="corner-motif top-right" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="4" fill="#FAF6F0"/>
+      <circle cx="40" cy="20" r="4" fill="#FAF6F0"/>
+      <circle cx="60" cy="20" r="4" fill="#FAF6F0"/>
+      <circle cx="20" cy="40" r="4" fill="#FAF6F0"/>
+      <circle cx="40" cy="40" r="4" fill="#FAF6F0"/>
+      <circle cx="20" cy="60" r="4" fill="#FAF6F0"/>
+      <circle cx="80" cy="20" r="3" fill="#E9A820" opacity="0.4"/>
+      <circle cx="60" cy="40" r="3" fill="#E07A5F" opacity="0.3"/>
+      <circle cx="40" cy="60" r="3" fill="#C9184A" opacity="0.2"/>
+    </svg>
+    <svg class="corner-motif bottom-left" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="4" fill="#FAF6F0"/>
+      <circle cx="40" cy="20" r="4" fill="#FAF6F0"/>
+      <circle cx="60" cy="20" r="4" fill="#FAF6F0"/>
+      <circle cx="20" cy="40" r="4" fill="#FAF6F0"/>
+      <circle cx="40" cy="40" r="4" fill="#FAF6F0"/>
+      <circle cx="20" cy="60" r="4" fill="#FAF6F0"/>
+      <circle cx="80" cy="20" r="3" fill="#52B788" opacity="0.4"/>
+      <circle cx="60" cy="40" r="3" fill="#E9A820" opacity="0.3"/>
+      <circle cx="40" cy="60" r="3" fill="#E07A5F" opacity="0.2"/>
+    </svg>
+    <div style="position: relative; z-index: 2;">
+      <h2>Hands-On Time</h2>
+      <p>Let's build something together</p>
+    </div>
+  </div>
+
+  <!-- Slide 4: Data -->
+  <p class="slide-mockup-label">Slide — Data / Takeaways</p>
+  <div class="slide-mockup slide-data-card">
+    <h3>What you'll walk away with</h3>
+    <div class="data-grid">
+      <div class="data-item">
+        <div class="data-accent-dot" style="background: var(--coral-vivo);"></div>
+        <p class="data-number">5</p>
+        <p class="data-label">AI tools you can use today</p>
+      </div>
+      <div class="data-item">
+        <div class="data-accent-dot" style="background: var(--marigold);"></div>
+        <p class="data-number">3</p>
+        <p class="data-label">Hands-on exercises</p>
+      </div>
+      <div class="data-item">
+        <div class="data-accent-dot" style="background: var(--verde-claro);"></div>
+        <p class="data-number">1</p>
+        <p class="data-label">Framework for evaluating AI</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- === BRAND RULES === -->
+<section class="rules-section" style="position: relative; overflow: hidden;">
+  <!-- Ave del paraíso motif — bottom left, mirrored -->
+  <div class="bg-motif" style="bottom: 20px; left: 30px; width: 110px; transform: scaleX(-1) rotate(-5deg);">
+    <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/>
+      <polygon points="42,92 18,42 26,40" fill="#E9A820"/>
+      <polygon points="46,90 30,35 38,32" fill="#E9A820"/>
+      <polygon points="50,88 40,28 48,26" fill="#E07A5F"/>
+      <polygon points="54,87 48,22 56,20" fill="#E07A5F"/>
+      <polygon points="58,86 56,16 64,15" fill="#C9184A"/>
+      <polygon points="62,87 66,24 72,26" fill="#C9184A"/>
+      <path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/>
+    </svg>
+  </div>
+  <p class="section-label">06 — Brand Rules</p>
+  <h2 class="section-title">The guardrails</h2>
+
+  <div class="rules-grid">
+    <div class="rule-card do">
+      <h4>Do</h4>
+      <ul>
+        <li>Use Latin accents as small punctuations — a dot, a bar, a corner leaf</li>
+        <li>Let warm neutrals carry the visual weight</li>
+        <li>Mix organic hand-drawn elements with clean data</li>
+        <li>Keep layouts editorial and asymmetric</li>
+        <li>Use generous white space — let things breathe</li>
+        <li>Name accent colors in Spanish — it's part of the identity</li>
+      </ul>
+    </div>
+    <div class="rule-card dont">
+      <h4>Don't</h4>
+      <ul>
+        <li>Turn it into a fiesta — accents are spice, not the dish</li>
+        <li>Use all accent colors at once on a single slide</li>
+        <li>Default to "safe beige" — this brand has soul</li>
+        <li>Use stock illustrations or generic tech graphics</li>
+        <li>Center everything — asymmetry is the design language</li>
+        <li>Make it look like a wellness or yoga brand</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="alebrije-strip"></div>
+
+<!-- === FOOTER === -->
+<footer>
+  <p class="footer-name" style="font-family: var(--font-display);">Maria Mendieta</p>
+  <p class="footer-sub">Technologist · Sustainability · Applied AI</p>
+  <div class="footer-strip"></div>
+</footer>
+
+</body>
+</html>

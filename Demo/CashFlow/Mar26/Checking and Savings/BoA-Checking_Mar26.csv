@@ -1,0 +1,11 @@
+Summary for 3/2026
+Beginning balance,5000.00
+Total credits,100.00
+Total debits,-200.00
+Ending balance,4900.00
+
+Date,Description,Amount,Running Bal.
+03/25/2026,ATM WITHDRAWAL,-36.97,5000.00
+03/28/2026,POS PURCHASE,-82.91,5000.00
+03/01/2026,ONLINE TRANSFER,-66.18,5000.00
+03/28/2026,INTEREST PAYMENT,2.17,5000.00

@@ -1,0 +1,17 @@
+# Real financial data (lives in separate private repo)
+Production/CashFlow/
+Production/InvestmentPortfolio/
+Context.md
+**/Context.md
+
+# OS files
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code
+.claude/
+~$*
