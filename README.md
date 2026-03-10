@@ -9,32 +9,95 @@ Personal finance tracker with cash flow analysis, investment portfolio tracking,
 - **Interactive Dashboard** — Streamlit app with monthly expense/income charts, net income tracking, top vendors, and portfolio allocation views
 - **File Upload** — Upload monthly CSV exports directly through the dashboard and run the pipeline with one click
 
+## Repository Setup
+
+This project uses **two repos** to separate code from private financial data:
+
+| Repo | Contents | Who has access |
+|------|----------|----------------|
+| **woffieta-finances** | Python scripts, demo data, README, brand guidelines | Anyone you invite |
+| **woffieta-data** | Real financial CSVs, Excel reports, Context.md | You + Scott only |
+
+### First-time setup (full access — you & Scott)
+
+```bash
+# 1. Clone the code repo
+git clone https://github.com/mariamendieta/woffieta-finances.git
+cd woffieta-finances
+
+# 2. Clone the data repo into Production/
+cd Production
+git clone https://github.com/mariamendieta/woffieta-data.git .
+
+# 3. Run the dashboard
+python3 -m streamlit run dashboard.py
+```
+
+> The `.` in step 2 clones the data directly into the `Production/` folder (alongside the scripts) rather than creating a subfolder.
+
+### First-time setup (demo only — anyone else)
+
+```bash
+git clone https://github.com/mariamendieta/woffieta-finances.git
+cd woffieta-finances/Demo
+python3 -m streamlit run dashboard.py
+```
+
+They only see demo data with fake names and reduced amounts.
+
+### Adding Scott as a collaborator
+
+Go to https://github.com/mariamendieta/woffieta-data/settings/access and add Scott's GitHub username.
+
+### Monthly update workflow
+
+After downloading new CSV exports and running the pipelines:
+
+```bash
+# Commit & push data changes
+cd Production
+git add -A
+git commit -m "March 2026 data"
+git push
+
+# Commit & push code changes (if scripts were modified)
+cd ..
+git add -A
+git commit -m "Update dashboard"
+git push
+```
+
+### Pulling latest changes
+
+```bash
+# Pull code updates
+cd woffieta-finances
+git pull
+
+# Pull data updates
+cd Production
+git pull
+```
+
 ## Project Structure
 
 ```
-Woffieta Finances/
+woffieta-finances/              ← code repo
 ├── README.md
-├── generate_demo_data.py        # Generates Demo/ folder with fake data
-├── Production/                  # Real financial data & scripts
-│   ├── cashflow.py              # Cash flow pipeline (parse, classify, export)
-│   ├── generate_report.py       # Excel cash flow report generator
-│   ├── portfolio.py             # Investment portfolio analyzer
-│   ├── dashboard.py             # Streamlit dashboard
-│   ├── Context.md               # Category rules documentation
-│   ├── CashFlow/                # Transaction CSVs & reports
-│   │   ├── 2025/                # Full-year CSV exports
-│   │   ├── Jan26/, Feb26/...    # Monthly CSV exports
-│   │   ├── Monthly/             # Pipeline output (monthly splits)
-│   │   ├── all_transactions.csv # Combined transaction file
-│   │   └── CashFlow_Report.xlsx # Excel report
-│   └── InvestmentPortfolio/
-│       ├── {date}/              # Dated snapshots
-│       │   ├── Investments&Balances/  # Account CSV exports
-│       │   └── Portfolio_Report.xlsx
-│       └── Portfolio_Report.xlsx      # Latest report (top-level copy)
-└── Demo/                        # Fake data for demonstrations
+├── .gitignore                  ← excludes Production data
+├── generate_demo_data.py       ← generates Demo/ with fake data
+├── BrandGuidelines/
+├── Production/
+│   ├── cashflow.py             ← cash flow pipeline
+│   ├── generate_report.py      ← Excel report generator
+│   ├── portfolio.py            ← portfolio analyzer
+│   ├── dashboard.py            ← Streamlit dashboard
+│   ├── CashFlow/               ← ⬇ from woffieta-data repo
+│   ├── InvestmentPortfolio/    ← ⬇ from woffieta-data repo
+│   └── Context.md              ← ⬇ from woffieta-data repo
+└── Demo/                       ← demo data + script copies
     ├── (same structure as Production)
-    └── ...
+    └── UploadTest/             ← sample files for testing uploads
 ```
 
 ## Supported Accounts
@@ -66,7 +129,7 @@ Woffieta Finances/
 
 ## Quick Start
 
-### Production
+### Production (with real data)
 
 ```bash
 cd Production
@@ -91,11 +154,10 @@ The demo generator creates 12 months of realistic fake transactions across all a
 
 ## Dashboard
 
-The Streamlit dashboard has three tabs:
+The dashboard has a sidebar to switch between two sections:
 
-1. **Cash Flow** — Monthly expenses by category (stacked bar with hover breakdown), income by source, net income with cumulative trend, spending by category table, top 10 vendors
-2. **Portfolio** — Asset allocation pie charts, retirement vs taxable breakdown with percentages, account-level views, snapshot comparison (when multiple snapshots exist)
-3. **Upload & Run** — Upload monthly CSV exports per account, run the pipeline, and refresh the dashboard
+- **Cash Flow** — Monthly expenses by category (stacked bar with hover breakdown), income by source, net income with cumulative trend, spending by category table, top 10 vendors. Add Data tab for uploading monthly CSVs.
+- **Investments** — Asset allocation pie charts, retirement vs taxable breakdown with percentages, account-level views, snapshot comparison. Add Data tab for uploading portfolio CSVs.
 
 ## Requirements
 
