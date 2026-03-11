@@ -9,3 +9,4 @@
 | Deploy demo with password or auth — host demo dashboard online with access control | Maria | 2026-03-10 | Idea |
 | Goals and budgeting tool — set monthly budget targets per category and track actuals vs goals in Cash Flow | Maria | 2026-03-10 | Idea |
 | Ghost reimbursement transactions — create placeholder transactions for expected reimbursements to reflect true net spending | Maria | 2026-03-10 | Idea |
+| Chatbot — add a conversational AI assistant to the dashboard for querying finances and getting insights | Maria | 2026-03-10 | Idea |
