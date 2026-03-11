@@ -204,6 +204,13 @@ hr {
     font-family: 'Source Sans 3', sans-serif !important;
     color: #6B5E52 !important;
 }
+.stSelectbox [data-baseweb="select"] span {
+    color: #2A2522 !important;
+    font-weight: 500 !important;
+}
+.stSelectbox [data-baseweb="select"] {
+    border-color: #6B5E52 !important;
+}
 
 /* Header bar accent */
 .brand-header {
@@ -553,11 +560,37 @@ if section == "cashflow":
             )
             st.plotly_chart(fig_net, use_container_width=True)
 
+            # ── Time period filter for tables ─────────────────────────────────
+            st.divider()
+            last_month_label = latest_month.strftime("%B %Y")
+            prev_month = latest_month - 1
+            prev_month_label = prev_month.strftime("%B %Y")
+
+            period_options = [
+                last_month_label,
+                prev_month_label,
+                "Last 3 months",
+                "Last 6 months",
+                "Last 12 months",
+            ]
+            filter_col, _ = st.columns([1, 3])
+            with filter_col:
+                selected_period = st.selectbox("Time period", period_options, index=4, key="cf_period")
+
+            if selected_period == last_month_label:
+                spending_filtered = spending[spending["month"] == latest_month]
+            elif selected_period == prev_month_label:
+                spending_filtered = spending[spending["month"] == prev_month]
+            else:
+                n_months = {"Last 3 months": 3, "Last 6 months": 6, "Last 12 months": 12}[selected_period]
+                period_cutoff = (latest_month - (n_months - 1)).to_timestamp()
+                spending_filtered = spending[spending["month_dt"] >= period_cutoff]
+
             # ── Spending breakdown table ───────────────────────────────────────
-            st.subheader("Spending by Category (Last 12 Months)")
+            st.subheader(f"Spending by Category ({selected_period})")
 
             cat_totals = (
-                spending.groupby("category")["amount"].sum().abs()
+                spending_filtered.groupby("category")["amount"].sum().abs()
                 .sort_values(ascending=False).reset_index()
             )
             cat_totals.columns = ["Category", "Total"]
@@ -567,7 +600,7 @@ if section == "cashflow":
             st.dataframe(cat_totals, use_container_width=True, hide_index=True)
 
             # ── Top 10 Vendors ─────────────────────────────────────────────────
-            st.subheader("Top 10 Vendors (Last 12 Months)")
+            st.subheader(f"Top 10 Vendors ({selected_period})")
 
             import re as _re
 
@@ -610,16 +643,16 @@ if section == "cashflow":
                         return name
                 return desc
 
-            spending["vendor"] = spending["description"].apply(normalize_vendor)
+            spending_filtered["vendor"] = spending_filtered["description"].apply(normalize_vendor)
 
-            total_spend = spending["amount"].abs().sum()
+            total_spend_filtered = spending_filtered["amount"].abs().sum()
             vendor_totals = (
-                spending.groupby("vendor")["amount"].sum().abs()
+                spending_filtered.groupby("vendor")["amount"].sum().abs()
                 .sort_values(ascending=False).head(10).reset_index()
             )
             vendor_totals.columns = ["Vendor", "Total"]
             vendor_totals = vendor_totals.reset_index(drop=True)
-            vendor_totals["% of Spending"] = (vendor_totals["Total"] / total_spend * 100).round(1)
+            vendor_totals["% of Spending"] = (vendor_totals["Total"] / total_spend_filtered * 100).round(1)
 
             fig_vendors = go.Figure(go.Bar(
                 x=vendor_totals["Total"],
