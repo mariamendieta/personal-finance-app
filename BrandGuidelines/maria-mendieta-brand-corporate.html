@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maria Mendieta — Brand Foundation · Corporate Mode</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* === CORPORATE PALETTE === */
+    --white: #FFFFFF;
+    --cool-white: #F7F7F7;
+    --warm-charcoal: #2A2522;
+    --stone: #6B5E52;
+    --cool-gray: #E8E8E8;
+    --mid-gray: #9A9A9A;
+
+    /* === PRIMARY ACCENTS — corporate-led === */
+    --azul-profundo: #1B4965;
+    --verde-hoja: #2D6A4F;
+    --verde-claro: #52B788;
+
+    /* === SECONDARY — used sparingly === */
+    --coral-vivo: #E07A5F;
+    --marigold: #E9A820;
+    --magenta-alebrije: #C9184A;
+
+    /* === TYPOGRAPHY === */
+    --font-display: 'Cormorant Garamond', serif;
+    --font-heading: 'Lora', serif;
+    --font-body: 'Source Sans 3', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--white);
+    color: var(--warm-charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* === HERO === */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    overflow: hidden;
+  }
+
+  .hero-accent-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      var(--azul-profundo) 0%,
+      var(--verde-hoja) 50%,
+      var(--verde-claro) 100%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 4rem 4rem 4rem 4rem;
+    max-width: 700px;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: 4.5rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-tagline {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-tagline .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--azul-profundo);
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .hero-description {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--stone);
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  /* Right side — single ave motif, subtle */
+  .hero-motif {
+    position: absolute;
+    right: 80px;
+    bottom: 60px;
+    width: 160px;
+    opacity: 0.08;
+  }
+
+  .hero-motif svg {
+    width: 100%;
+    height: auto;
+  }
+
+  /* === CORPORATE ACCENT STRIP === */
+  .corp-strip {
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--azul-profundo) 0%,
+      var(--verde-hoja) 40%,
+      var(--verde-claro) 100%
+    );
+    width: 100%;
+  }
+
+  /* === SECTIONS === */
+  section {
+    padding: 5rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--azul-profundo);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    margin-bottom: 2.5rem;
+  }
+
+  /* === MODE COMPARISON === */
+  .mode-section {
+    background: var(--cool-white);
+  }
+
+  .mode-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+  }
+
+  .mode-table th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--cool-gray);
+    color: var(--stone);
+  }
+
+  .mode-table th:nth-child(2) { color: var(--verde-hoja); }
+  .mode-table th:nth-child(3) { color: var(--azul-profundo); }
+
+  .mode-table td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--cool-gray);
+    color: var(--warm-charcoal);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .mode-table td:first-child {
+    font-weight: 500;
+    color: var(--stone);
+    width: 140px;
+  }
+
+  /* === COLOR PALETTE === */
+  .palette-grid {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .palette-group-label {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--stone);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+
+  .palette-group-label:first-of-type { margin-top: 0; }
+
+  .color-card { width: 140px; }
+
+  .color-swatch {
+    width: 100%;
+    height: 90px;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .color-name {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--warm-charcoal);
+  }
+
+  .color-hex {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--stone);
+  }
+
+  .color-usage {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: var(--mid-gray);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* === TYPOGRAPHY === */
+  .type-specimen {
+    margin-bottom: 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .type-specimen:last-child { border-bottom: none; }
+
+  .type-role {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--azul-profundo);
+    margin-bottom: 0.5rem;
+  }
+
+  .type-sample-display {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .type-sample-heading {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .type-sample-body {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    color: var(--warm-charcoal);
+    line-height: 1.7;
+    max-width: 600px;
+    margin-bottom: 0.5rem;
+  }
+
+  .type-meta {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--stone);
+  }
+
+  /* === VOICE PRINCIPLES === */
+  .principles-banner {
+    background: var(--azul-profundo);
+    border-radius: 10px;
+    padding: 2.5rem;
+    margin-top: 3rem;
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+  }
+
+  .principle-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 1.5rem 1.25rem;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .principle-icon { font-size: 1.25rem; margin-bottom: 0.75rem; }
+
+  .principle-title {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 0.5rem;
+  }
+
+  .principle-desc {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.55;
+  }
+
+  /* === DESIGN ELEMENTS === */
+  .elements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .element-card {
+    background: var(--cool-white);
+    border-radius: 10px;
+    padding: 2rem;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .element-card-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.5rem;
+  }
+
+  .element-card-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    line-height: 1.6;
+  }
+
+  /* === SLIDE MOCKUPS === */
+  .slide-mockup {
+    background: var(--white);
+    border-radius: 6px;
+    aspect-ratio: 16/9;
+    padding: 3rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--stone);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Title slide */
+  .slide-title .accent-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--azul-profundo), var(--verde-hoja), var(--verde-claro));
+    border-radius: 6px 0 0 6px;
+  }
+
+  .slide-title .slide-name {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    margin-bottom: 0.25rem;
+  }
+
+  .slide-title .slide-subtitle {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--azul-profundo);
+    margin-bottom: 0.5rem;
+  }
+
+  .slide-title .slide-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Content slide */
+  .slide-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .slide-content .text h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--warm-charcoal);
+    margin-bottom: 1rem;
+  }
+
+  .slide-content .text p {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    line-height: 1.7;
+  }
+
+  .slide-content .data-panel {
+    background: var(--cool-white);
+    border-radius: 8px;
+    padding: 2rem;
+    border: 1px solid var(--cool-gray);
+  }
+
+  /* Data slide */
+  .slide-data .data-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .data-card {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--cool-white);
+    border-radius: 8px;
+    border-top: 3px solid transparent;
+  }
+
+  .data-card .number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .data-card .label {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--stone);
+    margin-top: 0.5rem;
+  }
+
+  /* Section divider */
+  .slide-divider {
+    background: var(--azul-profundo);
+    text-align: center;
+  }
+
+  .slide-divider h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: #FFFFFF;
+  }
+
+  .slide-divider p {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: 0.5rem;
+  }
+
+  /* === BRAND RULES === */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .rule-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .rule-card.do {
+    background: rgba(27, 73, 101, 0.04);
+    border-left: 3px solid var(--azul-profundo);
+  }
+
+  .rule-card.dont {
+    background: rgba(201, 24, 74, 0.03);
+    border-left: 3px solid var(--coral-vivo);
+  }
+
+  .rule-card h4 {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .rule-card.do h4 { color: var(--azul-profundo); }
+  .rule-card.dont h4 { color: var(--coral-vivo); }
+
+  .rule-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .rule-card ul li {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--stone);
+    padding: 0.3rem 0;
+    line-height: 1.5;
+  }
+
+  .rule-card ul li::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+  }
+
+  .rule-card.do ul li::before { background: var(--azul-profundo); }
+  .rule-card.dont ul li::before { background: var(--coral-vivo); }
+
+  /* === FOOTER === */
+  footer {
+    text-align: center;
+    padding: 3rem;
+    background: var(--azul-profundo);
+    color: #FFFFFF;
+  }
+
+  footer .name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  footer .sub {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  footer .strip {
+    width: 60px;
+    height: 2px;
+    margin: 1rem auto 0;
+    background: linear-gradient(90deg, var(--verde-claro), var(--verde-hoja));
+    border-radius: 2px;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 1024px) {
+    .principles-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    section { padding: 3rem 2rem; }
+    .hero-content { padding: 2rem; }
+    .hero-name { font-size: 2.8rem; }
+    .elements-grid { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .slide-content { grid-template-columns: 1fr; }
+    .principles-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-accent-bar"></div>
+  <div class="hero-content">
+    <img src="bird_of_paradise_logo.png" alt="Maria Mendieta logo" style="max-width: 180px; margin-bottom: 1rem; display: block;">
+    <h1 class="hero-name">Maria Mendieta</h1>
+    <p class="hero-tagline"><span class="dot"></span>Brand Foundation · Corporate Mode</p>
+    <p class="hero-description">
+      The same identity, tuned for boardrooms, policy briefings, and executive audiences.
+      Precise. Grounded. Authoritative — without losing the warmth that makes you different.
+    </p>
+  </div>
+
+  <!-- Single ave motif — restrained -->
+  <div class="hero-motif">
+    <svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F" opacity="0.85"/>
+      <polygon points="42,92 18,42 26,40" fill="#E9A820" opacity="0.7"/>
+      <polygon points="46,90 30,35 38,32" fill="#E9A820" opacity="0.55"/>
+      <polygon points="50,88 40,28 48,26" fill="#E07A5F" opacity="0.65"/>
+      <polygon points="54,87 48,22 56,20" fill="#E07A5F" opacity="0.75"/>
+      <polygon points="58,86 56,16 64,15" fill="#C9184A" opacity="0.55"/>
+      <polygon points="62,87 66,24 72,26" fill="#C9184A" opacity="0.35"/>
+      <path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965" opacity="0.6"/>
+    </svg>
+  </div>
+</div>
+
+<div class="corp-strip"></div>
+
+<!-- ═══ MODE COMPARISON ═══ -->
+<section class="mode-section" style="background: var(--cool-white);">
+  <p class="section-label">00 — Two Modes, One Brand</p>
+  <h2 class="section-title">Workshop vs. Corporate</h2>
+
+  <table class="mode-table">
+    <thead>
+      <tr>
+        <th>Element</th>
+        <th>Workshop Mode</th>
+        <th>Corporate Mode</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Background</td>
+        <td>Warm white (#FAF6F0)</td>
+        <td>Pure white (#FFFFFF) or cool gray (#F7F7F7)</td>
+      </tr>
+      <tr>
+        <td>Primary accent</td>
+        <td>Verde Hoja — green leads</td>
+        <td>Azul Profundo — blue leads, green supports</td>
+      </tr>
+      <tr>
+        <td>Botanicals</td>
+        <td>Present on 3–4 slides</td>
+        <td>Title and closing only, smaller</td>
+      </tr>
+      <tr>
+        <td>Card surfaces</td>
+        <td>Linen (#EDE6DA)</td>
+        <td>Cool gray (#F7F7F7)</td>
+      </tr>
+      <tr>
+        <td>Accent strip</td>
+        <td>Full 6-color alebrije gradient</td>
+        <td>3-tone: azul → verde hoja → verde claro</td>
+      </tr>
+      <tr>
+        <td>Data viz</td>
+        <td>Full accent palette</td>
+        <td>Azul + Verde + one warm accent</td>
+      </tr>
+      <tr>
+        <td>Tone</td>
+        <td>Empowering, warm, approachable</td>
+        <td>Precise, grounded, authoritative</td>
+      </tr>
+      <tr>
+        <td>Energy</td>
+        <td>Morning coffee on a rooftop</td>
+        <td>Well-prepared briefing, clear agenda</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="corp-strip"></div>
+
+<!-- ═══ COLOR PALETTE ═══ -->
+<section>
+  <p class="section-label">01 — Color Palette · Corporate</p>
+  <h2 class="section-title">Cool, structured, authoritative</h2>
+
+  <p class="palette-group-label">Foundation</p>
+  <div class="palette-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #FFFFFF;"></div>
+      <p class="color-name">White</p>
+      <p class="color-hex">#FFFFFF</p>
+      <p class="color-usage">Backgrounds</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #F7F7F7;"></div>
+      <p class="color-name">Cool White</p>
+      <p class="color-hex">#F7F7F7</p>
+      <p class="color-usage">Alternate backgrounds</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #2A2522;"></div>
+      <p class="color-name">Warm Charcoal</p>
+      <p class="color-hex">#2A2522</p>
+      <p class="color-usage">Primary text</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #6B5E52;"></div>
+      <p class="color-name">Stone</p>
+      <p class="color-hex">#6B5E52</p>
+      <p class="color-usage">Secondary text</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #E8E8E8;"></div>
+      <p class="color-name">Cool Gray</p>
+      <p class="color-hex">#E8E8E8</p>
+      <p class="color-usage">Borders, dividers</p>
+    </div>
+  </div>
+
+  <p class="palette-group-label">Primary Accents — Corporate</p>
+  <div class="palette-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #1B4965;"></div>
+      <p class="color-name">Azul Profundo</p>
+      <p class="color-hex">#1B4965</p>
+      <p class="color-usage">Primary accent, headings</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #2D6A4F;"></div>
+      <p class="color-name">Verde Hoja</p>
+      <p class="color-hex">#2D6A4F</p>
+      <p class="color-usage">Secondary accent, data viz</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #52B788;"></div>
+      <p class="color-name">Verde Claro</p>
+      <p class="color-hex">#52B788</p>
+      <p class="color-usage">Highlights, positive data</p>
+    </div>
+  </div>
+
+  <p class="palette-group-label">Supporting — Use Sparingly</p>
+  <div class="palette-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #E07A5F;"></div>
+      <p class="color-name">Coral Vivo</p>
+      <p class="color-hex">#E07A5F</p>
+      <p class="color-usage">Warm emphasis, alerts</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #E9A820;"></div>
+      <p class="color-name">Marigold</p>
+      <p class="color-hex">#E9A820</p>
+      <p class="color-usage">Caution, energy data</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1.25rem; background: var(--cool-white); border-radius: 8px; max-width: 600px; border-left: 3px solid var(--azul-profundo);">
+    <p style="font-family: var(--font-body); font-size: 0.8rem; color: var(--stone); line-height: 1.6;">
+      <strong style="color: var(--warm-charcoal);">Corporate rule:</strong> Azul Profundo leads.
+      Verde Hoja supports. Warm accents (coral, marigold) appear only for functional purposes — data alerts, key metrics, emphasis. Never decorative.
+    </p>
+  </div>
+</section>
+
+<div class="corp-strip"></div>
+
+<!-- ═══ TYPOGRAPHY ═══ -->
+<section style="background: var(--cool-white);">
+  <p class="section-label">02 — Typography · Corporate</p>
+  <h2 class="section-title">Same fonts, sharper register</h2>
+
+  <div class="type-specimen">
+    <p class="type-role">Display — Name &amp; Titles</p>
+    <p class="type-sample-display">Maria Mendieta</p>
+    <p class="type-meta">Cormorant Garamond · Regular 400 · Reads as editorial authority in corporate context</p>
+  </div>
+
+  <div class="type-specimen">
+    <p class="type-role">Heading — Slide Titles &amp; Section Headers</p>
+    <p class="type-sample-heading">AI-driven sustainability strategy for energy transition</p>
+    <p class="type-meta">Lora · Regular 400 · Warm enough to be human, structured enough for policy</p>
+  </div>
+
+  <div class="type-specimen">
+    <p class="type-role">Body — Analysis &amp; Briefings</p>
+    <p class="type-sample-body">
+      The integration of machine learning models into grid optimization has demonstrated
+      a 23% reduction in curtailment across pilot markets, with implications for
+      capacity planning through 2030.
+    </p>
+    <p class="type-meta">Source Sans 3 · Regular 400 · Performs at small sizes in data-dense layouts</p>
+  </div>
+</section>
+
+<!-- ═══ VOICE — CORPORATE REGISTER ═══ -->
+<section>
+  <p class="section-label">03 — Voice &amp; Tone · Corporate</p>
+  <h2 class="section-title">Same principles, different register</h2>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+    <div>
+      <p style="font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--azul-profundo); margin-bottom: 0.75rem;">Workshop voice</p>
+      <p style="font-family: var(--font-body); font-size: 1rem; color: var(--stone); line-height: 1.7; font-style: italic;">
+        "You don't need to be technical to be powerful with AI. Let me show you."
+      </p>
+    </div>
+    <div>
+      <p style="font-family: var(--font-body); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--azul-profundo); margin-bottom: 0.75rem;">Corporate voice</p>
+      <p style="font-family: var(--font-body); font-size: 1rem; color: var(--warm-charcoal); line-height: 1.7;">
+        "AI adoption in sustainability requires technical literacy at the leadership level. Here's a practical framework."
+      </p>
+    </div>
+  </div>
+
+  <div class="principles-banner">
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-icon">&#9889;</div>
+        <p class="principle-title">Direct, not blunt</p>
+        <p class="principle-desc">Lead with the conclusion. Support with evidence. No padding, no hedging.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#127794;</div>
+        <p class="principle-title">Grounded, not dry</p>
+        <p class="principle-desc">Every claim backed by experience or data. Authority earned through substance.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#128270;</div>
+        <p class="principle-title">Analytical, not detached</p>
+        <p class="principle-desc">Deep on the numbers, but always connecting back to impact and decisions.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#128155;</div>
+        <p class="principle-title">Warm, not performative</p>
+        <p class="principle-desc">Professional doesn't mean cold. Clarity and respect are the warmth here.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#9999;&#65039;</div>
+        <p class="principle-title">Confident, not arrogant</p>
+        <p class="principle-desc">Present recommendations firmly. Acknowledge uncertainty where it exists.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-icon">&#9986;&#65039;</div>
+        <p class="principle-title">Precise, not sparse</p>
+        <p class="principle-desc">Every slide earns its place. Every data point serves the narrative.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="corp-strip"></div>
+
+<!-- ═══ DESIGN ELEMENTS ═══ -->
+<section style="background: var(--cool-white);">
+  <p class="section-label">04 — Design Elements · Corporate</p>
+  <h2 class="section-title">Restrained, functional, distinctive</h2>
+
+  <div class="elements-grid">
+    <div class="element-card">
+      <p class="element-card-title">Corporate Accent Strip</p>
+      <p class="element-card-desc">Simplified to 3 tones: azul → verde hoja → verde claro. Cleaner, more corporate. Used at slide tops and section breaks.</p>
+      <div style="margin-top: 1rem; height: 3px; border-radius: 2px; background: linear-gradient(90deg, #1B4965, #2D6A4F, #52B788);"></div>
+    </div>
+
+    <div class="element-card">
+      <p class="element-card-title">Botanical Motifs</p>
+      <p class="element-card-desc">Title and closing slides only. Smaller, lower opacity. The ave del paraíso becomes a subtle signature, not a pattern. No leaves on data slides.</p>
+      <div style="margin-top: 1rem; text-align: center; opacity: 0.08;">
+        <svg width="60" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+          <path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/>
+          <path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/>
+          <polygon points="42,92 18,42 26,40" fill="#E9A820"/>
+          <polygon points="46,90 30,35 38,32" fill="#E9A820"/>
+          <polygon points="50,88 40,28 48,26" fill="#E07A5F"/>
+          <polygon points="54,87 48,22 56,20" fill="#E07A5F"/>
+          <polygon points="58,86 56,16 64,15" fill="#C9184A"/>
+          <polygon points="62,87 66,24 72,26" fill="#C9184A"/>
+          <path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="element-card">
+      <p class="element-card-title">Data Visualization Palette</p>
+      <p class="element-card-desc">Primary: Azul Profundo + Verde Hoja. Secondary: Verde Claro. Alert/emphasis only: Coral Vivo, Marigold. No magenta in corporate charts.</p>
+      <div style="margin-top: 1rem; display: flex; gap: 6px;">
+        <div style="width: 40px; height: 24px; border-radius: 4px; background: #1B4965;"></div>
+        <div style="width: 40px; height: 24px; border-radius: 4px; background: #2D6A4F;"></div>
+        <div style="width: 40px; height: 24px; border-radius: 4px; background: #52B788;"></div>
+        <div style="width: 24px; height: 24px; border-radius: 4px; background: #E07A5F; opacity: 0.5;"></div>
+        <div style="width: 24px; height: 24px; border-radius: 4px; background: #E9A820; opacity: 0.5;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE MOCKUPS ═══ -->
+<section>
+  <p class="section-label">05 — Slide System · Corporate</p>
+  <h2 class="section-title">How it feels in a boardroom deck</h2>
+
+  <p class="slide-label">Slide — Title</p>
+  <div class="slide-mockup slide-title">
+    <div class="accent-bar"></div>
+    <p class="slide-name">Maria Mendieta</p>
+    <p class="slide-subtitle">AI Strategy for Energy Transition</p>
+    <p class="slide-desc">Sustainability · Applied AI · Advisory</p>
+  </div>
+
+  <p class="slide-label">Slide — Content with Data</p>
+  <div class="slide-mockup slide-content">
+    <div class="text">
+      <p style="font-family: var(--font-body); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--azul-profundo); margin-bottom: 0.75rem;">Market Analysis</p>
+      <h3>Grid optimization reduces curtailment by 23%</h3>
+      <p style="margin-top: 0.75rem;">ML models applied to renewable forecasting demonstrate significant gains across pilot markets, with direct implications for capacity planning and investment strategy.</p>
+    </div>
+    <div class="data-panel">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+        <div>
+          <p style="font-family: var(--font-display); font-size: 2rem; color: var(--azul-profundo);">23%</p>
+          <p style="font-size: 0.75rem; color: var(--stone);">Curtailment reduction</p>
+        </div>
+        <div>
+          <p style="font-family: var(--font-display); font-size: 2rem; color: var(--verde-hoja);">$4.2M</p>
+          <p style="font-size: 0.75rem; color: var(--stone);">Annual savings</p>
+        </div>
+      </div>
+      <div style="height: 4px; border-radius: 2px; background: linear-gradient(90deg, #1B4965 60%, #E8E8E8 60%); margin-top: 0.5rem;"></div>
+      <p style="font-size: 0.7rem; color: var(--mid-gray); margin-top: 0.5rem;">Progress toward 2030 target</p>
+    </div>
+  </div>
+
+  <p class="slide-label">Slide — Section Divider</p>
+  <div class="slide-mockup slide-divider">
+    <h2>Recommendations</h2>
+    <p>Strategic priorities for Q3–Q4 implementation</p>
+  </div>
+
+  <p class="slide-label">Slide — Key Metrics</p>
+  <div class="slide-mockup slide-data">
+    <p style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--warm-charcoal);">Performance summary</p>
+    <div class="data-row">
+      <div class="data-card" style="border-top-color: var(--azul-profundo);">
+        <p class="number" style="color: var(--azul-profundo);">97%</p>
+        <p class="label">Model accuracy</p>
+      </div>
+      <div class="data-card" style="border-top-color: var(--verde-hoja);">
+        <p class="number" style="color: var(--verde-hoja);">3.2x</p>
+        <p class="label">ROI on AI integration</p>
+      </div>
+      <div class="data-card" style="border-top-color: var(--verde-claro);">
+        <p class="number" style="color: var(--verde-claro);">14</p>
+        <p class="label">Markets deployed</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="corp-strip"></div>
+
+<!-- ═══ BRAND RULES ═══ -->
+<section style="background: var(--cool-white);">
+  <p class="section-label">06 — Brand Rules · Corporate</p>
+  <h2 class="section-title">The guardrails</h2>
+
+  <div class="rules-grid">
+    <div class="rule-card do">
+      <h4>Do</h4>
+      <ul>
+        <li>Lead with Azul Profundo — it signals authority and trust</li>
+        <li>Use pure white or cool gray backgrounds — no cream</li>
+        <li>Keep botanicals to title + closing slides only</li>
+        <li>Let data and structure carry the visual weight</li>
+        <li>Use the 3-tone accent strip, not the full alebrije gradient</li>
+        <li>Match the workshop brand's fonts — consistency builds recognition</li>
+      </ul>
+    </div>
+    <div class="rule-card dont">
+      <h4>Don't</h4>
+      <ul>
+        <li>Use warm white or linen backgrounds — too soft for this context</li>
+        <li>Place botanical motifs on data or analysis slides</li>
+        <li>Use magenta in corporate mode — reserve for workshop</li>
+        <li>Over-decorate — every element should be functional</li>
+        <li>Lose the personality entirely — the serif fonts and accent strip keep you distinctive</li>
+        <li>Use the full alebrije dot pattern — too playful for boardrooms</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="corp-strip"></div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p class="name">Maria Mendieta</p>
+  <p class="sub">Technologist · Sustainability · Applied AI</p>
+  <div class="strip"></div>
+</footer>
+
+</body>
+</html>

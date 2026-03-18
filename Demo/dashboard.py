@@ -24,21 +24,21 @@ RETIREMENT_TYPES = {"401k", "Roth IRA", "Traditional IRA"}
 
 # ── Brand colors ─────────────────────────────────────────────────────────────
 BRAND = {
-    "warm_white": "#FAF6F0",
+    "white": "#FFFFFF",
+    "cool_white": "#F7F7F7",
     "warm_charcoal": "#2A2522",
     "stone": "#6B5E52",
-    "linen": "#EDE6DA",
+    "cool_gray": "#E8E8E8",
+    "mid_gray": "#9A9A9A",
     "verde_hoja": "#2D6A4F",
     "verde_claro": "#52B788",
-    "magenta": "#C9184A",
     "coral": "#E07A5F",
     "marigold": "#E9A820",
     "azul": "#1B4965",
-    "rosa": "#D4A0A0",
 }
 
-BRAND_PALETTE = [BRAND["azul"], BRAND["verde_hoja"], BRAND["coral"], BRAND["marigold"],
-                 BRAND["magenta"], BRAND["verde_claro"], BRAND["rosa"], BRAND["stone"]]
+BRAND_PALETTE = [BRAND["azul"], BRAND["verde_hoja"], BRAND["verde_claro"], BRAND["coral"],
+                 BRAND["marigold"], BRAND["stone"]]
 
 # Bird of paradise SVG (from brand guidelines)
 FLOWER_SVG = """<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" width="48" height="56"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>"""
@@ -55,17 +55,17 @@ st.markdown("""
 
 /* Main app background */
 .stApp, [data-testid="stAppViewContainer"] {
-    background-color: #FAF6F0 !important;
+    background-color: #FFFFFF !important;
 }
 .main .block-container {
-    background-color: #FAF6F0;
+    background-color: #FFFFFF;
 }
 
 /* Sidebar styling */
 section[data-testid="stSidebar"] {
-    background-color: #EDE6DA !important;
+    background-color: #F7F7F7 !important;
     border-right: 3px solid;
-    border-image: linear-gradient(180deg, #C9184A 0%, #E07A5F 25%, #E9A820 50%, #52B788 75%, #1B4965 100%) 1;
+    border-image: linear-gradient(180deg, #1B4965 0%, #2D6A4F 50%, #52B788 100%) 1;
 }
 /* Push sidebar content to very top */
 section[data-testid="stSidebar"] > div,
@@ -97,12 +97,12 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
     margin-bottom: 4px;
 }
 .sidebar-nav a:hover {
-    color: #2D6A4F;
+    color: #1B4965;
 }
 .sidebar-nav a.active {
     font-weight: 600;
-    color: #2D6A4F;
-    border-bottom: 2px solid #2D6A4F;
+    color: #1B4965;
+    border-bottom: 2px solid #1B4965;
 }
 
 /* All text defaults */
@@ -122,7 +122,7 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
     background-color: transparent !important;
     border-radius: 0 !important;
     padding: 0 !important;
-    border-bottom: 1px solid #EDE6DA;
+    border-bottom: 1px solid #E8E8E8;
     gap: 0 !important;
 }
 .stTabs [data-baseweb="tab"] {
@@ -137,15 +137,15 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
     border-bottom: 2px solid transparent !important;
 }
 .stTabs [data-baseweb="tab"]:hover {
-    color: #2D6A4F !important;
+    color: #1B4965 !important;
     background-color: transparent !important;
 }
 .stTabs [aria-selected="true"] {
     background-color: transparent !important;
     border-radius: 0 !important;
-    color: #2D6A4F !important;
+    color: #1B4965 !important;
     font-weight: 600;
-    border-bottom: 2px solid #2D6A4F !important;
+    border-bottom: 2px solid #1B4965 !important;
 }
 /* Remove the default Streamlit tab highlight bar */
 .stTabs [data-baseweb="tab-highlight"] {
@@ -157,10 +157,10 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
 
 /* Metric cards */
 [data-testid="stMetric"] {
-    background-color: #EDE6DA;
+    background-color: #F7F7F7;
     border-radius: 10px;
     padding: 16px 20px;
-    border-left: 4px solid #2D6A4F;
+    border-left: 4px solid #1B4965;
 }
 [data-testid="stMetricLabel"] {
     font-family: 'Source Sans 3', sans-serif !important;
@@ -184,8 +184,8 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
 
 /* Buttons */
 .stButton > button[kind="primary"] {
-    background-color: #2D6A4F !important;
-    color: #FAF6F0 !important;
+    background-color: #1B4965 !important;
+    color: #FFFFFF !important;
     border: none;
     font-family: 'Source Sans 3', sans-serif !important;
     font-weight: 600;
@@ -196,7 +196,7 @@ section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
 
 /* Dividers */
 hr {
-    border-color: #EDE6DA !important;
+    border-color: #E8E8E8 !important;
 }
 
 /* Selectbox and inputs */
@@ -220,7 +220,7 @@ hr {
     padding-bottom: 8px;
     margin-bottom: 0.5rem;
     border-bottom: 3px solid;
-    border-image: linear-gradient(90deg, #C9184A 0%, #E07A5F 25%, #E9A820 50%, #52B788 75%, #1B4965 100%) 1;
+    border-image: linear-gradient(90deg, #1B4965 0%, #2D6A4F 50%, #52B788 100%) 1;
 }
 .brand-header h1 {
     font-family: 'Cormorant Garamond', serif !important;
@@ -247,7 +247,7 @@ hr {
     gap: 12px;
     padding: 1rem 0.5rem 0.75rem 0.5rem;
     margin: 0;
-    border-bottom: 2px solid #C9184A;
+    border-bottom: 2px solid #1B4965;
     margin-bottom: 1.5rem;
 }
 .sidebar-brand svg {
@@ -446,12 +446,12 @@ if section == "cashflow":
             CATEGORY_COLORS = {
                 "Mortgage, Loans & Car": BRAND["azul"],
                 "Childcare": BRAND["verde_hoja"],
-                "Taxes & Tax Fees": BRAND["magenta"],
+                "Taxes & Tax Fees": BRAND["coral"],
                 "Travel": BRAND["coral"],
                 "Other Expenses": BRAND["stone"],
                 "Utilities": BRAND["marigold"],
                 "House & Maintenance": BRAND["verde_claro"],
-                "Subscriptions": BRAND["rosa"],
+                "Subscriptions": BRAND["mid_gray"],
             }
 
             fig_exp = go.Figure()
@@ -500,7 +500,7 @@ if section == "cashflow":
             fig_inc = px.bar(
                 inc_by_src, x="month_dt", y="amount", color="subcategory",
                 labels={"month_dt": "", "amount": "Amount ($)", "subcategory": "Source"},
-                color_discrete_sequence=[BRAND["verde_hoja"], BRAND["marigold"], BRAND["coral"], BRAND["azul"], BRAND["magenta"], BRAND["verde_claro"], BRAND["rosa"], BRAND["stone"]],
+                color_discrete_sequence=[BRAND["azul"], BRAND["verde_hoja"], BRAND["verde_claro"], BRAND["coral"], BRAND["marigold"], BRAND["stone"]],
             )
 
             monthly_inc_totals = inc_by_src.groupby("month_dt")["amount"].sum().reset_index()
@@ -540,7 +540,7 @@ if section == "cashflow":
             })
 
             fig_net = go.Figure()
-            colors = [BRAND["verde_hoja"] if v >= 0 else BRAND["magenta"] for v in net_df["Net Income"]]
+            colors = [BRAND["azul"] if v >= 0 else BRAND["coral"] for v in net_df["Net Income"]]
             fig_net.add_trace(go.Bar(
                 x=net_df["month_dt"], y=net_df["Net Income"],
                 name="Monthly Net", marker_color=colors,
@@ -866,7 +866,7 @@ elif section == "investments":
                     )
                     fig_acct = px.pie(
                         acct_totals, values="value", names="account",
-                        color_discrete_sequence=[BRAND["verde_hoja"], BRAND["marigold"], BRAND["coral"], BRAND["azul"], BRAND["magenta"], BRAND["verde_claro"], BRAND["rosa"], BRAND["stone"]],
+                        color_discrete_sequence=[BRAND["azul"], BRAND["verde_hoja"], BRAND["verde_claro"], BRAND["coral"], BRAND["marigold"], BRAND["stone"]],
                         hole=0.4,
                     )
                     fig_acct.update_traces(textposition="inside", textinfo="percent+label")
