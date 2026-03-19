@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-white: #FFFFFF;
+  --color-cool-white: #F7F7F7;
+  --color-warm-charcoal: #2A2522;
+  --color-stone: #6B5E52;
+  --color-cool-gray: #E8E8E8;
+  --color-mid-gray: #9A9A9A;
+  --color-verde-hoja: #2D6A4F;
+  --color-verde-claro: #52B788;
+  --color-coral: #E07A5F;
+  --color-marigold: #E9A820;
+  --color-azul: #1B4965;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+}
+
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', system-ui, sans-serif;
+  color: #2A2522;
+  background-color: #FFFFFF;
+}
