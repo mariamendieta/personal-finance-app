@@ -1,169 +1,146 @@
-# Woffieta Finances
+# Personal Finance App
 
-Personal finance tracker with cash flow analysis, investment portfolio tracking, and an interactive Streamlit dashboard.
+Personal finance tracker with cash flow analysis, investment portfolio tracking, and a web dashboard built with Next.js and FastAPI.
 
 ## Features
 
-- **Cash Flow Tracking** — Parses CSV exports from 11 bank/credit card accounts, classifies transactions by category, and generates monthly reports
-- **Portfolio Analysis** — Reads holdings from 9 investment accounts, calculates asset allocation by account type (retirement vs taxable), and generates Excel reports
-- **Interactive Dashboard** — Streamlit app with monthly expense/income charts, net income tracking, top vendors, and portfolio allocation views
-- **File Upload** — Upload monthly CSV exports directly through the dashboard and run the pipeline with one click
+- **Cash Flow Tracking** — Parses CSV exports from multiple bank/credit card accounts, classifies transactions by category, and generates monthly reports
+- **Transaction Notes** — Add notes to individual transactions for context (reimbursable, trip details, etc.)
+- **Category Drill-Down** — Click through categories → subcategories → vendors to explore spending
+- **Income & Expense Filtering** — Toggle income sources and expense categories in/out of the net cash flow chart
+- **Portfolio Analysis** — Reads holdings from investment accounts, calculates asset allocation, and generates reports
+- **Action Items** — Track financial tasks with assignees, categories, and status
+- **File Upload** — Upload monthly CSV exports through the app
+- **Instructions Page** — Step-by-step guide for monthly updates
 
-## Repository Setup
+## Tech Stack
 
-This project uses **two repos** to separate code from private financial data:
+- **Frontend**: Next.js 15 + React + Tailwind CSS + Recharts
+- **Backend**: FastAPI + Python
+- **Data**: pandas for CSV processing, JSON for notes/config
 
-| Repo | Contents | Who has access |
-|------|----------|----------------|
-| **woffieta-finances** | Python scripts, demo data, README, brand guidelines | Anyone you invite |
-| **woffieta-data** | Real financial CSVs, Excel reports, Context.md | You + Scott only |
-
-### First-time setup (full access — you & Scott)
-
-```bash
-# 1. Clone the code repo
-git clone https://github.com/mariamendieta/woffieta-finances.git
-cd woffieta-finances
-
-# 2. Clone the data repo into Production/
-cd Production
-git clone https://github.com/mariamendieta/woffieta-data.git .
-
-# 3. Run the dashboard
-python3 -m streamlit run dashboard.py
-```
-
-> The `.` in step 2 clones the data directly into the `Production/` folder (alongside the scripts) rather than creating a subfolder.
-
-### First-time setup (demo only — anyone else)
+## Quick Start (Demo Mode)
 
 ```bash
-git clone https://github.com/mariamendieta/woffieta-finances.git
-cd woffieta-finances/Demo
-python3 -m streamlit run dashboard.py
+# 1. Clone the repo
+git clone https://github.com/mariamendieta/personal-finance-app.git
+cd personal-finance-app
+
+# 2. Generate demo data
+python3 generate_demo_data.py
+cd Demo && python3 cashflow.py && cd ..
+
+# 3. Install & start backend
+pip3 install fastapi uvicorn pandas openpyxl
+DATA_MODE=demo python3 -m uvicorn backend.app.main:app --port 8000 &
+
+# 4. Install & start frontend
+cd frontend && npm install && npm run dev -- -p 3001
 ```
 
-They only see demo data with fake names and reduced amounts.
+Open http://localhost:3001
 
-### Adding Scott as a collaborator
+## Running with Your Own Data
 
-Go to https://github.com/mariamendieta/woffieta-data/settings/access and add Scott's GitHub username.
+This app supports a separate private data repo so you can keep your financial data private while sharing the app code.
 
-### Monthly update workflow
-
-After downloading new CSV exports and running the pipelines:
+### Setup with private data repo
 
 ```bash
-# Commit & push data changes
-cd Production
-git add -A
-git commit -m "March 2026 data"
-git push
+# 1. Clone the app repo
+git clone https://github.com/mariamendieta/personal-finance-app.git
+cd personal-finance-app
 
-# Commit & push code changes (if scripts were modified)
-cd ..
-git add -A
-git commit -m "Update dashboard"
-git push
+# 2. Clone your data repo into Production/
+git clone https://github.com/YOUR_USER/YOUR_DATA_REPO.git Production
+
+# 3. Run the cash flow pipeline
+cd Production && python3 cashflow.py && cd ..
+
+# 4. Start the app in production mode
+DATA_MODE=production python3 -m uvicorn backend.app.main:app --port 8000 &
+cd frontend && npm run dev -- -p 3001
 ```
 
-### Pulling latest changes
+### Production data structure
 
-```bash
-# Pull code updates
-cd woffieta-finances
-git pull
+Your private data repo should have this structure inside `Production/`:
 
-# Pull data updates
-cd Production
-git pull
 ```
+Production/
+├── cashflow.py                 ← cash flow pipeline script
+├── ActionItems.md              ← action items table
+├── accounts.json               ← account definitions
+├── transaction_notes.json      ← notes on individual transactions
+├── CashFlow/
+│   ├── 2025/                   ← annual CSV exports
+│   │   ├── Checking and Savings/
+│   │   └── Credit Cards/
+│   ├── Jan26/                  ← monthly CSV exports
+│   │   ├── Checking and Savings/
+│   │   └── Credit Cards/
+│   ├── Monthly/                ← generated monthly summaries
+│   └── all_transactions.csv    ← generated master file
+└── InvestmentPortfolio/
+    └── {date}/                 ← dated snapshots
+```
+
+## Supported Account Formats
+
+The app auto-detects CSV formats from these institutions:
+
+| Institution | Account Types | Format |
+|-------------|--------------|--------|
+| Chase | Credit cards, Checking | Chase card/checking format |
+| Capital One | Credit cards | Debit/Credit columns |
+| Bank of America | Credit cards, Checking/Savings | BoA card/bank format |
+| SoFi | Checking, Savings | SoFi format |
+| Citi | Credit cards | Citi format |
+| Barclays | Credit cards | Barclays format |
 
 ## Project Structure
 
 ```
-woffieta-finances/              ← code repo
+personal-finance-app/
 ├── README.md
-├── .gitignore                  ← excludes Production data
+├── .gitignore
 ├── generate_demo_data.py       ← generates Demo/ with fake data
-├── BrandGuidelines/
-├── Production/
-│   ├── cashflow.py             ← cash flow pipeline
-│   ├── generate_report.py      ← Excel report generator
-│   ├── portfolio.py            ← portfolio analyzer
-│   ├── dashboard.py            ← Streamlit dashboard
-│   ├── CashFlow/               ← ⬇ from woffieta-data repo
-│   ├── InvestmentPortfolio/    ← ⬇ from woffieta-data repo
-│   └── Context.md              ← ⬇ from woffieta-data repo
-└── Demo/                       ← demo data + script copies
-    ├── (same structure as Production)
-    └── UploadTest/             ← sample files for testing uploads
+├── backend/
+│   └── app/
+│       ├── main.py             ← FastAPI app
+│       ├── routers/            ← API endpoints
+│       └── services/           ← business logic
+├── frontend/
+│   └── src/
+│       ├── app/                ← Next.js pages
+│       ├── components/         ← React components
+│       └── lib/                ← API client & utilities
+├── Demo/                       ← demo data + scripts
+│   ├── cashflow.py
+│   ├── CashFlow/
+│   └── InvestmentPortfolio/
+├── Production/                 ← .gitignored (private data repo)
+└── BrandGuidelines/
 ```
 
-## Supported Accounts
+## Monthly Update Workflow
 
-### Cash Flow (11 accounts)
-
-| Account | Type | Parser |
-|---------|------|--------|
-| Aeroplan, AmazonPrime, United | Chase Credit Cards | Chase card format |
-| VentureX, VentureOne | Capital One Credit Cards | Debit/Credit columns |
-| Alaska | Bank of America Credit Card | BoA card format |
-| SoFi Joint Checking/Savings | SoFi Bank | SoFi format |
-| BoA Checking/Savings | Bank of America | Summary header format |
-| Chase Checking | Chase Bank | Trailing-comma format |
-
-### Portfolio (9 accounts)
-
-| Account | Type | Parser |
-|---------|------|--------|
-| Chase Taxable Brokerage | Taxable | Chase 82-column |
-| Chase Parametric | Taxable | Chase 82-column |
-| Scott's Roth IRA | Roth IRA | Chase 82-column |
-| Scott's Traditional IRA | Traditional IRA | Chase 82-column |
-| SoFi Joint (managed) | Taxable | SoFi managed |
-| SoFi Self-Directed | Taxable | SoFi brokerage |
-| Maria's Roth IRA | Roth IRA | Vanguard brokerage |
-| Maria Empower 401k | 401k | Investment/Balance |
-| Maria Accrue LevelTen 401k | 401k | Vanguard fund |
-
-## Quick Start
-
-### Production (with real data)
-
-```bash
-cd Production
-python3 cashflow.py              # Parse transactions & classify
-python3 generate_report.py       # Generate Excel cash flow report
-python3 portfolio.py             # Generate portfolio report
-python3 -m streamlit run dashboard.py  # Launch dashboard
-```
-
-### Demo (with fake data)
-
-```bash
-python3 generate_demo_data.py    # Generate Demo/ folder
-cd Demo
-python3 cashflow.py
-python3 generate_report.py
-python3 portfolio.py
-python3 -m streamlit run dashboard.py
-```
-
-The demo generator creates 12 months of realistic fake transactions across all accounts with amounts scaled to 60% of typical values. Use `--scale` to adjust (e.g., `--scale 0.4` for 40%).
-
-## Dashboard
-
-The dashboard has a sidebar to switch between two sections:
-
-- **Cash Flow** — Monthly expenses by category (stacked bar with hover breakdown), income by source, net income with cumulative trend, spending by category table, top 10 vendors. Add Data tab for uploading monthly CSVs.
-- **Investments** — Asset allocation pie charts, retirement vs taxable breakdown with percentages, account-level views, snapshot comparison. Add Data tab for uploading portfolio CSVs.
+1. Download CSV exports from all bank/credit card accounts
+2. Upload them via the app's upload page, or place them in `Production/CashFlow/{MonthYear}/`
+3. Run the pipeline: `cd Production && python3 cashflow.py`
+4. Restart the backend to pick up new data
+5. Review the dashboard for any unclassified transactions
 
 ## Requirements
 
 - Python 3.9+
-- pandas, openpyxl, streamlit, plotly
+- Node.js 18+
+- npm
 
 ```bash
-pip3 install pandas openpyxl streamlit plotly
+# Python dependencies
+pip3 install fastapi uvicorn pandas openpyxl
+
+# Frontend dependencies
+cd frontend && npm install
 ```
