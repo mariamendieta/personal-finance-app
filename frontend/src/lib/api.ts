@@ -53,6 +53,18 @@ export interface CategorySpending {
   percent: number;
 }
 
+export interface SubcategorySpending {
+  subcategory: string;
+  total: number;
+  percent: number;
+}
+
+export interface SubcategoryVendor {
+  vendor: string;
+  total: number;
+  count: number;
+}
+
 export interface VendorSpending {
   vendor: string;
   total: number;
@@ -110,6 +122,17 @@ export interface PortfolioComparison {
   by_asset_class: ComparisonAssetClass[];
 }
 
+export interface Account {
+  label: string;
+  filePrefix: string;
+  hidden: boolean;
+}
+
+export interface AccountsList {
+  credit_cards: Account[];
+  bank_accounts: Account[];
+}
+
 export interface ActionItem {
   task: string;
   assignee: string;
@@ -117,6 +140,29 @@ export interface ActionItem {
   date_created: string;
   status: string;
   date_completed: string;
+}
+
+export interface BudgetCategoryRow {
+  category: string;
+  monthly_budget: number;
+  budget_for_period: number;
+  actual_spent: number;
+  difference: number;
+  avg_12mo: number;
+}
+
+export interface BudgetSummary {
+  total_budget_for_period: number;
+  total_actual: number;
+  total_difference: number;
+  pct_used: number;
+  categories_over: number;
+  categories_under: number;
+}
+
+export interface BudgetVsActual {
+  categories: BudgetCategoryRow[];
+  summary: BudgetSummary;
 }
 
 async function postAPI<T>(path: string, body: Record<string, unknown>): Promise<T> {
@@ -159,6 +205,8 @@ export const api = {
   getMonthlyIncome: (months = 12) => fetchAPI<MonthlyIncome[]>("/api/cashflow/monthly-income", { months }),
   getNetIncome: (months = 12) => fetchAPI<NetIncomeMonth[]>("/api/cashflow/net-income", { months }),
   getSpendingByCategory: (months = 12) => fetchAPI<CategorySpending[]>("/api/cashflow/spending-by-category", { months }),
+  getSubcategories: (category: string, months = 12) => fetchAPI<SubcategorySpending[]>("/api/cashflow/subcategories", { category, months }),
+  getSubcategoryVendors: (category: string, subcategory: string, months = 12) => fetchAPI<SubcategoryVendor[]>("/api/cashflow/subcategory-vendors", { category, subcategory, months }),
   getTopVendors: (months = 12, limit = 10) => fetchAPI<VendorSpending[]>("/api/cashflow/top-vendors", { months, limit }),
 
   // Portfolio
@@ -169,12 +217,33 @@ export const api = {
   getRetirementVsTaxable: (snapshot: string) => fetchAPI<RetirementVsTaxable>("/api/portfolio/retirement-vs-taxable", { snapshot }),
   getComparison: (current: string, previous: string) => fetchAPI<PortfolioComparison>("/api/portfolio/compare", { current, previous }),
 
+  // Budget
+  getBudget: () => fetchAPI<Record<string, number>>("/api/budget/"),
+  saveBudget: (budgets: Record<string, number>) =>
+    putAPI<Record<string, number>>("/api/budget/", { budgets }),
+  getBudgetVsActual: (months = 1) => fetchAPI<BudgetVsActual>("/api/budget/vs-actual", { months }),
+  getBudgetCategories: () => fetchAPI<string[]>("/api/budget/categories"),
+
+  // Balances
+  getBalances: (date: string) => fetchAPI<Record<string, number>>("/api/balances/", { date }),
+  saveBalances: (date: string, balances: Record<string, number>) =>
+    putAPI<Record<string, number>>("/api/balances/", { date, balances }),
+
+  // Accounts
+  getAccounts: () => fetchAPI<AccountsList>("/api/accounts/"),
+  addAccount: (account_type: string, label: string, file_prefix: string) =>
+    postAPI<AccountsList>("/api/accounts/", { account_type, label, file_prefix }),
+  toggleAccount: (account_type: string, file_prefix: string, hidden: boolean) =>
+    putAPI<AccountsList>("/api/accounts/toggle", { account_type, file_prefix, hidden }),
+
   // Action Items
   getActionItems: () => fetchAPI<ActionItem[]>("/api/action-items/"),
   addActionItem: (task: string, assignee: string, category: string, date_created: string) =>
     postAPI<ActionItem[]>("/api/action-items/", { task, assignee, category, date_created }),
   updateActionItemStatus: (task: string, status: string, date_completed: string = "") =>
     putAPI<ActionItem[]>("/api/action-items/status", { task, status, date_completed }),
+  editActionItem: (old_task: string, task: string, assignee: string, category: string) =>
+    putAPI<ActionItem[]>("/api/action-items/edit", { old_task, task, assignee, category }),
   deleteActionItem: (task: string) =>
     deleteAPI<ActionItem[]>("/api/action-items/", { task }),
 };

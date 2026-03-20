@@ -65,7 +65,7 @@ ASSET_CLASS_MAP = {
     "FETH": "Crypto", "ETHE": "Crypto",
     # Cash
     "MJLXX": "Cash", "QAJDS": "Cash", "QCERQ": "Cash", "VMFXX": "Cash",
-    # Maria's Roth
+    # Viviana's Roth
     "BND": "Fixed Income", "VBTLX": "Fixed Income", "AVDV": "International Equity", "SOXX": "US Equity",
 }
 
@@ -91,13 +91,13 @@ FUND_ASSET_CLASS = {
 ACCOUNT_TYPES = {
     "Chase Taxable Brokerage": "Taxable",
     "Chase Parametric": "Taxable",
-    "Scott's Roth IRA": "Roth IRA",
-    "Scott's Traditional IRA": "Traditional IRA",
+    "Michael's Roth IRA (prod)": "Roth IRA",
+    "Michael's Traditional IRA": "Traditional IRA",
     "SoFi Joint": "Taxable",
     "SoFi Self-Directed": "Taxable",
-    "Maria Empower 401k": "401k",
-    "Maria Accrue LevelTen 401k": "401k",
-    "Maria's Roth IRA": "Roth IRA",
+    "Viviana 401k": "401k",
+    "Viviana Secondary 401k": "401k",
+    "Viviana's Roth IRA (prod)": "Roth IRA",
     # Demo account names (no-op in production)
     "Joint Brokerage": "Taxable",
     "Michael's Roth IRA": "Roth IRA",
@@ -249,7 +249,7 @@ def parse_sofi_brokerage(filepath: Path, account_name: str) -> pd.DataFrame:
 
 
 def parse_marias_roth(filepath: Path) -> pd.DataFrame:
-    """Parse Maria's Roth IRA (Symbol, Name, Price, Quantity, Current Balance)."""
+    """Parse Viviana's Roth IRA (Symbol, Name, Price, Quantity, Current Balance)."""
     df = pd.read_csv(filepath, on_bad_lines="skip")
     rows = []
     for _, r in df.iterrows():
@@ -264,7 +264,7 @@ def parse_marias_roth(filepath: Path) -> pd.DataFrame:
         cost = value - gl if gl != 0 else value
 
         rows.append({
-            "account": "Maria's Roth IRA",
+            "account": "Viviana's Roth IRA",
             "account_type": "Roth IRA",
             "ticker": ticker,
             "description": desc,
@@ -343,8 +343,8 @@ def load_all_holdings() -> pd.DataFrame:
     chase_files = {
         "ChaseTaxableBrokerage.csv": "Chase Taxable Brokerage",
         "ChaseParametric.csv": "Chase Parametric",
-        "ScottsRothIRA_Chase.csv": "Scott's Roth IRA",
-        "ScottsTraditionalIRA.csv": "Scott's Traditional IRA",
+        "ScottsRothIRA_Chase.csv": "Michael's Roth IRA",
+        "ScottsTraditionalIRA.csv": "Michael's Traditional IRA",
         # Demo accounts
         "JointBrokerage.csv": "Joint Brokerage",
         "MichaelsRothIRA.csv": "Michael's Roth IRA",
@@ -375,7 +375,7 @@ def load_all_holdings() -> pd.DataFrame:
 
     # Roth IRA accounts (marias_roth parser format)
     roth_files = {
-        "Marias Roth IRA.csv": "Maria's Roth IRA",
+        "Marias Roth IRA.csv": "Viviana's Roth IRA",
         "Vivianas Roth IRA.csv": "Viviana's Roth IRA",  # Demo
     }
     for filename, account in roth_files.items():
@@ -390,7 +390,7 @@ def load_all_holdings() -> pd.DataFrame:
 
     # 401k accounts (simple Investment/Balance format)
     simple_401k_files = {
-        "Maria Carbon Direct 401k.csv": "Maria Empower 401k",
+        "Maria Carbon Direct 401k.csv": "Viviana 401k",
         "Michaels 401k.csv": "Michael's 401k",  # Demo
     }
     for filename, account in simple_401k_files.items():
@@ -403,7 +403,7 @@ def load_all_holdings() -> pd.DataFrame:
 
     # 401k accounts (Vanguard format)
     vanguard_401k_files = {
-        "Maria Accrue LevelTen 401k.csv": "Maria Accrue LevelTen 401k",
+        "Maria Accrue LevelTen 401k.csv": "Viviana Secondary 401k",
         "Vivianas 401k.csv": "Viviana's 401k",  # Demo
     }
     for filename, account in vanguard_401k_files.items():

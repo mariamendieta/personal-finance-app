@@ -25,7 +25,7 @@ export default function IncomeBySource({ data }: { data: MonthlyIncome[] }) {
 
   return (
     <div>
-      <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Monthly Income by Source</h2>
+      <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Monthly Inflows by Source</h2>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
           <XAxis dataKey="monthLabel" tick={{ fontSize: 12 }} />

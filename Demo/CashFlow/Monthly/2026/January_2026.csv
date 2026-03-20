@@ -1,73 +1,77 @@
-date,post_date,description,original_category,amount,account,account_type,source_file,month_folder,flow_type,category,subcategory,transaction_date
-2026-01-01,2026-01-01,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1427.56,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Viviana Salary,2026-01-01
-2026-01-01,2026-01-01,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,3083.63,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Michael Salary,2026-01-01
-2026-01-02,2026-01-02,H&M US ONLINE,Merchandise,-10.32,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Shopping,,2026-01-01
-2026-01-02,2026-01-02,ONLINE TRANSFER,,-112.31,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-02
-2026-01-02,2026-01-02,IKEA SEATTLE,Shopping,-115.79,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Shopping,,2026-01-01
-2026-01-03,2026-01-03,H&M US ONLINE,Shopping,-41.77,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-01
-2026-01-03,2026-01-03,GOODWILL RETAIL #89,,-115.48,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Shopping,,2026-01-03
-2026-01-04,2026-01-04,IC* INSTACART GROCERIES,Groceries,-117.83,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-03
-2026-01-05,2026-01-05,IKEA SEATTLE,Shopping,-91.28,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-02
-2026-01-05,2026-01-05,JPMORGAN CHASE,DIRECT_PAY,-2416.83,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Mortgage & Student Loans,Shorewood Mortgage,2026-01-05
-2026-01-06,2026-01-06,CHASE CREDIT CRD AUTOPAY,DIRECT_PAY,-974.42,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,cc_payment,cc_payment,,2026-01-06
-2026-01-06,2026-01-06,PANERA BREAD #4567,Dining,-27.24,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-05
-2026-01-07,2026-01-07,SKECHERS USA 456,Shopping,-93.54,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-04
-2026-01-07,2026-01-07,NETFLIX.COM,Phone/Cable,-7.26,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Subscriptions,,2026-01-04
-2026-01-07,2026-01-07,SKECHERS USA 456,Shopping,-110.5,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Shopping,,2026-01-04
-2026-01-07,2026-01-07,COSTCO WHSE #0045,Groceries,-49.42,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-05
-2026-01-09,2026-01-09,ROSS STORES #567,Shopping,-115.23,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Shopping,,2026-01-07
-2026-01-09,2026-01-09,GOODWILL RETAIL #89,,-38.67,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Shopping,,2026-01-09
-2026-01-09,2026-01-09,IKEA SEATTLE,Shopping,-51.16,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-07
-2026-01-09,2026-01-09,PHO BAC SUP SHOP,Dining,-13.11,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-06
-2026-01-10,2026-01-10,STARBUCKS #12345,,-33.46,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Restaurants,,2026-01-10
-2026-01-10,2026-01-10,MCDONALDS F12345,Food & Drink,-32.29,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-09
-2026-01-10,2026-01-10,JPMORGAN CHASE,DIRECT_PAY,-240.57,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Car,Subaru Lease,2026-01-10
-2026-01-11,2026-01-11,UBER *TRIP,Travel,-401.53,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Travel,Rideshare & Transit,2026-01-10
-2026-01-11,2026-01-11,PHO BAC SUP SHOP,Food & Drink,-30.25,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-10
-2026-01-11,2026-01-11,ONLINE TRANSFER,,-115.84,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-11
-2026-01-11,2026-01-11,DROPBOX*PLAN,Bills & Utilities,-12.71,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Subscriptions,,2026-01-08
-2026-01-12,2026-01-12,MCDONALDS F12345,Food & Drink,-37.69,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-10
-2026-01-12,2026-01-12,GOODWILL RETAIL #89,Shopping,-43.73,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-11
-2026-01-12,2026-01-12,WA PARKS RESERVATIONS,Entertainment,-29.0,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Fun & Entertainment,,2026-01-10
-2026-01-13,2026-01-13,SKECHERS USA 456,Merchandise,-82.18,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Shopping,,2026-01-12
-2026-01-14,2026-01-14,THAI BAMBOO REST,Food & Drink,-23.15,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-11
-2026-01-14,2026-01-14,TRADER JOES #123,Groceries,-139.5,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-11
-2026-01-15,2026-01-15,PANERA BREAD #4567,Food & Drink,-28.67,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-13
-2026-01-15,2026-01-15,OPENAI *CHATGPT PLUS,Bills & Utilities,-11.42,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Subscriptions,AI Subscriptions,2026-01-13
-2026-01-15,2026-01-15,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1531.62,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Viviana Salary,2026-01-15
-2026-01-15,2026-01-15,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,2484.15,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Michael Salary,2026-01-15
-2026-01-15,2026-01-15,PANERA BREAD #4567,Dining,-8.85,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-14
-2026-01-15,2026-01-15,THAI BAMBOO REST,Food & Drink,-39.0,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-12
-2026-01-17,2026-01-17,MOD PIZZA SEATTLE,Food & Drink,-7.97,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-14
-2026-01-17,2026-01-17,PANERA BREAD #4567,Food & Drink,-18.63,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-16
-2026-01-18,2026-01-18,From Checking - 1234,OTHER,638.11,SoFi-JointSavings,savings,SOFI-JointSavings_Jan26.csv,Jan26,internal_transfer,internal_transfer,,2026-01-18
-2026-01-19,2026-01-19,PANERA BREAD #4567,,-47.59,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Unclassified,,2026-01-19
-2026-01-19,2026-01-19,ONLINE TRANSFER,,-93.24,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-19
-2026-01-20,2026-01-20,WHOLEFDS MKT #10567,Groceries,-90.23,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-18
-2026-01-20,2026-01-20,ROSS STORES #567,Merchandise,-68.47,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Shopping,,2026-01-17
-2026-01-21,2026-01-21,MOD PIZZA SEATTLE,Food & Drink,-31.11,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-20
-2026-01-24,2026-01-24,PANERA BREAD #4567,Food & Drink,-37.1,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-23
-2026-01-24,2026-01-24,NETFLIX.COM,Phone/Cable,-5.89,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Subscriptions,,2026-01-22
-2026-01-24,2026-01-24,MOD PIZZA SEATTLE,Food & Drink,-44.42,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-23
-2026-01-25,2026-01-25,QFC #5678,Groceries,-20.34,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-22
-2026-01-26,2026-01-26,MCDONALDS F12345,Food & Drink,-27.16,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-25
-2026-01-26,2026-01-26,DISNEY PLUS,Bills & Utilities,-8.85,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Subscriptions,,2026-01-23
-2026-01-26,2026-01-26,VENMO PAYMENT,DIRECT_PAY,-182.78,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-26
-2026-01-27,2026-01-27,MOD PIZZA SEATTLE,Dining,-13.73,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-24
-2026-01-27,2026-01-27,QFC #5678,Groceries,-44.3,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-24
-2026-01-28,2026-01-28,WHOLEFDS MKT #10567,Groceries,-89.34,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Groceries,,2026-01-27
-2026-01-28,2026-01-28,CHIPOTLE 2345,Dining,-38.1,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-27
-2026-01-28,2026-01-28,PHO BAC SUP SHOP,Food & Drink,-15.95,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-25
-2026-01-28,2026-01-28,INTEREST PAYMENT,,6.58,BoA-Savings,savings,BoA-Savings_Jan26.csv,Jan26,income,Income,Other Income,2026-01-28
-2026-01-28,2026-01-28,INTEREST PAYMENT,,4.62,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,income,Income,Other Income,2026-01-28
-2026-01-28,2026-01-28,TRADER JOES #123,Groceries,-51.24,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-27
-2026-01-28,2026-01-28,CAPITAL ONE MOBILE PMT,DIRECT_PAY,-1290.52,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,cc_payment,cc_payment,,2026-01-28
-2026-01-28,2026-01-28,Zelle Payment to Alex,ZELLE,-271.59,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-28
-2026-01-28,2026-01-28,INTEREST PAYMENT,INTEREST_EARNED,13.21,SoFi-JointSavings,savings,SOFI-JointSavings_Jan26.csv,Jan26,income,Income,Other Income,2026-01-28
-2026-01-29,2026-01-29,CHIPOTLE 2345,Dining,-28.01,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-29
-2026-01-29,2026-01-29,DIRECT_PAY UTILITIES,DIRECT_PAY,-103.2,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-29
-2026-01-30,2026-01-30,Zelle Payment to Alex,ZELLE,-214.8,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-30
-2026-01-30,2026-01-30,TRADER JOES #123,Groceries,-87.31,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-28
-2026-01-30,2026-01-30,PANERA BREAD #4567,Food & Drink,-23.37,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-29
-2026-01-30,2026-01-30,Zelle Payment to Alex,ZELLE,-92.04,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-30
-2026-01-31,2026-01-31,SAFEWAY STORE 1234,Groceries,-49.74,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Groceries,,2026-01-31
+date,post_date,description,original_category,amount,account,account_type,source_file,month_folder,flow_type,category,subcategory,transaction_date,notes
+2026-01-01,2026-01-01,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,3083.63,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Michael Salary,2026-01-01,
+2026-01-01,2026-01-01,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1427.56,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Viviana Salary,2026-01-01,
+2026-01-02,2026-01-02,H&M US ONLINE,Merchandise,-10.32,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Shopping,,2026-01-01,
+2026-01-02,2026-01-02,IKEA SEATTLE,Shopping,-115.79,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Shopping,,2026-01-01,
+2026-01-02,2026-01-02,ONLINE TRANSFER,,-112.31,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-02,
+2026-01-03,2026-01-03,ZELLE PAYMENT TO ALEX,DEBIT,-110.37,Chase Checking,checking,Chase-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-03,
+2026-01-03,2026-01-03,H&M US ONLINE,Shopping,-41.77,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-01,
+2026-01-03,2026-01-03,GOODWILL RETAIL #89,,-115.48,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Shopping,,2026-01-03,
+2026-01-04,2026-01-04,IC* INSTACART GROCERIES,Groceries,-117.83,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-03,
+2026-01-05,2026-01-05,JPMORGAN CHASE,DIRECT_PAY,-2416.83,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Mortgage & Student Loans,Shorewood Mortgage,2026-01-05,
+2026-01-05,2026-01-05,IKEA SEATTLE,Shopping,-91.28,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-02,
+2026-01-06,2026-01-06,CHASE CREDIT CRD AUTOPAY,DIRECT_PAY,-974.42,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,cc_payment,cc_payment,,2026-01-06,
+2026-01-06,2026-01-06,PANERA BREAD #4567,Dining,-27.24,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-05,
+2026-01-07,2026-01-07,SKECHERS USA 456,Shopping,-110.5,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Shopping,,2026-01-04,
+2026-01-07,2026-01-07,NETFLIX.COM,Phone/Cable,-7.26,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Subscriptions,,2026-01-04,
+2026-01-07,2026-01-07,COSTCO WHSE #0045,Groceries,-49.42,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-05,
+2026-01-07,2026-01-07,SKECHERS USA 456,Shopping,-93.54,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-04,
+2026-01-09,2026-01-09,ROSS STORES #567,Shopping,-115.23,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Shopping,,2026-01-07,
+2026-01-09,2026-01-09,PHO BAC SUP SHOP,Dining,-13.11,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-06,
+2026-01-09,2026-01-09,GOODWILL RETAIL #89,,-38.67,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Shopping,,2026-01-09,
+2026-01-09,2026-01-09,IKEA SEATTLE,Shopping,-51.16,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-07,
+2026-01-10,2026-01-10,MCDONALDS F12345,Food & Drink,-32.29,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-09,
+2026-01-10,2026-01-10,JPMORGAN CHASE,DIRECT_PAY,-240.57,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Car,Subaru Lease,2026-01-10,
+2026-01-10,2026-01-10,STARBUCKS #12345,,-33.46,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Restaurants,,2026-01-10,
+2026-01-11,2026-01-11,UBER *TRIP,Travel,-401.53,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Travel,Rideshare & Transit,2026-01-10,
+2026-01-11,2026-01-11,DROPBOX*PLAN,Bills & Utilities,-12.71,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Subscriptions,,2026-01-08,
+2026-01-11,2026-01-11,PHO BAC SUP SHOP,Food & Drink,-30.25,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-10,
+2026-01-11,2026-01-11,ONLINE TRANSFER,,-115.84,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-11,
+2026-01-12,2026-01-12,GOODWILL RETAIL #89,Shopping,-43.73,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Shopping,,2026-01-11,
+2026-01-12,2026-01-12,WA PARKS RESERVATIONS,Entertainment,-29.0,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Fun & Entertainment,,2026-01-10,
+2026-01-12,2026-01-12,MCDONALDS F12345,Food & Drink,-37.69,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-10,
+2026-01-13,2026-01-13,SKECHERS USA 456,Merchandise,-82.18,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Shopping,,2026-01-12,
+2026-01-14,2026-01-14,THAI BAMBOO REST,Food & Drink,-23.15,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-11,
+2026-01-14,2026-01-14,TRADER JOES #123,Groceries,-139.5,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-11,
+2026-01-15,2026-01-15,OPENAI *CHATGPT PLUS,Bills & Utilities,-11.42,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Subscriptions,AI Subscriptions,2026-01-13,
+2026-01-15,2026-01-15,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1531.62,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Viviana Salary,2026-01-15,
+2026-01-15,2026-01-15,THAI BAMBOO REST,Food & Drink,-39.0,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-12,
+2026-01-15,2026-01-15,PANERA BREAD #4567,Food & Drink,-28.67,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-13,
+2026-01-15,2026-01-15,PANERA BREAD #4567,Dining,-8.85,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-14,
+2026-01-15,2026-01-15,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,2484.15,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,income,Income,Michael Salary,2026-01-15,
+2026-01-17,2026-01-17,MOD PIZZA SEATTLE,Food & Drink,-7.97,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-14,
+2026-01-17,2026-01-17,PANERA BREAD #4567,Food & Drink,-18.63,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-16,
+2026-01-18,2026-01-18,From Checking - 1234,OTHER,638.11,SoFi-JointSavings,savings,SOFI-JointSavings_Jan26.csv,Jan26,internal_transfer,internal_transfer,,2026-01-18,
+2026-01-19,2026-01-19,ZELLE PAYMENT FROM PAT,CREDIT,80.66,Chase Checking,checking,Chase-Checking_Jan26.csv,Jan26,income,Income,Friends & Family Payments,2026-01-19,
+2026-01-19,2026-01-19,ONLINE TRANSFER,,-93.24,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-19,
+2026-01-19,2026-01-19,PANERA BREAD #4567,,-47.59,Alaska,credit_card,Alaska_Jan26.csv,Jan26,spending,Unclassified,,2026-01-19,
+2026-01-20,2026-01-20,ROSS STORES #567,Merchandise,-68.47,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Shopping,,2026-01-17,
+2026-01-20,2026-01-20,WHOLEFDS MKT #10567,Groceries,-90.23,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-18,
+2026-01-21,2026-01-21,MOD PIZZA SEATTLE,Food & Drink,-31.11,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-20,
+2026-01-22,2026-01-22,ATM WITHDRAWAL,DEBIT,-69.52,Chase Checking,checking,Chase-Checking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-22,
+2026-01-24,2026-01-24,MOD PIZZA SEATTLE,Food & Drink,-44.42,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-23,
+2026-01-24,2026-01-24,PANERA BREAD #4567,Food & Drink,-37.1,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-23,
+2026-01-24,2026-01-24,NETFLIX.COM,Phone/Cable,-5.89,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Subscriptions,,2026-01-22,
+2026-01-25,2026-01-25,QFC #5678,Groceries,-20.34,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-22,
+2026-01-26,2026-01-26,MCDONALDS F12345,Food & Drink,-27.16,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-25,
+2026-01-26,2026-01-26,VENMO PAYMENT,DIRECT_PAY,-182.78,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-26,
+2026-01-26,2026-01-26,DISNEY PLUS,Bills & Utilities,-8.85,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Subscriptions,,2026-01-23,
+2026-01-27,2026-01-27,QFC #5678,Groceries,-44.3,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-24,
+2026-01-27,2026-01-27,MOD PIZZA SEATTLE,Dining,-13.73,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-24,
+2026-01-27,2026-01-27,CHECK DEPOSIT,CREDIT,341.93,Chase Checking,checking,Chase-Checking_Jan26.csv,Jan26,other,Unclassified,,2026-01-27,
+2026-01-28,2026-01-28,PHO BAC SUP SHOP,Food & Drink,-15.95,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-25,
+2026-01-28,2026-01-28,INTEREST PAYMENT,,4.62,BoA-Checking,checking,BoA-Checking_Jan26.csv,Jan26,income,Income,Other Income,2026-01-28,
+2026-01-28,2026-01-28,WHOLEFDS MKT #10567,Groceries,-89.34,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Groceries,,2026-01-27,
+2026-01-28,2026-01-28,TRADER JOES #123,Groceries,-51.24,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-27,
+2026-01-28,2026-01-28,CAPITAL ONE MOBILE PMT,DIRECT_PAY,-1290.52,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,cc_payment,cc_payment,,2026-01-28,
+2026-01-28,2026-01-28,Zelle Payment to Alex,ZELLE,-271.59,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-28,
+2026-01-28,2026-01-28,INTEREST PAYMENT,,6.58,BoA-Savings,savings,BoA-Savings_Jan26.csv,Jan26,income,Income,Other Income,2026-01-28,
+2026-01-28,2026-01-28,CHIPOTLE 2345,Dining,-38.1,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-27,
+2026-01-28,2026-01-28,INTEREST PAYMENT,INTEREST_EARNED,13.21,SoFi-JointSavings,savings,SOFI-JointSavings_Jan26.csv,Jan26,income,Income,Other Income,2026-01-28,
+2026-01-29,2026-01-29,DIRECT_PAY UTILITIES,DIRECT_PAY,-103.2,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-29,
+2026-01-29,2026-01-29,CHIPOTLE 2345,Dining,-28.01,VentureX,credit_card,VentureX_Jan26.csv,Jan26,spending,Restaurants,,2026-01-29,
+2026-01-30,2026-01-30,Zelle Payment to Alex,ZELLE,-92.04,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-30,
+2026-01-30,2026-01-30,Zelle Payment to Alex,ZELLE,-214.8,SoFi-JointChecking,checking,SOFI-JointChecking_Jan26.csv,Jan26,spending,Unclassified,,2026-01-30,
+2026-01-30,2026-01-30,TRADER JOES #123,Groceries,-87.31,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Groceries,,2026-01-28,
+2026-01-30,2026-01-30,PANERA BREAD #4567,Food & Drink,-23.37,Aeroplan,credit_card,Aeroplan_Jan26.CSV,Jan26,spending,Unclassified,,2026-01-29,
+2026-01-31,2026-01-31,SAFEWAY STORE 1234,Groceries,-49.74,AmazonPrime,credit_card,AmazonPrime_Jan26.CSV,Jan26,spending,Groceries,,2026-01-31,

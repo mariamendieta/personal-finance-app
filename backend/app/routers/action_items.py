@@ -30,6 +30,13 @@ class UpdateStatusRequest(BaseModel):
     date_completed: str = ""
 
 
+class EditItemRequest(BaseModel):
+    old_task: str
+    task: str
+    assignee: str
+    category: str
+
+
 class DeleteItemRequest(BaseModel):
     task: str
 
@@ -50,6 +57,13 @@ def add_item(request: AddItemRequest):
 def update_status(request: UpdateStatusRequest):
     return action_items_service.update_action_item_status(
         request.task, request.status, request.date_completed,
+    )
+
+
+@router.put("/edit", response_model=list[ActionItem])
+def edit_item(request: EditItemRequest):
+    return action_items_service.update_action_item(
+        request.old_task, request.task, request.assignee, request.category,
     )
 
 

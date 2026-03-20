@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-
-const FLOWER_SVG = `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" width="40" height="48"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>`;
 
 const NAV_ITEMS = [
   { href: "/cashflow", label: "Cash Flow" },
+  { href: "/budget", label: "Budget" },
   { href: "/investments", label: "Investments" },
   { href: "/action-items", label: "Action Items" },
+  { href: "/instructions", label: "Instructions" },
 ];
 
 export default function Sidebar({ familyName }: { familyName?: string }) {
@@ -20,13 +21,13 @@ export default function Sidebar({ familyName }: { familyName?: string }) {
 
       {/* Brand header */}
       <div className="flex items-center gap-3 px-4 py-4 border-b-2 border-azul">
-        <div dangerouslySetInnerHTML={{ __html: FLOWER_SVG }} className="shrink-0" />
+        <Image src="/logo.png" alt="Bird of Paradise" width={44} height={44} className="shrink-0" />
         <div>
-          <h2 className="font-[Cormorant_Garamond,serif] text-[1.15rem] font-medium text-warm-charcoal leading-tight">
-            Maria Mendieta
+          <h2 className="font-[Cormorant_Garamond,serif] text-[1.1rem] font-medium text-warm-charcoal leading-tight">
+            Personal Finance App
           </h2>
-          <p className="text-[0.7rem] font-light text-stone tracking-[0.12em] uppercase mt-0.5">
-            Personal Finances
+          <p className="text-[0.65rem] font-light text-stone tracking-[0.08em] mt-0.5">
+            by Maria Mendieta
           </p>
         </div>
       </div>
