@@ -85,6 +85,17 @@ def update_action_item_status(task: str, status: str, date_completed: str = "") 
     return save_action_items(items)
 
 
+def update_action_item(old_task: str, task: str, assignee: str, category: str) -> list[dict]:
+    items = get_action_items()
+    for item in items:
+        if item["task"] == old_task:
+            item["task"] = task
+            item["assignee"] = assignee
+            item["category"] = category if category in CATEGORIES else "Other"
+            break
+    return save_action_items(items)
+
+
 def delete_action_item(task: str) -> list[dict]:
     items = get_action_items()
     items = [i for i in items if i["task"] != task]

@@ -1,0 +1,36 @@
+{
+  "credit_cards": [
+    {
+      "label": "Rewards Visa",
+      "filePrefix": "RewardsVisa",
+      "hidden": false
+    },
+    {
+      "label": "Travel Card",
+      "filePrefix": "TravelCard",
+      "hidden": false
+    },
+    {
+      "label": "Cash Back Card",
+      "filePrefix": "CashBackCard",
+      "hidden": false
+    }
+  ],
+  "bank_accounts": [
+    {
+      "label": "Joint Checking",
+      "filePrefix": "JointChecking",
+      "hidden": false
+    },
+    {
+      "label": "Joint Savings",
+      "filePrefix": "JointSavings",
+      "hidden": false
+    },
+    {
+      "label": "Emergency Fund",
+      "filePrefix": "EmergencyFund",
+      "hidden": false
+    }
+  ]
+}

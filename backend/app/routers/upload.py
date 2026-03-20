@@ -11,7 +11,7 @@ from ..services import cashflow_service, portfolio_service
 
 router = APIRouter(prefix="/api/upload", tags=["upload"])
 
-SAFE_FILENAME = re.compile(r"^[\w\-. ]+\.csv$", re.I)
+SAFE_FILENAME = re.compile(r"^[\w\-. ()'&,]+\.csv$", re.I)
 
 
 @router.post("/cashflow")

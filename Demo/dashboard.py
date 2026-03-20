@@ -46,7 +46,7 @@ FLOWER_SVG = """<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" wi
 FLOWER_SVG_SMALL = """<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg" width="40" height="48"><path d="M60 140 C58 120, 52 105, 48 95" stroke="#2D6A4F" stroke-width="0.7" fill="none"/><path d="M28 96 C32 92, 48 88, 68 95 C72 96, 74 97, 72 99 C66 102, 40 102, 28 96Z" fill="#2D6A4F"/><polygon points="42,92 18,42 26,40" fill="#E9A820"/><polygon points="46,90 30,35 38,32" fill="#E9A820"/><polygon points="50,88 40,28 48,26" fill="#E07A5F"/><polygon points="54,87 48,22 56,20" fill="#E07A5F"/><polygon points="58,86 56,16 64,15" fill="#C9184A"/><polygon points="62,87 66,24 72,26" fill="#C9184A"/><path d="M50 92 C48 82, 44 72, 38 58 C36 54, 38 52, 42 54 C50 60, 56 78, 56 92Z" fill="#1B4965"/></svg>"""
 
 # ── Page config ──────────────────────────────────────────────────────────────
-st.set_page_config(page_title="Maria Mendieta — Finances", layout="wide")
+st.set_page_config(page_title="Viviana and Michael — Finances", layout="wide")
 
 # ── Brand CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -287,7 +287,7 @@ if section not in ("cashflow", "investments"):
     section = "cashflow"
 
 with st.sidebar:
-    st.markdown(f"""<div class="sidebar-brand">{FLOWER_SVG_SMALL}<div class="sidebar-brand-text"><h2>Maria Mendieta</h2><div class="sidebar-subtitle">Personal Finances</div></div></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div class="sidebar-brand">{FLOWER_SVG_SMALL}<div class="sidebar-brand-text"><h2>Viviana and Michael</h2><div class="sidebar-subtitle">Personal Finances</div></div></div>""", unsafe_allow_html=True)
 
     cf_cls = "active" if section == "cashflow" else ""
     inv_cls = "active" if section == "investments" else ""
@@ -1001,13 +1001,13 @@ elif section == "investments":
         PORTFOLIO_FILES = [
             ("Chase Taxable Brokerage", "ChaseTaxableBrokerage.csv"),
             ("Chase Parametric", "ChaseParametric.csv"),
-            ("Scott's Roth IRA (Chase)", "ScottsRothIRA_Chase.csv"),
-            ("Scott's Traditional IRA", "ScottsTraditionalIRA.csv"),
+            ("Michael's Roth IRA (Chase)", "ScottsRothIRA_Chase.csv"),
+            ("Michael's Traditional IRA", "ScottsTraditionalIRA.csv"),
             ("SoFi Joint", "SOFI_Joint.csv"),
             ("SoFi Self-Directed", "SOFI_SelfDirected.csv"),
-            ("Maria's Roth IRA", "Marias Roth IRA.csv"),
-            ("Maria Carbon Direct 401k", "Maria Carbon Direct 401k.csv"),
-            ("Maria Accrue LevelTen 401k", "Maria Accrue LevelTen 401k.csv"),
+            ("Viviana's Roth IRA", "Marias Roth IRA.csv"),
+            ("Viviana 401k", "Viviana 401k.csv"),
+            ("Viviana Secondary 401k", "Viviana Secondary 401k.csv"),
         ]
 
         today = _date.today()

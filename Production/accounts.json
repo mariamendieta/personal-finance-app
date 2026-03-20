@@ -1,0 +1,71 @@
+{
+  "credit_cards": [
+    {
+      "label": "Aeroplan (Chase)",
+      "filePrefix": "Aeroplan",
+      "hidden": false
+    },
+    {
+      "label": "AmazonPrime (Chase)",
+      "filePrefix": "AmazonPrime",
+      "hidden": false
+    },
+    {
+      "label": "United (Chase)",
+      "filePrefix": "United",
+      "hidden": false
+    },
+    {
+      "label": "VentureX (Capital One)",
+      "filePrefix": "VentureX",
+      "hidden": false
+    },
+    {
+      "label": "VentureOne (Capital One)",
+      "filePrefix": "VentureOne",
+      "hidden": false
+    },
+    {
+      "label": "Alaska (BofA)",
+      "filePrefix": "Alaska",
+      "hidden": false
+    },
+    {
+      "label": "Scott's Alaska",
+      "filePrefix": "Scott-s-Alaska",
+      "hidden": false
+    },
+    {
+      "label": "Scotts Cash Rewards (BofA)",
+      "filePrefix": "Scotts-Cash-Rewards--BofA-",
+      "hidden": false
+    }
+  ],
+  "bank_accounts": [
+    {
+      "label": "SoFi Joint Checking",
+      "filePrefix": "SOFI-JointChecking",
+      "hidden": false
+    },
+    {
+      "label": "SoFi Joint Savings",
+      "filePrefix": "SOFI-JointSavings",
+      "hidden": false
+    },
+    {
+      "label": "BoA Checking",
+      "filePrefix": "BoA-Checking",
+      "hidden": false
+    },
+    {
+      "label": "BoA Savings",
+      "filePrefix": "BoA-Savings",
+      "hidden": false
+    },
+    {
+      "label": "Chase Checking",
+      "filePrefix": "Chase-Checking",
+      "hidden": false
+    }
+  ]
+}

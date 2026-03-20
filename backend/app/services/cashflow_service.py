@@ -54,13 +54,13 @@ def get_cashflow_data(months: int = 12) -> pd.DataFrame:
 
 KEEP_CATEGORIES = {
     "Childcare", "Subscriptions", "Taxes & Tax Fees", "Travel",
-    "House & Maintenance", "Utilities",
+    "House & Maintenance", "Utilities", "Investments",
 }
 DEBT_MERGE = {"Mortgage & Student Loans", "Car"}
 OTHER_MERGE = {
     "Fitness & Healthcare", "Unclassified", "Groceries", "Pets",
     "Restaurants", "Shopping", "Donations", "Fees & Bank Charges",
-    "Fun & Entertainment", "Therapy & Coaching", "Investments",
+    "Fun & Entertainment", "Therapy & Coaching",
 }
 
 
@@ -76,16 +76,17 @@ CATEGORY_COLORS = {
     "Mortgage, Loans & Car": "#1B4965",
     "Childcare": "#2D6A4F",
     "Taxes & Tax Fees": "#E07A5F",
-    "Travel": "#E07A5F",
+    "Travel": "#7B68EE",
     "Other Expenses": "#6B5E52",
     "Utilities": "#E9A820",
     "House & Maintenance": "#52B788",
     "Subscriptions": "#9A9A9A",
+    "Investments": "#1B4965",
 }
 
 DISPLAY_CATEGORY_ORDER = [
     "Mortgage, Loans & Car", "Childcare", "Taxes & Tax Fees", "Travel",
-    "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
+    "Investments", "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
 ]
 
 # ── Vendor normalization ──
@@ -254,6 +255,56 @@ def get_spending_by_category(months: int = 12) -> list[dict]:
             "percent": round(float(row["amount"]) / total * 100, 1) if total else 0,
         }
         for _, row in cat_totals.iterrows()
+    ]
+
+
+def get_subcategories(category: str, months: int = 12) -> list[dict]:
+    df = get_cashflow_data(months)
+    if df.empty:
+        return []
+    spending = df[(df["flow_type"] == "spending") & (df["category"] == category)]
+    if spending.empty:
+        return []
+    spending = spending.copy()
+    spending["subcategory"] = spending["subcategory"].fillna("").replace("", "Other")
+    sub_totals = (
+        spending.groupby("subcategory")["amount"].sum().abs()
+        .sort_values(ascending=False).reset_index()
+    )
+    total = sub_totals["amount"].sum()
+    return [
+        {
+            "subcategory": row["subcategory"],
+            "total": float(row["amount"]),
+            "percent": round(float(row["amount"]) / total * 100, 1) if total else 0,
+        }
+        for _, row in sub_totals.iterrows()
+    ]
+
+
+def get_subcategory_vendors(category: str, subcategory: str, months: int = 12) -> list[dict]:
+    df = get_cashflow_data(months)
+    if df.empty:
+        return []
+    spending = df[(df["flow_type"] == "spending") & (df["category"] == category)].copy()
+    spending["subcategory"] = spending["subcategory"].fillna("").replace("", "Other")
+    spending = spending[spending["subcategory"] == subcategory]
+    if spending.empty:
+        return []
+    spending["vendor"] = spending["description"].apply(normalize_vendor)
+    vendor_totals = (
+        spending.groupby("vendor")["amount"].agg(["sum", "count"])
+        .reset_index()
+    )
+    vendor_totals["sum"] = vendor_totals["sum"].abs()
+    vendor_totals = vendor_totals.sort_values("sum", ascending=False)
+    return [
+        {
+            "vendor": row["vendor"],
+            "total": float(row["sum"]),
+            "count": int(row["count"]),
+        }
+        for _, row in vendor_totals.iterrows()
     ]
 
 

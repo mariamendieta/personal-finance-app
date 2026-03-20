@@ -7,6 +7,8 @@ import type { ActionItem } from "@/lib/api";
 
 const STATUS_OPTIONS = ["In Progress", "Open", "Done"];
 const CATEGORY_OPTIONS = ["Cash Flow", "Investment", "Other"];
+const ASSIGNEES_PROD = ["Maria", "Scott"];
+const ASSIGNEES_DEMO = ["Viviana", "Michael"];
 
 const STATUS_BADGE: Record<string, string> = {
   "In Progress": "bg-marigold/15 text-marigold border-marigold",
@@ -34,7 +36,8 @@ export default function ActionItemsPage() {
   // Add form
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTask, setNewTask] = useState("");
-  const [newAssignee, setNewAssignee] = useState("Maria");
+  const assignees = config?.is_demo ? ASSIGNEES_DEMO : ASSIGNEES_PROD;
+  const [newAssignee, setNewAssignee] = useState(assignees[0]);
   const [newCategory, setNewCategory] = useState("Other");
 
   const updateStatus = useMutation({
@@ -57,13 +60,19 @@ export default function ActionItemsPage() {
     },
   });
 
+  const editItem = useMutation({
+    mutationFn: ({ oldTask, task, assignee, category }: { oldTask: string; task: string; assignee: string; category: string }) =>
+      api.editActionItem(oldTask, task, assignee, category),
+    onSuccess: (data) => queryClient.setQueryData(["action-items"], data),
+  });
+
   const deleteItem = useMutation({
     mutationFn: (task: string) => api.deleteActionItem(task),
     onSuccess: (data) => queryClient.setQueryData(["action-items"], data),
   });
 
   // Derived filter options
-  const assignees = useMemo(() => {
+  const filterAssignees = useMemo(() => {
     if (!items) return [];
     return [...new Set(items.map(i => i.assignee))].sort();
   }, [items]);
@@ -126,7 +135,7 @@ export default function ActionItemsPage() {
           <select value={filterAssignee} onChange={e => setFilterAssignee(e.target.value)}
             className="border border-cool-gray rounded px-3 py-1.5 text-sm text-warm-charcoal">
             <option>All</option>
-            {assignees.map(a => <option key={a}>{a}</option>)}
+            {filterAssignees.map(a => <option key={a}>{a}</option>)}
           </select>
         </div>
         <div>
@@ -166,8 +175,7 @@ export default function ActionItemsPage() {
               onKeyDown={e => e.key === "Enter" && newTask.trim() && addItem.mutate()} />
             <select value={newAssignee} onChange={e => setNewAssignee(e.target.value)}
               className="text-sm px-3 py-2 rounded border border-cool-gray">
-              <option>Maria</option>
-              <option>Scott</option>
+              {assignees.map(a => <option key={a}>{a}</option>)}
             </select>
             <select value={newCategory} onChange={e => setNewCategory(e.target.value)}
               className="text-sm px-3 py-2 rounded border border-cool-gray">
@@ -194,17 +202,20 @@ export default function ActionItemsPage() {
           {inProgress.length > 0 && (
             <StatusTable title="In Progress" items={inProgress} count={inProgress.length}
               onStatusChange={(task, status) => updateStatus.mutate({ task, status })}
-              onDelete={task => deleteItem.mutate(task)} />
+              onEdit={(oldTask, task, assignee, category) => editItem.mutate({ oldTask, task, assignee, category })}
+              onDelete={task => deleteItem.mutate(task)} assignees={assignees} />
           )}
           {open.length > 0 && (
             <StatusTable title="Open" items={open} count={open.length}
               onStatusChange={(task, status) => updateStatus.mutate({ task, status })}
-              onDelete={task => deleteItem.mutate(task)} />
+              onEdit={(oldTask, task, assignee, category) => editItem.mutate({ oldTask, task, assignee, category })}
+              onDelete={task => deleteItem.mutate(task)} assignees={assignees} />
           )}
           {done.length > 0 && (
             <StatusTable title="Done" items={done} count={done.length}
               onStatusChange={(task, status) => updateStatus.mutate({ task, status })}
-              onDelete={task => deleteItem.mutate(task)}
+              onEdit={(oldTask, task, assignee, category) => editItem.mutate({ oldTask, task, assignee, category })}
+              onDelete={task => deleteItem.mutate(task)} assignees={assignees}
               defaultCollapsed />
           )}
           {filtered.length === 0 && (
@@ -262,19 +273,136 @@ function sortItems(items: ActionItem[], field: SortField | null, dir: SortDir): 
   });
 }
 
+function EditableRow({
+  item,
+  onStatusChange,
+  onEdit,
+  onDelete,
+  assignees,
+}: {
+  item: ActionItem;
+  onStatusChange: (task: string, status: string) => void;
+  onEdit: (oldTask: string, task: string, assignee: string, category: string) => void;
+  onDelete: (task: string) => void;
+  assignees: string[];
+}) {
+  const [editing, setEditing] = useState(false);
+  const [editTask, setEditTask] = useState(item.task);
+  const [editAssignee, setEditAssignee] = useState(item.assignee);
+  const [editCategory, setEditCategory] = useState(item.category);
+
+  const handleSave = () => {
+    if (editTask.trim()) {
+      onEdit(item.task, editTask.trim(), editAssignee, editCategory);
+      setEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditTask(item.task);
+    setEditAssignee(item.assignee);
+    setEditCategory(item.category);
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <tr className="border-t border-cool-gray bg-azul/5">
+        <td className="px-4 py-2">
+          <input type="text" value={editTask} onChange={e => setEditTask(e.target.value)}
+            className="w-full text-sm px-2 py-1 rounded border border-azul focus:outline-none"
+            autoFocus onKeyDown={e => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") handleCancel(); }} />
+        </td>
+        <td className="px-4 py-2">
+          <select value={editAssignee} onChange={e => setEditAssignee(e.target.value)}
+            className="text-sm px-2 py-1 rounded border border-azul">
+            {assignees.map(a => <option key={a}>{a}</option>)}
+          </select>
+        </td>
+        <td className="px-4 py-2">
+          <select value={editCategory} onChange={e => setEditCategory(e.target.value)}
+            className="text-sm px-2 py-1 rounded border border-azul">
+            {CATEGORY_OPTIONS.map(c => <option key={c}>{c}</option>)}
+          </select>
+        </td>
+        <td className="px-4 py-2">
+          <select value={item.status} onChange={e => onStatusChange(item.task, e.target.value)}
+            className={`text-xs font-medium px-2 py-1 rounded border ${STATUS_BADGE[item.status] || ""}`}>
+            {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </td>
+        <td className="px-4 py-2 text-stone">{item.date_created}</td>
+        <td className="px-4 py-2 text-stone">{item.date_completed || "—"}</td>
+        <td className="px-2 py-2">
+          <div className="flex gap-1">
+            <button onClick={handleSave} className="text-verde-hoja hover:text-verde-claro" title="Save">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            </button>
+            <button onClick={handleCancel} className="text-stone hover:text-coral" title="Cancel">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  return (
+    <tr className="border-t border-cool-gray hover:bg-cool-white/50 group">
+      <td className={`px-4 py-2.5 cursor-pointer ${item.status === "Done" ? "line-through text-stone" : "text-warm-charcoal"}`}
+        onDoubleClick={() => setEditing(true)}>
+        {item.task}
+      </td>
+      <td className="px-4 py-2.5 text-stone cursor-pointer" onDoubleClick={() => setEditing(true)}>{item.assignee}</td>
+      <td className="px-4 py-2.5 text-stone cursor-pointer" onDoubleClick={() => setEditing(true)}>{item.category}</td>
+      <td className="px-4 py-2.5">
+        <select value={item.status} onChange={e => onStatusChange(item.task, e.target.value)}
+          className={`text-xs font-medium px-2 py-1 rounded border ${STATUS_BADGE[item.status] || ""}`}>
+          {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+      </td>
+      <td className="px-4 py-2.5 text-stone">{item.date_created}</td>
+      <td className="px-4 py-2.5 text-stone">{item.date_completed || "—"}</td>
+      <td className="px-2 py-2.5">
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => setEditing(true)} className="text-mid-gray hover:text-azul" title="Edit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+          </button>
+          <button onClick={() => onDelete(item.task)} className="text-mid-gray hover:text-coral" title="Delete">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 function StatusTable({
   title,
   items,
   count,
   onStatusChange,
+  onEdit,
   onDelete,
+  assignees,
   defaultCollapsed = false,
 }: {
   title: string;
   items: ActionItem[];
   count: number;
   onStatusChange: (task: string, status: string) => void;
+  onEdit: (oldTask: string, task: string, assignee: string, category: string) => void;
   onDelete: (task: string) => void;
+  assignees: string[];
   defaultCollapsed?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(!defaultCollapsed);
@@ -312,35 +440,13 @@ function StatusTable({
                 <th className="text-left px-4 py-3 font-semibold text-stone w-32">Status</th>
                 <SortHeader label="Date Created" field="date_created" activeField={sortField} direction={sortDir} onSort={handleSort} className="w-32" />
                 <SortHeader label="Date Completed" field="date_completed" activeField={sortField} direction={sortDir} onSort={handleSort} className="w-36" />
-                <th className="w-10"></th>
+                <th className="w-16"></th>
               </tr>
             </thead>
             <tbody>
               {sorted.map(item => (
-                <tr key={item.task} className="border-t border-cool-gray hover:bg-cool-white/50 group">
-                  <td className={`px-4 py-2.5 ${item.status === "Done" ? "line-through text-stone" : "text-warm-charcoal"}`}>
-                    {item.task}
-                  </td>
-                  <td className="px-4 py-2.5 text-stone">{item.assignee}</td>
-                  <td className="px-4 py-2.5 text-stone">{item.category}</td>
-                  <td className="px-4 py-2.5">
-                    <select value={item.status} onChange={e => onStatusChange(item.task, e.target.value)}
-                      className={`text-xs font-medium px-2 py-1 rounded border ${STATUS_BADGE[item.status] || ""}`}>
-                      {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </td>
-                  <td className="px-4 py-2.5 text-stone">{item.date_created}</td>
-                  <td className="px-4 py-2.5 text-stone">{item.date_completed || "—"}</td>
-                  <td className="px-2 py-2.5">
-                    <button onClick={() => onDelete(item.task)}
-                      className="text-mid-gray hover:text-coral opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Delete">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M18 6L6 18M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
+                <EditableRow key={item.task} item={item}
+                  onStatusChange={onStatusChange} onEdit={onEdit} onDelete={onDelete} assignees={assignees} />
               ))}
             </tbody>
           </table>

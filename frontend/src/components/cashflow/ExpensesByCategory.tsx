@@ -1,23 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import type { MonthlyExpense } from "@/lib/api";
 import { formatCurrency, formatMonth } from "@/lib/format";
 
 const CATEGORY_ORDER = [
   "Mortgage, Loans & Car", "Childcare", "Taxes & Tax Fees", "Travel",
-  "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
+  "Investments", "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
 ];
 
 const COLORS: Record<string, string> = {
   "Mortgage, Loans & Car": "#1B4965",
   "Childcare": "#2D6A4F",
   "Taxes & Tax Fees": "#E07A5F",
-  "Travel": "#E07A5F",
+  "Travel": "#7B68EE",
   "Other Expenses": "#6B5E52",
   "Utilities": "#E9A820",
   "House & Maintenance": "#52B788",
   "Subscriptions": "#9A9A9A",
+  "Investments": "#1B4965",
 };
 
 interface ChartRow {
@@ -61,9 +63,27 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export default function ExpensesByCategory({ data }: { data: MonthlyExpense[] }) {
+  const allCategories = CATEGORY_ORDER.filter(c => data.some(d => d.display_category === c));
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+
+  const toggleCategory = (cat: string) => {
+    setHiddenCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(cat)) {
+        next.delete(cat);
+      } else {
+        next.add(cat);
+      }
+      return next;
+    });
+  };
+
+  const visibleCategories = allCategories.filter(c => !hiddenCategories.has(c));
+
   // Pivot data: one row per month, one key per display_category
   const monthMap = new Map<string, ChartRow>();
   for (const item of data) {
+    if (hiddenCategories.has(item.display_category)) continue;
     if (!monthMap.has(item.month)) {
       monthMap.set(item.month, {
         month: item.month,
@@ -77,18 +97,33 @@ export default function ExpensesByCategory({ data }: { data: MonthlyExpense[] })
     row.total += item.amount;
   }
   const chartData = Array.from(monthMap.values()).sort((a, b) => a.month.localeCompare(b.month));
-  const categories = CATEGORY_ORDER.filter(c => data.some(d => d.display_category === c));
 
   return (
     <div>
-      <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Monthly Expenses by Category</h2>
+      <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Monthly Outflows by Category</h2>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {allCategories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => toggleCategory(cat)}
+            className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+              hiddenCategories.has(cat)
+                ? "border-cool-gray text-stone bg-cool-white line-through opacity-50"
+                : "border-current font-medium"
+            }`}
+            style={{ color: hiddenCategories.has(cat) ? undefined : COLORS[cat], borderColor: hiddenCategories.has(cat) ? undefined : COLORS[cat] }}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
       <ResponsiveContainer width="100%" height={450}>
         <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
           <XAxis dataKey="monthLabel" tick={{ fontSize: 12 }} />
           <YAxis tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ paddingTop: 8 }} />
-          {categories.map(cat => (
+          {visibleCategories.map(cat => (
             <Bar key={cat} dataKey={cat} stackId="a" fill={COLORS[cat]} />
           ))}
         </BarChart>

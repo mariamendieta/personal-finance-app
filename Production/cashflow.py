@@ -99,6 +99,63 @@ def parse_alaska_card(filepath: Path, account_name: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def parse_barclays_card(filepath: Path, account_name: str) -> pd.DataFrame:
+    """Barclays credit card.
+    Has a header section, then: Transaction Date, Description, Category, Amount
+    Amount is negative for purchases, positive for payments.
+    """
+    with open(filepath, "r") as f:
+        lines = f.readlines()
+    tx_start = None
+    for i, line in enumerate(lines):
+        if line.strip().startswith("Transaction Date,Description"):
+            tx_start = i
+            break
+    if tx_start is None:
+        return pd.DataFrame()
+    from io import StringIO
+    csv_text = "".join(lines[tx_start:])
+    df = pd.read_csv(StringIO(csv_text))
+    rows = []
+    for _, r in df.iterrows():
+        rows.append({
+            "date": pd.to_datetime(r["Transaction Date"]),
+            "post_date": pd.to_datetime(r["Transaction Date"]),
+            "description": str(r["Description"]).strip(),
+            "original_category": str(r.get("Category", "")).strip(),
+            "amount": float(r["Amount"]),
+            "account": account_name,
+            "account_type": "credit_card",
+            "source_file": filepath.name,
+        })
+    return pd.DataFrame(rows)
+
+
+def parse_citi_card(filepath: Path, account_name: str) -> pd.DataFrame:
+    """Citi credit card (AAdvantage).
+    Columns: Status, Date, Description, Debit, Credit, Member Name
+    Debit = purchases, Credit = payments/refunds (may be negative values).
+    """
+    df = pd.read_csv(filepath)
+    rows = []
+    for _, r in df.iterrows():
+        debit = abs(float(r["Debit"])) if pd.notna(r.get("Debit")) else 0.0
+        credit = abs(float(r["Credit"])) if pd.notna(r.get("Credit")) else 0.0
+        amount = credit - debit
+        desc = str(r["Description"]).strip().strip('"')
+        rows.append({
+            "date": pd.to_datetime(r["Date"]),
+            "post_date": pd.to_datetime(r["Date"]),
+            "description": desc,
+            "original_category": "",
+            "amount": amount,
+            "account": account_name,
+            "account_type": "credit_card",
+            "source_file": filepath.name,
+        })
+    return pd.DataFrame(rows)
+
+
 def parse_sofi(filepath: Path, account_name: str) -> pd.DataFrame:
     """SoFi checking or savings.
     Columns: Date, Description, Type, Amount, Current balance, Status
@@ -193,7 +250,191 @@ def parse_chase_checking(filepath: Path, account_name: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def parse_generic(filepath: Path, account_name: str) -> pd.DataFrame:
+    """Generic CSV parser that auto-detects columns by header names.
+
+    Tries to match known parser patterns first, then falls back to
+    heuristic column detection for date, description, and amount fields.
+    """
+    # Try reading with and without index_col=False (handles trailing commas)
+    try:
+        df = pd.read_csv(filepath, index_col=False)
+    except Exception:
+        df = pd.read_csv(filepath)
+
+    if df.empty:
+        return pd.DataFrame()
+
+    cols = set(c.strip() for c in df.columns)
+
+    # ── Try matching known parser patterns by headers ──
+
+    # Chase card pattern: Post Date, Description, Amount, Category
+    if {"Post Date", "Description", "Amount", "Category"}.issubset(cols):
+        return parse_chase_card(filepath, account_name)
+
+    # Capital One pattern: Transaction Date, Posted Date, Debit, Credit
+    if {"Transaction Date", "Posted Date", "Debit", "Credit"}.issubset(cols):
+        return parse_capital_one(filepath, account_name)
+
+    # Alaska/BoA card pattern: Posted Date, Payee, Amount
+    if {"Posted Date", "Payee", "Amount"}.issubset(cols):
+        return parse_alaska_card(filepath, account_name)
+
+    # Citi card pattern: Status, Date, Description, Debit, Credit, Member Name
+    if {"Status", "Date", "Description", "Debit", "Credit", "Member Name"}.issubset(cols):
+        return parse_citi_card(filepath, account_name)
+
+    # SoFi pattern: Date, Description, Amount, and (Current balance or Status)
+    if {"Date", "Description", "Amount"}.issubset(cols) and (
+        "Current balance" in cols or "Status" in cols
+    ):
+        return parse_sofi(filepath, account_name)
+
+    # Chase checking pattern: Details, Posting Date, Description, Balance
+    if {"Details", "Posting Date", "Description", "Balance"}.issubset(cols):
+        return parse_chase_checking(filepath, account_name)
+
+    # ── Generic fallback: detect columns heuristically ──
+
+    # Find date column
+    date_candidates = [
+        "Date", "Transaction Date", "Posted Date", "Posting Date",
+        "Post Date", "Trans Date", "Txn Date",
+    ]
+    date_col = None
+    for candidate in date_candidates:
+        if candidate in cols:
+            date_col = candidate
+            break
+    # Case-insensitive fallback
+    if date_col is None:
+        cols_lower = {c.lower(): c for c in df.columns}
+        for candidate in date_candidates:
+            if candidate.lower() in cols_lower:
+                date_col = cols_lower[candidate.lower()]
+                break
+
+    if date_col is None:
+        print(f"  ⚠ Generic parser: no date column found in {filepath.name}")
+        return pd.DataFrame()
+
+    # Find description column
+    desc_candidates = [
+        "Description", "Payee", "Merchant", "Name", "Memo",
+        "Transaction Description", "Merchant Name",
+    ]
+    desc_col = None
+    for candidate in desc_candidates:
+        if candidate in cols:
+            desc_col = candidate
+            break
+    if desc_col is None:
+        cols_lower = {c.lower(): c for c in df.columns}
+        for candidate in desc_candidates:
+            if candidate.lower() in cols_lower:
+                desc_col = cols_lower[candidate.lower()]
+                break
+
+    if desc_col is None:
+        print(f"  ⚠ Generic parser: no description column found in {filepath.name}")
+        return pd.DataFrame()
+
+    # Find amount column(s)
+    has_debit_credit = "Debit" in cols and "Credit" in cols
+    if not has_debit_credit:
+        cols_lower_map = {c.lower(): c for c in df.columns}
+        has_debit_credit = "debit" in cols_lower_map and "credit" in cols_lower_map
+
+    amount_col = None
+    if not has_debit_credit:
+        amount_candidates = ["Amount", "Value", "Transaction Amount"]
+        for candidate in amount_candidates:
+            if candidate in cols:
+                amount_col = candidate
+                break
+        if amount_col is None:
+            cols_lower = {c.lower(): c for c in df.columns}
+            for candidate in amount_candidates:
+                if candidate.lower() in cols_lower:
+                    amount_col = cols_lower[candidate.lower()]
+                    break
+
+    if amount_col is None and not has_debit_credit:
+        print(f"  ⚠ Generic parser: no amount column found in {filepath.name}")
+        return pd.DataFrame()
+
+    # Find category column (optional)
+    cat_col = None
+    cat_candidates = ["Category", "Type", "Transaction Type"]
+    for candidate in cat_candidates:
+        if candidate in cols:
+            cat_col = candidate
+            break
+
+    # Guess account type from name
+    name_lower = account_name.lower()
+    if any(kw in name_lower for kw in ["checking", "savings", "saving", "bank"]):
+        account_type = "savings" if "saving" in name_lower else "checking"
+    else:
+        account_type = "credit_card"
+
+    # Find debit/credit columns (case-insensitive)
+    debit_col = None
+    credit_col = None
+    if has_debit_credit:
+        for c in df.columns:
+            if c.strip().lower() == "debit":
+                debit_col = c
+            elif c.strip().lower() == "credit":
+                credit_col = c
+
+    rows = []
+    for _, r in df.iterrows():
+        # Parse amount
+        if has_debit_credit and debit_col and credit_col:
+            debit = float(r[debit_col]) if pd.notna(r.get(debit_col)) else 0.0
+            credit = float(r[credit_col]) if pd.notna(r.get(credit_col)) else 0.0
+            amount = credit - debit
+        else:
+            raw = r.get(amount_col, 0)
+            try:
+                amount = float(str(raw).replace(",", "")) if pd.notna(raw) else 0.0
+            except (ValueError, TypeError):
+                continue
+
+        # Parse date
+        try:
+            parsed_date = pd.to_datetime(r[date_col], format="mixed")
+        except Exception:
+            continue
+
+        desc = str(r.get(desc_col, "")).strip()
+        orig_cat = str(r.get(cat_col, "")).strip() if cat_col else ""
+
+        rows.append({
+            "date": parsed_date,
+            "post_date": parsed_date,
+            "description": desc,
+            "original_category": orig_cat,
+            "amount": amount,
+            "account": account_name,
+            "account_type": account_type,
+            "source_file": filepath.name,
+        })
+    return pd.DataFrame(rows)
+
+
 # ── File-to-parser routing ────────────────────────────────────────────────
+
+def _account_name_from_filename(filepath: Path) -> str:
+    """Derive a human-readable account name from a filename."""
+    stem = filepath.stem
+    # Remove common suffixes like _Mar26, _2026, etc.
+    stem = re.sub(r"[_-]\w{3}\d{2}$", "", stem)
+    stem = re.sub(r"[_-]\d{4}$", "", stem)
+    return stem.replace("_", " ").replace("-", " ").title()
+
 
 def detect_parser(filepath: Path):
     """Return (parser_function, account_name) based on filename."""
@@ -209,8 +450,20 @@ def detect_parser(filepath: Path):
         return parse_capital_one, "VentureX"
     elif "ventureone" in name:
         return parse_capital_one, "VentureOne"
+    elif "scott" in name and "alaska" in name:
+        return parse_alaska_card, "Alaska-Scott"
+    elif "cash-rewards" in name or "cashrewards" in name:
+        return parse_alaska_card, "CashRewards-Scott"
+    elif "_3728" in name:
+        return parse_alaska_card, "Alaska-Scott"
+    elif "_2382" in name:
+        return parse_alaska_card, "CashRewards-Scott"
     elif "alaska" in name:
         return parse_alaska_card, "Alaska"
+    elif "citi" in name or "aadvantage" in name:
+        return parse_citi_card, "CitiAAdvantage"
+    elif "barclay" in name:
+        return parse_barclays_card, "Barclays"
     elif "chasechecking" in name:
         return parse_chase_checking, "Chase-Checking"
     elif "sofi" in name and "checking" in name:
@@ -222,17 +475,19 @@ def detect_parser(filepath: Path):
     elif "boa" in name and "saving" in name:
         return parse_boa_bank, "BoA-Savings"
     else:
-        return None, None
+        # Fallback: try generic auto-detect parser
+        account_name = _account_name_from_filename(filepath)
+        return parse_generic, account_name
 
 
 # ── Flow-type classification ──────────────────────────────────────────────
 
 # Patterns that indicate a credit card payment (on the checking/savings side)
 CC_PAYMENT_PATTERNS = re.compile(
-    r"CAPITAL ONE|CHASE CREDIT CRD|BANK OF AMERICA - PERSONAL CARD|"
+    r"CAPITAL ONE|CHASE CREDIT CRD|BANK OF AMERICA(?!, N\.A\.)|"
     r"AUTOMATIC PAYMENT - THANK|AUTOPAY PYMT|"
-    r"PAYMENT - THANK YOU|"
-    r"CITI AUTOPAY|BARCLAYCARD|CREDIT-TRAVEL REWARD",
+    r"PAYMENT - THANK YOU|BA ELECTRONIC PAYMENT|"
+    r"CITI AUTOPAY|BARCLAYCARD|CREDIT-TRAVEL REWARD|AUTOPAY.*AUTO-PMT|Payment Received",
     re.IGNORECASE,
 )
 
@@ -252,7 +507,8 @@ INTERNAL_TRANSFER_PATTERNS = re.compile(
 INCOME_PATTERNS = re.compile(
     r"DIRECT_DEPOSIT|CHECK_DEPOSIT|CARBON DIRECT IN|Interest earned|"
     r"INTEREST_EARNED|INTEREST PAYMENT|WIRE_INCOMING|CHIPS CREDIT|"
-    r"Cash Redemption|Aseltine.*Settlement|BKOFAMERICA ATM.*DEPOSIT|Seattle Network",
+    r"Cash Redemption|Aseltine.*Settlement|BKOFAMERICA ATM.*DEPOSIT|Seattle Network|"
+    r"Epoch Artificial|Zelle.*from|CREDIT-TRAVEL REWARD",
     re.IGNORECASE,
 )
 
@@ -263,6 +519,14 @@ def classify_flow_type(row: pd.Series) -> str:
     cat = str(row.get("original_category", ""))
     acct_type = row["account_type"]
     amount = row["amount"]
+
+    # ── Annual/member fees on credit cards are spending, not cc_payment ──
+    if re.search(r"MEMBER FEE", desc, re.I) and amount < 0:
+        return "spending"
+
+    # ── Credit card rewards (before cc_payment check) ──
+    if re.search(r"CREDIT-TRAVEL REWARD", desc, re.I):
+        return "income"
 
     # ── Credit card side: payments received ──
     if acct_type == "credit_card":
@@ -278,19 +542,28 @@ def classify_flow_type(row: pd.Series) -> str:
     if INCOME_PATTERNS.search(desc) or INCOME_PATTERNS.search(cat):
         return "income"
 
+    # ── Investment transfers (before internal_transfer check) ──
+    # Money going TO brokerage = spending (investment)
+    if re.search(r"Manual DB-Bkrg|CHARLES SCHWAB BANK", desc, re.I) and amount < 0:
+        return "spending"
+    # Money coming FROM brokerage = income (withdrawal)
+    if re.search(r"Manual CR-Bkrg|SOFI SECURITIES", desc, re.I) and amount > 0:
+        return "income"
+
     # ── Internal transfers ──
     if INTERNAL_TRANSFER_PATTERNS.search(desc):
         return "internal_transfer"
 
-    # Venmo deposits into bank = transfers from Venmo balance, not income
+    # Venmo deposits into bank = income (reimbursements, payments received)
     if re.search(r"^VENMO$", desc, re.I) and amount > 0:
-        return "internal_transfer"
+        return "income"
 
     # JPMorgan Chase from savings — keep as spending (double lease payments are real)
 
     # SoFi OTHER type with no other match is often an auto-cover transfer
     if cat == "OTHER" and acct_type in ("checking", "savings"):
-        return "internal_transfer"
+        if not re.search(r"Miscellaneous Debit|Wire Transfer", desc, re.I):
+            return "internal_transfer"
 
     # ── Spending ──
     # Credit card charges (negative on Chase/Amazon, negative debit-credit on CapOne)
@@ -323,7 +596,7 @@ def classify_flow_type(row: pd.Series) -> str:
 # Order matters — first match wins. Each entry is (pattern, category).
 CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── Investments (401k, IRA, brokerage) ──
-    (re.compile(r"SOFI SECURITIES|VANGUARD BUY|VANGUARD", re.I), "Investments"),
+    (re.compile(r"SOFI SECURITIES|VANGUARD BUY|VANGUARD|Manual DB-Bkrg|Manual CR-Bkrg|CHARLES SCHWAB", re.I), "Investments"),
 
     # ── Mortgage & Student Loans ──
     (re.compile(r"Firstmark|Common Bond|MOHELA", re.I), "Mortgage & Student Loans"),
@@ -332,12 +605,12 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"SAFEWAY FUEL|76 - ROXBURY|WSDOT-GOODTOGO|PayMyNotice|"
                 r"SDOT PAYBYPHONE|CTLP\*CSC SERVICEWORKS|Gas/Automotive|"
                 r"PIKE PLACE MARKET PDA|WA STATE DOL|WA DOL LIC|"
-                r"SPOTHERO|DIAMOND PARKING|HONK PARKING|"
+                r"SPOTHERO|DIAMOND PARKING|HONK PARKING|ParkWhiz|"
                 r"TESLA SUPERCHARGER|CHARGEPOINT", re.I), "Car"),
 
     # ── Utilities ──
     (re.compile(r"T-MOBILE|TMOBILE|SEATTLEUTILTIES|SOUTHWEST SUBURBAN|"
-                r"RECOLOGY|Seattle City Light|SPU", re.I), "Utilities"),
+                r"RECOLOGY|Seattle City Light|SPU|COMCAST|XFINITY", re.I), "Utilities"),
     (re.compile(r"PEMCO MUTUAL|PEMCO Mutual", re.I), "Utilities"),  # umbrella/home insurance
 
     # ── Childcare ──
@@ -349,13 +622,14 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── House & Maintenance ──
     (re.compile(r"Zelle.*Graciela", re.I), "House & Maintenance"),  # cleaning
     (re.compile(r"Zelle.*Iris", re.I), "House & Maintenance"),      # house helper
+    (re.compile(r"Zelle.*Silvia.*Diaz|Zelle.*Silvia Adriana", re.I), "House & Maintenance"),  # former house helper
     (re.compile(r"Zelle.*Israel", re.I), "House & Maintenance"),     # yard
     (re.compile(r"Zelle.*Francisco", re.I), "House & Maintenance"),  # contractor
     (re.compile(r"ECOSHIELD PEST|NUTONE DRY CLEANERS", re.I), "House & Maintenance"),
 
     # ── Fitness & Healthcare ──
     (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Fitness & Healthcare"),
-    (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care", re.I), "Fitness & Healthcare"),
+    (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy", re.I), "Fitness & Healthcare"),
     (re.compile(r"PROVIDENCE|BLVD.*RUDY|PAULINE.S NAIL SPA", re.I), "Fitness & Healthcare"),
     (re.compile(r"PAYPAL \*SEATAC BMX|PP\*SURF BALLARD", re.I), "Fitness & Healthcare"),
 
@@ -363,19 +637,21 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"YMCA", re.I), "Childcare"),
 
     # ── Therapy & Coaching ──
-    (re.compile(r"MARGARITA QUIJANO|HOTMART|BEAUTIFUL\.AI", re.I), "Therapy & Coaching"),  # therapist + coaching courses
+    (re.compile(r"MARGARITA QUIJANO|HOTMART|BEAUTIFUL\.AI|GAMRAY", re.I), "Therapy & Coaching"),  # therapist + coaching courses
     # Standalone PAYPAL (coaching) is handled in classify_category
 
     # ── Travel ──
     (re.compile(r"ALASKA AIR|UNITED\s|DELTA AIR|FRONTIER AI|COT\*FLT|"
-                r"Airfare|EXPEDIA", re.I), "Travel"),
+                r"Airfare|EXPEDIA|AIR CAN\*", re.I), "Travel"),
+    (re.compile(r"UKVI ETAM|CRYSTAL INNTOPIA|CRYSTAL MTN|CRYSTAL.*ENUMCLAW|"
+                r"FIRESIDE CAFE CRYSTAL|BREW 62 ENUMCLAW", re.I), "Travel"),
     (re.compile(r"AIRBNB|GUESTRS|VIDANTA|ROYAL SOLARIS|EXPERIENCIAS XCARET|"
-                r"Lodging", re.I), "Travel"),
+                r"Lodging|RMTLY\*|REMITLY", re.I), "Travel"),
     (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|CLIPPER TRANSIT|ORCA\b|"
                 r"MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI|"
                 r"MTA\*NYCT|TFL TRAVEL|CITIBIK|EMPRESA MALAGUENA|"
                 r"WSFERRIES|MARTA TVM|CARCAMOVIL", re.I), "Travel"),
-    (re.compile(r"Stamps\.com|Stamps Add Funds|WIFIONBOARD|BA INFLIGHT|"
+    (re.compile(r"WIFIONBOARD|BA INFLIGHT|"
                 r"Chairs/Carts|Nyx\*SmarteCarte|SmarteCarte|NYX\*PGGroup|"
                 r"Goldcar|TIDES OF ANACORTES|ACE OF ANACORTES", re.I), "Travel"),
     (re.compile(r"CANCUN PL SOLARIS|OXXO YALMAKAN|ASUR C CONV SHOP|"
@@ -394,9 +670,11 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"UBER\s+\*EATS|GRUBHUB|DD \*|DLO\*RAPPI|Rappi(?! Bogota)", re.I), "Restaurants"),
     (re.compile(r"Rappi Bogota", re.I), "Restaurants"),
     (re.compile(r"SUBWAY|CHICK-FIL-A|CHIPOTLE|ALADDIN GYRO|SAIGON DELI|"
-                r"PIZZA ZONE|COLDSTONE|SNACK\*|LAZY DOG|EATS ON 57|"
+                r"PIZZA ZONE|COLDSTONE|SNACK\*|LAZY DOG RESTAURANT|EATS ON 57|"
                 r"TROPICALIA|OHANA MARBELLA|KUDEDON|HOJAS|"
-                r"MEAL TRAIN", re.I), "Restaurants"),
+                r"MEAL TRAIN|STK DENVER|EMERALD CITY SMOOTHIE|MARKETIME FOODS|"
+                r"JACK IN THE BOX|POTBELLY|CASABLANCA EXPRESS|"
+                r"SHACK N STACK|TAQUERIA EL RINCON", re.I), "Restaurants"),
     (re.compile(r"TST\*|SQ \*|CAFE TURKO|LIL JON|MARTHA|EL RINCONSITO|"
                 r"LA COSTA MEXICAN|SAL Y LIMON|STARBUCKS|JOECOFFEE|"
                 r"JOHNNY FOLEYS|PANDORA KARAOKE|SQ \*CHUCK", re.I), "Restaurants"),
@@ -412,7 +690,8 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"DROPBOX|BEAUTIFUL\.AI|COPILOT MONEY|CURSOR.*IDE|"
                 r"LinkedInPreB|CANVA|PADDLE\.NET|ST SUBSCRIPTIONS|"
                 r"SP -ORGANIC LIFE|"
-                r"THE ECONOMIST", re.I), "Subscriptions"),
+                r"THE ECONOMIST|WAVE.*KATEAH|Kindle Svcs|BLOOMBERG|"
+                r"Stamps\.com|Stamps Add Funds|D J\*WSJ|Spotify", re.I), "Subscriptions"),
 
     # ── Shopping ──
     (re.compile(r"AMAZON|Amazon\.com|Amazon Pharmacy", re.I), "Shopping"),
@@ -429,10 +708,11 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"LUCERO HOFMANN|REGALOS RENATA|PALACE SHOP|"
                 r"LA TIENDA DE GUADALUPE|SMOKERS PARADIZE|KTC .INDIA|"
                 r"SBIJAIPUR|SBISBI|SBINEAR|SBISIDE|SBISIDHBARI|"
-                r"STATE BANK OF INDIA|KALAGRAM|D&D\b|AMZ\*", re.I), "Shopping"),
+                r"STATE BANK OF INDIA|KALAGRAM|D&D\b|AMZ\*|SWEETWATER", re.I), "Shopping"),
 
     # ── Fun & Entertainment ──
-    (re.compile(r"SUMMIT RTP|SOUTHGATE ROLLER|XCARET|Entertainment", re.I), "Fun & Entertainment"),
+    (re.compile(r"SUMMIT RTP|SOUTHGATE ROLLER|XCARET|Entertainment|"
+                r"TM \*|TICKETMASTER|JAZZALLEY|ALBUM COVER GROUP", re.I), "Fun & Entertainment"),
     (re.compile(r"WA PARKSRESERVATIONS|SEATTLEAQUARIUM|GEORGIA AQUAR|"
                 r"MT ST HELENS|HIGHLINE HERITAGE|BIKEINDEX", re.I), "Fun & Entertainment"),
 
@@ -446,7 +726,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Taxes & Tax Fees ──
     (re.compile(r"IRS|tax payment|Pablo|estate planning|"
-                r"M Squared Tax|INTUIT \*TURBOTAX|SEATTLE MUNI INT", re.I), "Taxes & Tax Fees"),
+                r"M Squared Tax|INTUIT \*TURBOTAX|SEATTLE MUNI INT|Wire Transfer(?! Fee)", re.I), "Taxes & Tax Fees"),
 
     # ── Donations ──
     (re.compile(r"CENTREFOREFFECTIVEALTR|GOFNDME|GOFUNDME|"
@@ -454,14 +734,13 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Catch-alls ──
     (re.compile(r"Monthly Maintenance Fee|MEMBER FEE|Fee/Interest|"
-                r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee", re.I), "Fees & Bank Charges"),
+                r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee|Miscellaneous Debit", re.I), "Fees & Bank Charges"),
     (re.compile(r"CITY OF FEDERAL WAY", re.I), "Fun & Entertainment"),
     (re.compile(r"VENMO|PAYPAL|Zelle.*Minh|BKOFAMERICA ATM|"
-                r"BANK OF AMERICA|RMTLY\*|REMITLY|Wire Transfer(?! Fee)|"
-                r"Zelle.*Silvia|Zelle.*Esteban|Zelle.*Patricia|Zelle.*Paty|"
-                r"Zelle.*Walter|GAMRAY|Seattle Network|Epoch Artificial|"
-                r"WAVE.*KATEAH|GUSTO|Returned Check|Miscellaneous Debit|"
-                r"\+BOB\b|RAZ\*SMART|UKVI ETAM|EVALO|EVACOL|EXITO WOW|"
+                r"Zelle.*Esteban|Zelle.*Patricia|Zelle.*Paty|"
+                r"Zelle.*Walter|Seattle Network|"
+                r"GUSTO|Returned Check|"
+                r"\+BOB\b|RAZ\*SMART|EVALO|EVACOL|EXITO WOW|"
                 r"WWW\.CLASSACTPORTRAITS|CLAUDIA PRIETO|ASTRA FESTUM", re.I), "Unclassified"),
 ]
 
@@ -490,6 +769,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
     "House & Maintenance": [
         (re.compile(r"Zelle.*Graciela", re.I), "Cleaning (Graciela)"),
         (re.compile(r"Zelle.*Iris", re.I), "House Helper (Iris)"),
+        (re.compile(r"Zelle.*Silvia.*Diaz|Zelle.*Silvia Adriana", re.I), "House Helper (Silvia)"),
         (re.compile(r"Zelle.*Israel", re.I), "Yard (Israel)"),
         (re.compile(r"Zelle.*Francisco", re.I), "Contractor (Francisco)"),
         (re.compile(r"CTLP\*AIRCO", re.I), "Laundry"),
@@ -498,7 +778,9 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
     ],
     "Car": [
         (re.compile(r"JPMORGAN CHASE|JPMorgan Chase", re.I), "Subaru Lease"),
-        (re.compile(r"SAFEWAY FUEL|76 - ROXBURY|TESLA SUPERCHARGER|CHARGEPOINT", re.I), "Gas"),
+        (re.compile(r"SAFEWAY FUEL|76 -|TESLA SUPERCHARGER|CHARGEPOINT|"
+                    r"CHEVRON|ARCO|SHELL OIL|COSTCO GAS|E\.S AEROPUERTO|"
+                    r"7-ELEVEN|WEST COAST PETROLEUM|AUTOPISTA DEL SOL", re.I), "Gas"),
         (re.compile(r"WSDOT-GOODTOGO", re.I), "Tolls"),
         (re.compile(r"SDOT PAYBYPHONE|PIKE PLACE MARKET PDA|SPOTHERO|DIAMOND PARKING|HONK PARKING", re.I), "Parking"),
         (re.compile(r"PayMyNotice", re.I), "Tickets/Fines"),
@@ -511,7 +793,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"MOHELA", re.I), "Student Loan (MOHELA)"),
     ],
     "Travel": [
-        (re.compile(r"ALASKA AIR|UNITED\s|DELTA AIR|FRONTIER AI|COT\*FLT|Airfare", re.I), "Flights"),
+        (re.compile(r"ALASKA AIR|UNITED\s|DELTA AIR|FRONTIER AI|COT\*FLT|Airfare|AIR CAN\*|BRITISH A|VUELING|AMERICAN AI|SOUTHWES|TACA AIR", re.I), "Flights"),
         (re.compile(r"AIRBNB|GUESTRS|VIDANTA|ROYAL SOLARIS|EXPERIENCIAS XCARET|Lodging", re.I), "Lodging"),
         (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|CLIPPER TRANSIT|ORCA\b|MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI", re.I), "Rideshare & Transit"),
         (re.compile(r"Stamps\.com|Stamps Add Funds", re.I), "Shipping"),
@@ -549,14 +831,21 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"IRS", re.I), "Federal Tax"),
         (re.compile(r"SEATTLE MUNI INT", re.I), "City Tax"),
         (re.compile(r"M Squared Tax|INTUIT \*TURBOTAX", re.I), "Tax Preparation"),
+        (re.compile(r"Wire Transfer(?! Fee)", re.I), "Estate Planning"),
     ],
     "Investments": [
         (re.compile(r"SOFI SECURITIES", re.I), "SoFi Brokerage"),
         (re.compile(r"VANGUARD", re.I), "Vanguard IRA"),
+        (re.compile(r"Manual DB-Bkrg", re.I), "Chase Brokerage"),
+        (re.compile(r"CHARLES SCHWAB", re.I), "Schwab Brokerage"),
     ],
     "Income": [
         (re.compile(r"CARBON DIRECT", re.I), "Maria Job Income"),
         (re.compile(r"WA ST EMPLOY SEC", re.I), "Scott's Unemployment"),
+        (re.compile(r"VENMO|PAYPAL|Zelle.*from", re.I), "Friends & Family Payments"),
+        (re.compile(r"Epoch Artificial", re.I), "Scott's Salary"),
+        (re.compile(r"CREDIT-TRAVEL REWARD", re.I), "Credit Card Rewards"),
+        (re.compile(r"Manual CR-Bkrg|SOFI SECURITIES", re.I), "Investment Liquidations"),
         # Demo income sources (no-op on real data)
         (re.compile(r"GREENTECH SOLUTIONS", re.I), "Michael Salary"),
         (re.compile(r"PACIFIC NORTHWEST CONSULTING", re.I), "Viviana Salary"),
@@ -574,6 +863,11 @@ def classify_subcategory(row: pd.Series) -> str:
     # Special case for standalone PAYPAL
     if re.match(r"^PAYPAL$", desc, re.I):
         return "Coaching"
+
+    # JPMorgan Chase: $519.50 = car loan, $563.99 = Subaru lease
+    amount = row.get("amount", 0)
+    if category == "Car" and re.search(r"JPMORGAN CHASE|JPMorgan Chase", desc, re.I):
+        return "Car Loan" if abs(abs(amount) - 519.50) < 1 else "Subaru Lease"
 
     rules = SUBCATEGORY_RULES.get(category, [])
     for pattern, subcat in rules:
@@ -658,6 +952,28 @@ def load_all_transactions() -> pd.DataFrame:
         (combined["post_date"].dt.month.isin([1, 2]))
     )].copy()
 
+    # Exclude spillover transactions: for monthly upload folders (e.g., "Feb26"),
+    # exclude transactions whose post_date falls in a later month than the folder's
+    # primary month. Annual folders (e.g., "2025") are exempt from this check.
+    folder_primary = {}
+    for folder, grp in combined.groupby("month_folder"):
+        # Skip annual folders (4-digit year names like "2025")
+        if re.match(r"^\d{4}$", folder):
+            continue
+        # Skip folders with data spanning more than 2 months (backfill folders)
+        distinct_months = grp["post_date"].dt.to_period("M").nunique()
+        if distinct_months > 2:
+            continue
+        mode = grp["post_date"].dt.to_period("M").mode()
+        if not mode.empty:
+            folder_primary[folder] = mode.iloc[0]
+    spillover = combined["month_folder"].map(folder_primary).notna() & (
+        combined["post_date"].dt.to_period("M") > combined["month_folder"].map(folder_primary)
+    )
+    if spillover.any():
+        print(f"  Excluding {spillover.sum()} spillover transaction(s) from incomplete month(s)")
+    combined = combined[~spillover].copy()
+
     # Classify flow types
     combined["flow_type"] = combined.apply(classify_flow_type, axis=1)
 
@@ -671,6 +987,25 @@ def load_all_transactions() -> pd.DataFrame:
 
     # Sort by date
     combined = combined.sort_values("date").reset_index(drop=True)
+
+    # Merge transaction notes
+    notes_file = Path(__file__).parent / "transaction_notes.json"
+    if notes_file.exists():
+        import json
+        notes = json.loads(notes_file.read_text())
+        if notes:
+            combined["_tx_key"] = (
+                combined["date"].dt.strftime("%Y-%m-%d") + "|" +
+                combined["description"] + "|" +
+                combined["amount"].round(2).astype(str) + "|" +
+                combined["account"]
+            )
+            combined["notes"] = combined["_tx_key"].map(notes).fillna("")
+            combined.drop(columns=["_tx_key"], inplace=True)
+        else:
+            combined["notes"] = ""
+    else:
+        combined["notes"] = ""
 
     return combined
 

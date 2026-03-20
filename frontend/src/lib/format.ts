@@ -12,6 +12,8 @@ export function formatPercent(value: number, decimals = 1): string {
 }
 
 export function formatMonth(dateStr: string): string {
-  const d = new Date(dateStr);
+  // Parse as local date to avoid UTC timezone shift (e.g. 2025-04-01 → Mar 31 in Pacific)
+  const [year, month] = dateStr.split("-").map(Number);
+  const d = new Date(year, month - 1, 1);
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
