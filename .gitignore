@@ -1,6 +1,17 @@
-# Real financial data (lives in separate private repo)
+# Production data (lives in separate private repo: woffieta-data)
 Production/CashFlow/
 Production/InvestmentPortfolio/
+Production/ActionItems.md
+Production/accounts.json
+Production/budgets.json
+Production/transaction_notes.json
+Production/credit_card_audit.csv
+Production/excluded_transactions.csv
+Production/parking_transactions.csv
+Production/parkwhiz_transactions.csv
+Production/README.md
+
+# Context files
 Context.md
 **/Context.md
 
@@ -12,6 +23,13 @@ Context.md
 __pycache__/
 *.pyc
 
+# Node
+node_modules/
+.next/
+
 # Claude Code
 .claude/
 ~$*
+
+# IDE
+.vscode/
