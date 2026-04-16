@@ -53,8 +53,8 @@ def get_cashflow_data(months: int = 12) -> pd.DataFrame:
 # ── Display category mapping (from dashboard.py) ──
 
 KEEP_CATEGORIES = {
-    "Childcare", "Subscriptions", "Taxes & Tax Fees", "Travel",
-    "House & Maintenance", "Utilities", "Investments",
+    "Childcare", "Subscriptions", "Taxes & Tax Fees", "Travel", "Work Travel",
+    "House & Maintenance", "Utilities", "Investments", "Luthien Expenses",
 }
 DEBT_MERGE = {"Mortgage & Student Loans", "Car"}
 OTHER_MERGE = {
@@ -82,11 +82,13 @@ CATEGORY_COLORS = {
     "House & Maintenance": "#52B788",
     "Subscriptions": "#9A9A9A",
     "Investments": "#1B4965",
+    "Luthien Expenses": "#C44536",
+    "Work Travel": "#9B2226",
 }
 
 DISPLAY_CATEGORY_ORDER = [
-    "Mortgage, Loans & Car", "Childcare", "Taxes & Tax Fees", "Travel",
-    "Investments", "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
+    "Mortgage, Loans & Car", "Childcare", "Taxes & Tax Fees", "Travel", "Work Travel",
+    "Investments", "Luthien Expenses", "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
 ]
 
 # ── Vendor normalization ──
@@ -141,7 +143,8 @@ def get_summary(months: int = 12) -> dict:
                 "months_available": []}
     spending = df[df["flow_type"] == "spending"]
     income = df[df["flow_type"] == "income"]
-    total_income = float(income["amount"].sum())
+    refunds = df[(df["flow_type"] == "other") & (df["amount"] > 0)]
+    total_income = float(income["amount"].sum() + refunds["amount"].sum())
     total_spending = float(spending["amount"].abs().sum())
     months_available = sorted(df["month_dt"].unique().astype(str).tolist())
     return {
@@ -198,6 +201,11 @@ def get_monthly_income(months: int = 12) -> list[dict]:
         return []
     income = df[df["flow_type"] == "income"].copy()
     income["subcategory"] = income["subcategory"].fillna("Other Income")
+    # Treat positive "other" amounts (refunds, credits) as income with "Refunds & Credits" subcategory
+    refunds = df[(df["flow_type"] == "other") & (df["amount"] > 0)].copy()
+    if not refunds.empty:
+        refunds["subcategory"] = "Refunds & Credits"
+        income = pd.concat([income, refunds[income.columns]], ignore_index=True)
     inc_by_src = (
         income.groupby(["month_dt", "subcategory"])["amount"]
         .sum().reset_index()
@@ -218,10 +226,13 @@ def get_net_income(months: int = 12) -> list[dict]:
         return []
     spending = df[df["flow_type"] == "spending"]
     income = df[df["flow_type"] == "income"]
+    refunds = df[(df["flow_type"] == "other") & (df["amount"] > 0)]
     all_months = sorted(df["month_dt"].unique())
     all_idx = pd.DatetimeIndex(all_months)
 
-    monthly_income = income.groupby("month_dt")["amount"].sum().reindex(all_idx, fill_value=0)
+    monthly_income = (
+        pd.concat([income, refunds]).groupby("month_dt")["amount"].sum().reindex(all_idx, fill_value=0)
+    )
     monthly_spending = spending.groupby("month_dt")["amount"].sum().abs().reindex(all_idx, fill_value=0)
     monthly_net = monthly_income - monthly_spending
     cumulative = monthly_net.cumsum()

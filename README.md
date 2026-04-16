@@ -2,6 +2,8 @@
 
 Personal finance tracker with cash flow analysis, investment portfolio tracking, and a web dashboard built with Next.js and FastAPI.
 
+[View Architecture Deck](https://gamma.app/generations/O8Gs4v17UIWGKcx5k8Gjv)
+
 ## Features
 
 - **Cash Flow Tracking** — Parses CSV exports from multiple bank/credit card accounts, classifies transactions by category, and generates monthly reports
