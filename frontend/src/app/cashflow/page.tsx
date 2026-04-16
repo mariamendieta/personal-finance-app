@@ -13,17 +13,38 @@ import SpendingTable from "@/components/cashflow/SpendingTable";
 import TopVendorsChart from "@/components/cashflow/TopVendorsChart";
 import AddCashFlowTab from "@/components/cashflow/AddCashFlowTab";
 
+const ytdMonths = new Date().getMonth() || 1; // Completed months this year (Mar=2: Jan+Feb, Jan defaults to 1)
+
 const PERIOD_OPTIONS = [
-  { label: "Last month", value: 1 },
-  { label: "Last 3 months", value: 3 },
-  { label: "Last 6 months", value: 6 },
-  { label: "Last 12 months", value: 12 },
+  { label: "YTD", value: ytdMonths, key: "ytd" },
+  { label: "Last month", value: 1, key: "1m" },
+  { label: "Last 3 months", value: 3, key: "3m" },
+  { label: "Last 6 months", value: 6, key: "6m" },
+  { label: "Last 12 months", value: 12, key: "12m" },
 ];
 
 export default function CashFlowPage() {
   const [detailMonths, setDetailMonths] = useState(12);
+  const [selectedPeriodKey, setSelectedPeriodKey] = useState("12m");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [hiddenOutflows, setHiddenOutflows] = useState<Set<string>>(new Set());
+  const [hiddenInflows, setHiddenInflows] = useState<Set<string>>(new Set());
+
+  const toggleOutflow = (cat: string) => {
+    setHiddenOutflows(prev => {
+      const next = new Set(prev);
+      next.has(cat) ? next.delete(cat) : next.add(cat);
+      return next;
+    });
+  };
+  const toggleInflow = (sub: string) => {
+    setHiddenInflows(prev => {
+      const next = new Set(prev);
+      next.has(sub) ? next.delete(sub) : next.add(sub);
+      return next;
+    });
+  };
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: api.getConfig,
@@ -65,6 +86,17 @@ export default function CashFlowPage() {
 
   const familyName = config?.family_name || "Woffieta Family";
 
+  // Compute filtered totals from monthly data based on hidden filters
+  const filteredTotalOutflows = expenses
+    ? expenses.filter(e => !hiddenOutflows.has(e.display_category)).reduce((s, e) => s + e.amount, 0)
+    : summary?.total_spending || 0;
+  const filteredTotalInflows = income
+    ? income.filter(i => !hiddenInflows.has(i.subcategory)).reduce((s, i) => s + i.amount, 0)
+    : summary?.total_income || 0;
+  const filteredNetCashFlow = filteredTotalInflows - filteredTotalOutflows;
+  const hasFilters = hiddenOutflows.size > 0 || hiddenInflows.size > 0;
+  const filterSuffix = hasFilters ? " (filtered)" : "";
+
   return (
     <div>
       {/* Header */}
@@ -89,17 +121,29 @@ export default function CashFlowPage() {
             <>
               {summary && (
                 <div className="grid grid-cols-3 gap-6 mb-8">
-                  <MetricCard label="Total Inflows (12 mo)" value={formatCurrency(summary.total_income)} accent="azul" />
-                  <MetricCard label="Total Outflows (12 mo)" value={formatCurrency(summary.total_spending)} accent="coral" />
-                  <MetricCard label="Net Cash Flow (12 mo)" value={formatCurrency(summary.net_income)} accent="verde" />
+                  <MetricCard label={`Total Inflows (12 mo)${filterSuffix}`} value={formatCurrency(filteredTotalInflows)} accent="azul" />
+                  <MetricCard label={`Total Outflows (12 mo)${filterSuffix}`} value={formatCurrency(filteredTotalOutflows)} accent="coral" />
+                  <MetricCard label={`Net Cash Flow (12 mo)${filterSuffix}`} value={formatCurrency(filteredNetCashFlow)} accent="verde" />
                 </div>
               )}
 
               <hr className="border-cool-gray mb-8" />
 
-              {expenses && <ExpensesByCategory data={expenses} />}
+              {expenses && (
+                <ExpensesByCategory
+                  data={expenses}
+                  hiddenCategories={hiddenOutflows}
+                  onToggleCategory={toggleOutflow}
+                />
+              )}
               <div className="mt-10" />
-              {income && <IncomeBySource data={income} />}
+              {income && (
+                <IncomeBySource
+                  data={income}
+                  hiddenSubcategories={hiddenInflows}
+                  onToggleSubcategory={toggleInflow}
+                />
+              )}
               <div className="mt-10" />
               {netIncome && <NetIncomeChart data={netIncome} incomeData={income} expenseData={expenses} />}
 
@@ -110,10 +154,10 @@ export default function CashFlowPage() {
                 <div className="flex gap-1 bg-cool-white rounded-lg p-1 border border-cool-gray">
                   {PERIOD_OPTIONS.map(opt => (
                     <button
-                      key={opt.value}
-                      onClick={() => setDetailMonths(opt.value)}
+                      key={opt.key}
+                      onClick={() => { setDetailMonths(opt.value); setSelectedPeriodKey(opt.key); }}
                       className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                        detailMonths === opt.value
+                        selectedPeriodKey === opt.key
                           ? "bg-azul text-white font-medium"
                           : "text-stone hover:text-warm-charcoal hover:bg-cool-gray"
                       }`}
@@ -163,6 +207,13 @@ export default function CashFlowPage() {
                               </tr>
                             ))}
                           </tbody>
+                          <tfoot>
+                            <tr className="border-t-2 border-warm-charcoal bg-cool-white font-semibold">
+                              <td className="px-4 py-2.5">Total</td>
+                              <td className="px-4 py-2.5 text-right">{formatCurrency(subcategories.reduce((s, r) => s + r.total, 0), 2)}</td>
+                              <td className="px-4 py-2.5 text-right">100%</td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -202,6 +253,13 @@ export default function CashFlowPage() {
                           </tr>
                         ))}
                       </tbody>
+                      <tfoot>
+                        <tr className="border-t-2 border-warm-charcoal bg-cool-white font-semibold">
+                          <td className="px-4 py-2.5">Total</td>
+                          <td className="px-4 py-2.5 text-right">{formatCurrency(subcatVendors.reduce((s, r) => s + r.total, 0), 2)}</td>
+                          <td className="px-4 py-2.5 text-right">{subcatVendors.reduce((s, r) => s + r.count, 0)}</td>
+                        </tr>
+                      </tfoot>
                     </table>
                   </div>
                 </div>

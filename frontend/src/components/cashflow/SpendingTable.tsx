@@ -45,6 +45,13 @@ export default function SpendingTable({
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-warm-charcoal bg-cool-white font-semibold">
+              <td className="px-4 py-2.5">Total</td>
+              <td className="px-4 py-2.5 text-right">{formatCurrency(data.reduce((s, r) => s + r.total, 0), 2)}</td>
+              <td className="px-4 py-2.5 text-right">100%</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>

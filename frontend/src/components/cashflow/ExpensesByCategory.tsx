@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import type { MonthlyExpense } from "@/lib/api";
 import { formatCurrency, formatMonth } from "@/lib/format";
 
 const CATEGORY_ORDER = [
-  "Mortgage, Loans & Car", "Childcare", "Taxes & Tax Fees", "Travel",
-  "Investments", "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
+  "Mortgage, Loans & Car", "Childcare", "Taxes & Tax Fees", "Travel", "Work Travel",
+  "Investments", "Luthien Expenses", "Other Expenses", "Utilities", "House & Maintenance", "Subscriptions",
 ];
 
 const COLORS: Record<string, string> = {
@@ -20,6 +20,8 @@ const COLORS: Record<string, string> = {
   "House & Maintenance": "#52B788",
   "Subscriptions": "#9A9A9A",
   "Investments": "#1B4965",
+  "Luthien Expenses": "#C44536",
+  "Work Travel": "#9B2226",
 };
 
 interface ChartRow {
@@ -62,12 +64,25 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   );
 }
 
-export default function ExpensesByCategory({ data }: { data: MonthlyExpense[] }) {
+export default function ExpensesByCategory({
+  data,
+  hiddenCategories: controlledHidden,
+  onToggleCategory,
+}: {
+  data: MonthlyExpense[];
+  hiddenCategories?: Set<string>;
+  onToggleCategory?: (cat: string) => void;
+}) {
   const allCategories = CATEGORY_ORDER.filter(c => data.some(d => d.display_category === c));
-  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+  const [internalHidden, setInternalHidden] = useState<Set<string>>(new Set());
+  const hiddenCategories = controlledHidden ?? internalHidden;
 
   const toggleCategory = (cat: string) => {
-    setHiddenCategories(prev => {
+    if (onToggleCategory) {
+      onToggleCategory(cat);
+      return;
+    }
+    setInternalHidden(prev => {
       const next = new Set(prev);
       if (next.has(cat)) {
         next.delete(cat);
@@ -97,6 +112,7 @@ export default function ExpensesByCategory({ data }: { data: MonthlyExpense[] })
     row.total += item.amount;
   }
   const chartData = Array.from(monthMap.values()).sort((a, b) => a.month.localeCompare(b.month));
+  const avgTotal = chartData.length > 0 ? chartData.reduce((sum, r) => sum + r.total, 0) / chartData.length : 0;
 
   return (
     <div>
@@ -126,6 +142,15 @@ export default function ExpensesByCategory({ data }: { data: MonthlyExpense[] })
           {visibleCategories.map(cat => (
             <Bar key={cat} dataKey={cat} stackId="a" fill={COLORS[cat]} />
           ))}
+          {avgTotal > 0 && (
+            <ReferenceLine
+              y={avgTotal}
+              stroke="#E07A5F"
+              strokeDasharray="6 4"
+              strokeWidth={2}
+              label={{ value: `Avg: ${formatCurrency(avgTotal)}`, position: "left", fontSize: 12, fill: "#E07A5F" }}
+            />
+          )}
         </BarChart>
       </ResponsiveContainer>
     </div>

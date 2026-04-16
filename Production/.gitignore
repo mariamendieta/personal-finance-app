@@ -1,6 +1,12 @@
-# Only track financial data, not scripts (scripts live in parent repo)
+# Scripts (live in personal-finance-app repo)
 *.py
-__pycache__/
+
+# OS files
 .DS_Store
 **/.DS_Store
+
+# Python
+__pycache__/
+
+# Excel temp files
 ~$*

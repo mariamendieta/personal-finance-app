@@ -45,12 +45,16 @@ export default function AddInvestmentsTab() {
       formData.append("files", f);
     }
 
-    const res = await fetch(`${API_BASE}/api/upload/portfolio`, { method: "POST", body: formData });
-    const data = await res.json();
-
-    setSavedCount(data.saved_count || 0);
-    setResults(data.pipeline_results || []);
-    setIsRunning(false);
+    try {
+      const res = await fetch(`${API_BASE}/api/upload/portfolio`, { method: "POST", body: formData });
+      const data = await res.json();
+      setSavedCount(data.saved_count || 0);
+      setResults(data.pipeline_results || []);
+    } catch (err) {
+      setResults([{ script: "upload", success: false, output: String(err) }]);
+    } finally {
+      setIsRunning(false);
+    }
   }, [files, otherFiles, snapshotDate, runAnalysis]);
 
   return (

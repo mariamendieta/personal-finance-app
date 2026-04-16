@@ -74,6 +74,7 @@ def parse_capital_one(filepath: Path, account_name: str) -> pd.DataFrame:
             "account": account_name,
             "account_type": "credit_card",
             "source_file": filepath.name,
+            "card_last4": str(r.get("Card No.", "")).strip().zfill(4) if pd.notna(r.get("Card No.")) else "",
         })
     return pd.DataFrame(rows)
 
@@ -602,16 +603,17 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Firstmark|Common Bond|MOHELA", re.I), "Mortgage & Student Loans"),
 
     # ── Car ──
-    (re.compile(r"SAFEWAY FUEL|76 - ROXBURY|WSDOT-GOODTOGO|PayMyNotice|"
+    (re.compile(r"SAFEWAY FUEL|76\s*-\s|WSDOT-GOODTOGO|PayMyNotice|"
                 r"SDOT PAYBYPHONE|CTLP\*CSC SERVICEWORKS|Gas/Automotive|"
                 r"PIKE PLACE MARKET PDA|WA STATE DOL|WA DOL LIC|"
                 r"SPOTHERO|DIAMOND PARKING|HONK PARKING|ParkWhiz|"
-                r"TESLA SUPERCHARGER|CHARGEPOINT", re.I), "Car"),
+                r"TESLA SUPERCHARGER|CHARGEPOINT|SPNW Seattle Citations", re.I), "Car"),
 
     # ── Utilities ──
+    (re.compile(r"T-MOBILE PARK", re.I), "Fun & Entertainment"),
     (re.compile(r"T-MOBILE|TMOBILE|SEATTLEUTILTIES|SOUTHWEST SUBURBAN|"
                 r"RECOLOGY|Seattle City Light|SPU|COMCAST|XFINITY", re.I), "Utilities"),
-    (re.compile(r"PEMCO MUTUAL|PEMCO Mutual", re.I), "Utilities"),  # umbrella/home insurance
+    (re.compile(r"PEMCO MUTUAL|PEMCO Mutual", re.I), "Utilities"),  # car + umbrella insurance (home insurance is with mortgage)
 
     # ── Childcare ──
     (re.compile(r"WORLDKIDS|LINELEADER|RightAtSchool", re.I), "Childcare"),
@@ -629,12 +631,15 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Fitness & Healthcare ──
     (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Fitness & Healthcare"),
-    (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy", re.I), "Fitness & Healthcare"),
-    (re.compile(r"PROVIDENCE|BLVD.*RUDY|PAULINE.S NAIL SPA", re.I), "Fitness & Healthcare"),
+    (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy|DENTIS", re.I), "Fitness & Healthcare"),
+    (re.compile(r"PROVIDENCE|BLVD.*RUDY|PAULINE.S NAIL SPA|CLAUDIA PRIETO", re.I), "Fitness & Healthcare"),
     (re.compile(r"PAYPAL \*SEATAC BMX|PP\*SURF BALLARD", re.I), "Fitness & Healthcare"),
 
     # ── Childcare (YMCA = kids programs) ──
     (re.compile(r"YMCA", re.I), "Childcare"),
+
+    # ── Luthien Expenses ──
+    (re.compile(r"UPWORK|LUTHIEN RESEARCH", re.I), "Luthien Expenses"),
 
     # ── Therapy & Coaching ──
     (re.compile(r"MARGARITA QUIJANO|HOTMART|BEAUTIFUL\.AI|GAMRAY", re.I), "Therapy & Coaching"),  # therapist + coaching courses
@@ -646,8 +651,8 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"UKVI ETAM|CRYSTAL INNTOPIA|CRYSTAL MTN|CRYSTAL.*ENUMCLAW|"
                 r"FIRESIDE CAFE CRYSTAL|BREW 62 ENUMCLAW", re.I), "Travel"),
     (re.compile(r"AIRBNB|GUESTRS|VIDANTA|ROYAL SOLARIS|EXPERIENCIAS XCARET|"
-                r"Lodging|RMTLY\*|REMITLY", re.I), "Travel"),
-    (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|CLIPPER TRANSIT|ORCA\b|"
+                r"Lodging|RMTLY\*|REMITLY|NEXION|TURO", re.I), "Travel"),
+    (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|LYFT\s+\*\d|CLIPPER TRANSIT|ORCA\b|"
                 r"MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI|"
                 r"MTA\*NYCT|TFL TRAVEL|CITIBIK|EMPRESA MALAGUENA|"
                 r"WSFERRIES|MARTA TVM|CARCAMOVIL", re.I), "Travel"),
@@ -669,21 +674,25 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── Restaurants ──
     (re.compile(r"UBER\s+\*EATS|GRUBHUB|DD \*|DLO\*RAPPI|Rappi(?! Bogota)", re.I), "Restaurants"),
     (re.compile(r"Rappi Bogota", re.I), "Restaurants"),
+    (re.compile(r"Zelle.*Katherine.*Pierson", re.I), "Restaurants"),
     (re.compile(r"SUBWAY|CHICK-FIL-A|CHIPOTLE|ALADDIN GYRO|SAIGON DELI|"
                 r"PIZZA ZONE|COLDSTONE|SNACK\*|LAZY DOG RESTAURANT|EATS ON 57|"
                 r"TROPICALIA|OHANA MARBELLA|KUDEDON|HOJAS|"
                 r"MEAL TRAIN|STK DENVER|EMERALD CITY SMOOTHIE|MARKETIME FOODS|"
                 r"JACK IN THE BOX|POTBELLY|CASABLANCA EXPRESS|"
-                r"SHACK N STACK|TAQUERIA EL RINCON", re.I), "Restaurants"),
+                r"SHACK N STACK|TAQUERIA EL RINCON|7-ELEVEN", re.I), "Restaurants"),
     (re.compile(r"TST\*|SQ \*|CAFE TURKO|LIL JON|MARTHA|EL RINCONSITO|"
                 r"LA COSTA MEXICAN|SAL Y LIMON|STARBUCKS|JOECOFFEE|"
-                r"JOHNNY FOLEYS|PANDORA KARAOKE|SQ \*CHUCK", re.I), "Restaurants"),
+                r"JOHNNY FOLEYS|PANDORA KARAOKE|SQ \*CHUCK|"
+                r"WAFFLE CABIN|GDP\*Waffle|Rudys West Seattle|SFO LITTLE CHIHUAHUA|"
+                r"BURGER AND KABOB|BREWTOP SOCIAL|DFW WHATABURGER|DILETTANTE MOCHA", re.I), "Restaurants"),
     (re.compile(r"CTLP\*AIRCO", re.I), "House & Maintenance"),  # laundry
     (re.compile(r"Dining", re.I), "Restaurants"),
 
     # ── Subscriptions ──
     (re.compile(r"CLAUDE\.AI|ANTHROPIC|OPENAI|CHATGPT|OTTER\.AI|"
-                r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART", re.I), "Subscriptions"),
+                r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART|"
+                r"X CORP|PLAUD\.AI|PLAUD LLC", re.I), "Subscriptions"),
     (re.compile(r"Netflix|YouTubePremium|YouTube Premiu|Disney|GOOGLE \*Google One|Google One|"
                 r"APPLE\.COM/BILL|WAPO\.COM|TWP\*SUB", re.I), "Subscriptions"),
     (re.compile(r"PAYPAL DES:INST XFER ID:DISNEY", re.I), "Subscriptions"),
@@ -696,7 +705,9 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── Shopping ──
     (re.compile(r"AMAZON|Amazon\.com|Amazon Pharmacy", re.I), "Shopping"),
     (re.compile(r"TARGET|REI\s|REI\.COM|SKECHERS|SEAHAWKS.*RETAIL|"
-                r"GREGG.S GREENLAKE|SP RYZESUPERFOODS", re.I), "Shopping"),
+                r"GREGG.S GREENLAKE|SP RYZESUPERFOODS|"
+                r"HOME DEPOT|B&N-BOOKS|BARNES.*NOBLE|FIREWORKS SEATAC|"
+                r"SP BASECAMP", re.I), "Shopping"),
     (re.compile(r"IKEA|H&M|GAP US|ARITZIA|ROSS STORE|GOODWILL|"
                 r"UNIQLO|BIBA FASHION|SHOPPERS STOP|SPEEDO|"
                 r"SP ALLBIRDS|SP KUT FROM|JOANN STORES|SP NORTHWEST YARNS|"
@@ -726,11 +737,12 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Taxes & Tax Fees ──
     (re.compile(r"IRS|tax payment|Pablo|estate planning|"
-                r"M Squared Tax|INTUIT \*TURBOTAX|SEATTLE MUNI INT|Wire Transfer(?! Fee)", re.I), "Taxes & Tax Fees"),
+                r"M Squared Tax|INTUIT \*TURBOTAX|SEATTLE MUNI INT|Wire Transfer(?! Fee)|"
+                r"Zelle.*Lana.*Kurilova", re.I), "Taxes & Tax Fees"),
 
     # ── Donations ──
     (re.compile(r"CENTREFOREFFECTIVEALTR|GOFNDME|GOFUNDME|"
-                r"PAYPAL \*SHOREWOODEL|PP\*SHOREWOOD PTA", re.I), "Donations"),
+                r"PAYPAL \*SHOREWOODEL|PP\*SHOREWOOD PTA|BLUEDOT", re.I), "Donations"),
 
     # ── Catch-alls ──
     (re.compile(r"Monthly Maintenance Fee|MEMBER FEE|Fee/Interest|"
@@ -831,6 +843,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"IRS", re.I), "Federal Tax"),
         (re.compile(r"SEATTLE MUNI INT", re.I), "City Tax"),
         (re.compile(r"M Squared Tax|INTUIT \*TURBOTAX", re.I), "Tax Preparation"),
+        (re.compile(r"Zelle.*Lana.*Kurilova", re.I), "Professional Services"),
         (re.compile(r"Wire Transfer(?! Fee)", re.I), "Estate Planning"),
     ],
     "Investments": [
@@ -891,6 +904,14 @@ def classify_category(row: pd.Series) -> str:
     desc = str(row["description"])
     orig_cat = str(row.get("original_category", ""))
     combined = f"{desc} {orig_cat}"
+    card_last4 = str(row.get("card_last4", ""))
+
+    # Luthien Expenses: AI tools charged on card 9430 (Maria's Luthien business card)
+    if card_last4 == "9430" and re.search(
+        r"CLAUDE|ANTHROPIC|OPENAI|CHATGPT|OTTER|CURSOR|COPILOT|PLAUD|BEAUTIFUL\.AI",
+        desc, re.I
+    ):
+        return "Luthien Expenses"
 
     # Special case: standalone PAYPAL (not Disney/subscriptions) = Maria's coaching
     if re.match(r"^PAYPAL$", desc, re.I):
@@ -1002,6 +1023,22 @@ def load_all_transactions() -> pd.DataFrame:
             )
             combined["notes"] = combined["_tx_key"].map(notes).fillna("")
             combined.drop(columns=["_tx_key"], inplace=True)
+            # Reclassify by note content
+            scott_ba = combined["notes"].str.contains("Scott Bay Area Trip", case=False, na=False)
+            combined.loc[scott_ba, "category"] = "Luthien Expenses"
+            combined.loc[scott_ba, "subcategory"] = "Bay Area Trips"
+            # Maria's work trips → Work Travel category
+            is_travel = combined["category"] == "Travel"
+            maria_work = combined["notes"].str.contains(
+                "San Jose conference|Maria work trip|Virginia work",
+                case=False, na=False, regex=True
+            )
+            combined.loc[is_travel & maria_work, "category"] = "Work Travel"
+            # Crystal Mountain → Fun & Entertainment
+            crystal = combined["notes"].str.contains("Crystal Mountain", case=False, na=False)
+            crystal_desc = combined["description"].str.contains("CRYSTAL MTN|CRYSTAL MOUNTAIN", case=False, na=False, regex=True)
+            combined.loc[crystal | crystal_desc, "category"] = "Fun & Entertainment"
+            combined.loc[crystal | crystal_desc, "subcategory"] = "Crystal Mountain"
         else:
             combined["notes"] = ""
     else:
