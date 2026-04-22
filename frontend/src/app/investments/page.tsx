@@ -55,6 +55,45 @@ export default function InvestmentsPage() {
     enabled: !!snapshot && !!compTo && snapshot !== compTo,
   });
 
+  // Prior snapshot = chronologically immediately before selected
+  const sortedSnaps = [...(snapshots || [])].sort();
+  const selectedIdx = sortedSnaps.indexOf(snapshot);
+  const priorSnapshot = selectedIdx > 0 ? sortedSnaps[selectedIdx - 1] : "";
+
+  // Prior month snapshot = snapshot closest to 30 days before current
+  const priorMonthSnapshot = (() => {
+    if (!snapshot) return "";
+    const currentMs = new Date(snapshot).getTime();
+    const targetMs = currentMs - 30 * 24 * 3600 * 1000;
+    const candidates = sortedSnaps.filter(s => new Date(s).getTime() < currentMs);
+    if (!candidates.length) return "";
+    return candidates.reduce((best, s) =>
+      Math.abs(new Date(s).getTime() - targetMs) < Math.abs(new Date(best).getTime() - targetMs) ? s : best
+    );
+  })();
+
+  // YTD snapshot = earliest snapshot in current year (year of selected)
+  const currentYear = snapshot.substring(0, 4);
+  const ytdSnapshot = sortedSnaps.find(s => s.startsWith(currentYear)) || "";
+
+  const { data: priorComparison } = useQuery({
+    queryKey: ["comparison-prior", snapshot, priorSnapshot],
+    queryFn: () => api.getComparison(snapshot, priorSnapshot),
+    enabled: !!snapshot && !!priorSnapshot && snapshot !== priorSnapshot,
+  });
+  const { data: priorMonthComparison } = useQuery({
+    queryKey: ["comparison-prior-month", snapshot, priorMonthSnapshot],
+    queryFn: () => api.getComparison(snapshot, priorMonthSnapshot),
+    enabled: !!snapshot && !!priorMonthSnapshot && snapshot !== priorMonthSnapshot,
+  });
+  const { data: ytdComparison } = useQuery({
+    queryKey: ["comparison-ytd", snapshot, ytdSnapshot],
+    queryFn: () => api.getComparison(snapshot, ytdSnapshot),
+    enabled: !!snapshot && !!ytdSnapshot && snapshot !== ytdSnapshot,
+  });
+
+  const accountCount = accounts?.length || 0;
+
   const familyName = config?.family_name || "Woffieta Family";
 
   return (
@@ -98,8 +137,33 @@ export default function InvestmentsPage() {
               </div>
 
               {summary && (
-                <div className="grid grid-cols-1 max-w-md mb-8">
-                  <MetricCard label="Total Portfolio Value" value={formatCurrency(summary.total_value, 2)} accent="azul" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  <MetricCard
+                    label={`Total Portfolio Value · ${accountCount} accounts`}
+                    value={formatCurrency(summary.total_value, 2)}
+                    accent="azul"
+                  />
+                  <MetricCard
+                    label={priorSnapshot ? `vs Prior Snapshot (${priorSnapshot})` : "vs Prior Snapshot"}
+                    value={priorComparison
+                      ? `${formatCurrency(priorComparison.change, 2)} (${priorComparison.pct_change >= 0 ? "+" : ""}${priorComparison.pct_change.toFixed(2)}%)`
+                      : "—"}
+                    accent={priorComparison && priorComparison.change >= 0 ? "verde" : "coral"}
+                  />
+                  <MetricCard
+                    label={priorMonthSnapshot ? `Prior Month Change (${priorMonthSnapshot})` : "Prior Month Change"}
+                    value={priorMonthComparison
+                      ? `${formatCurrency(priorMonthComparison.change, 2)} (${priorMonthComparison.pct_change >= 0 ? "+" : ""}${priorMonthComparison.pct_change.toFixed(2)}%)`
+                      : "—"}
+                    accent={priorMonthComparison && priorMonthComparison.change >= 0 ? "verde" : "coral"}
+                  />
+                  <MetricCard
+                    label={ytdSnapshot ? `YTD (from ${ytdSnapshot})` : "YTD"}
+                    value={ytdComparison
+                      ? `${formatCurrency(ytdComparison.change, 2)} (${ytdComparison.pct_change >= 0 ? "+" : ""}${ytdComparison.pct_change.toFixed(2)}%)`
+                      : "—"}
+                    accent={ytdComparison && ytdComparison.change >= 0 ? "verde" : "coral"}
+                  />
                 </div>
               )}
 

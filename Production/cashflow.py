@@ -663,7 +663,8 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"LOS CINCO SOLES|SUNSET NEWS ST|HUDSONNEWS|"
                 r"HUDSON ST\s?\d|1866_YYZ|ADRENALINE ST|DFWTEXASMONTHLYST|"
                 r"NEWREST TRAVEL|KANGRA AIRPORT|MPOS-AVIANCA|"
-                r"PPOINT_\*NR97|CHOOOSE", re.I), "Travel"),
+                r"PPOINT_\*NR97|CHOOOSE|"
+                r"SBIJAIPUR|SBISBI|SBINEAR|SBISIDE|SBISIDHBARI|STATE BANK OF INDIA", re.I), "Travel"),
 
     # ── Groceries ──
     (re.compile(r"COSTCO|INSTACART|IC\*|SAFEWAY(?! FUEL)|WHOLEFDS|"
@@ -692,7 +693,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── Subscriptions ──
     (re.compile(r"CLAUDE\.AI|ANTHROPIC|OPENAI|CHATGPT|OTTER\.AI|"
                 r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART|"
-                r"X CORP|PLAUD\.AI|PLAUD LLC", re.I), "Subscriptions"),
+                r"X CORP|PLAUD\.AI|PLAUD LLC|LOVABLE", re.I), "Subscriptions"),
     (re.compile(r"Netflix|YouTubePremium|YouTube Premiu|Disney|GOOGLE \*Google One|Google One|"
                 r"APPLE\.COM/BILL|WAPO\.COM|TWP\*SUB", re.I), "Subscriptions"),
     (re.compile(r"PAYPAL DES:INST XFER ID:DISNEY", re.I), "Subscriptions"),
@@ -712,14 +713,13 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"UNIQLO|BIBA FASHION|SHOPPERS STOP|SPEEDO|"
                 r"SP ALLBIRDS|SP KUT FROM|JOANN STORES|SP NORTHWEST YARNS|"
                 r"ETSY|WALMART|MINISO|SP RUGGABLE|SP HAPPY HYGGE|"
-                r"MEENA BAZAAR|RAJASTHALI|FALABELLA|LOVABLE|"
+                r"MEENA BAZAAR|RAJASTHALI|FALABELLA|"
                 r"BOLD Laska|BOLD Leila|BOLD BELLO|LASKA|"
                 r"BANANA TITAN|INDIGO NATURALLY|BO SIDHPUR|"
                 r"ACCESSORIZE|M S JAYPORE|Eliza Handicraft|"
                 r"LUCERO HOFMANN|REGALOS RENATA|PALACE SHOP|"
                 r"LA TIENDA DE GUADALUPE|SMOKERS PARADIZE|KTC .INDIA|"
-                r"SBIJAIPUR|SBISBI|SBINEAR|SBISIDE|SBISIDHBARI|"
-                r"STATE BANK OF INDIA|KALAGRAM|D&D\b|AMZ\*|SWEETWATER", re.I), "Shopping"),
+                r"KALAGRAM|D&D\b|AMZ\*|SWEETWATER", re.I), "Shopping"),
 
     # ── Fun & Entertainment ──
     (re.compile(r"SUMMIT RTP|SOUTHGATE ROLLER|XCARET|Entertainment|"
@@ -806,7 +806,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
     ],
     "Travel": [
         (re.compile(r"ALASKA AIR|UNITED\s|DELTA AIR|FRONTIER AI|COT\*FLT|Airfare|AIR CAN\*|BRITISH A|VUELING|AMERICAN AI|SOUTHWES|TACA AIR", re.I), "Flights"),
-        (re.compile(r"AIRBNB|GUESTRS|VIDANTA|ROYAL SOLARIS|EXPERIENCIAS XCARET|Lodging", re.I), "Lodging"),
+        (re.compile(r"AIRBNB|GUESTRS|VIDANTA|ROYAL SOLARIS|EXPERIENCIAS XCARET|Lodging|NEXION", re.I), "Lodging"),
         (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|CLIPPER TRANSIT|ORCA\b|MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI", re.I), "Rideshare & Transit"),
         (re.compile(r"Stamps\.com|Stamps Add Funds", re.I), "Shipping"),
         (re.compile(r"WIFIONBOARD", re.I), "In-flight WiFi"),
@@ -882,6 +882,10 @@ def classify_subcategory(row: pd.Series) -> str:
     if category == "Car" and re.search(r"JPMORGAN CHASE|JPMorgan Chase", desc, re.I):
         return "Car Loan" if abs(abs(amount) - 519.50) < 1 else "Subaru Lease"
 
+    # Shopping: single transactions > $200 → "Large Purchases"
+    if category == "Shopping" and abs(amount) > 200:
+        return "Large Purchases"
+
     rules = SUBCATEGORY_RULES.get(category, [])
     for pattern, subcat in rules:
         if pattern.search(combined):
@@ -923,6 +927,10 @@ def classify_category(row: pd.Series) -> str:
             return "Mortgage & Student Loans"
         else:
             return "Car"
+
+    # Costco always goes to Groceries (overrides Capital One's Gas/Automotive tag)
+    if re.search(r"COSTCO|IC\* COSTCO", desc, re.I):
+        return "Groceries"
 
     for pattern, category in CATEGORY_RULES:
         if pattern.search(combined):
@@ -1024,7 +1032,7 @@ def load_all_transactions() -> pd.DataFrame:
             combined["notes"] = combined["_tx_key"].map(notes).fillna("")
             combined.drop(columns=["_tx_key"], inplace=True)
             # Reclassify by note content
-            scott_ba = combined["notes"].str.contains("Scott Bay Area Trip", case=False, na=False)
+            scott_ba = combined["notes"].str.contains("Scott Bay Area|Luthien reimbursable", case=False, na=False, regex=True)
             combined.loc[scott_ba, "category"] = "Luthien Expenses"
             combined.loc[scott_ba, "subcategory"] = "Bay Area Trips"
             # Maria's work trips → Work Travel category

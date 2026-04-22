@@ -5,7 +5,7 @@ import { api } from "@/lib/api";
 
 const PROD_ACCOUNTS = [
   { name: "Aeroplan", type: "Chase Credit Card", owner: "Maria", format: "Chase card CSV", notes: "Export from Chase → Download activity" },
-  { name: "AmazonPrime", type: "Chase Credit Card", owner: "Maria", format: "Chase card CSV", notes: "Export from Chase → Download activity" },
+  { name: "AmazonPrime", type: "Chase Credit Card", owner: "Shared", format: "Chase card CSV", notes: "Export from Chase → Download activity" },
   { name: "United", type: "Chase Credit Card", owner: "Maria", format: "Chase card CSV", notes: "Export from Chase → Download activity" },
   { name: "VentureX", type: "Capital One Credit Card", owner: "Maria", format: "Capital One CSV (Debit/Credit columns)", notes: "Export from Capital One → Download transactions" },
   { name: "VentureOne", type: "Capital One Credit Card", owner: "Scott", format: "Capital One CSV (Debit/Credit columns)", notes: "Export from Capital One → Download transactions" },
@@ -28,6 +28,24 @@ const DEMO_ACCOUNTS = [
   { name: "Joint Savings", type: "Savings", owner: "Joint", format: "Standard CSV", notes: "Savings account" },
 ];
 
+const PROD_INVESTMENT_ACCOUNTS = [
+  { name: "ChaseTaxableBrokerage", type: "Taxable Brokerage", owner: "Joint", notes: "Chase taxable investment account" },
+  { name: "ChaseParametric", type: "Taxable Brokerage", owner: "Joint", notes: "Chase Parametric direct indexing (~301 individual stocks)" },
+  { name: "ScottsRothIRA_Chase", type: "Roth IRA", owner: "Scott", notes: "Scott's Roth IRA at Chase" },
+  { name: "ScottsTraditionalIRA", type: "Traditional IRA", owner: "Scott", notes: "Scott's Traditional IRA" },
+  { name: "SOFI_Joint", type: "Taxable Brokerage", owner: "Joint", notes: "SoFi managed portfolio" },
+  { name: "SOFI_SelfDirected", type: "Taxable Brokerage", owner: "Joint", notes: "SoFi self-directed brokerage" },
+  { name: "Marias Roth IRA", type: "Roth IRA", owner: "Maria", notes: "Maria's Roth IRA" },
+  { name: "Maria Carbon Direct 401k", type: "401k", owner: "Maria", notes: "Empower (current employer)" },
+  { name: "Maria Accrue LevelTen 401k", type: "401k", owner: "Maria", notes: "Vanguard (prior employer)" },
+];
+
+const DEMO_INVESTMENT_ACCOUNTS = [
+  { name: "Taxable Brokerage", type: "Taxable", owner: "Joint", notes: "Main brokerage account" },
+  { name: "Roth IRA", type: "Roth IRA", owner: "Viviana", notes: "Retirement account" },
+  { name: "401k", type: "401k", owner: "Michael", notes: "Employer retirement" },
+];
+
 export default function InstructionsPage() {
   const { data: config } = useQuery({
     queryKey: ["config"],
@@ -36,6 +54,7 @@ export default function InstructionsPage() {
   const familyName = config?.family_name || "Woffieta Family";
   const isDemo = config?.is_demo ?? false;
   const accounts = isDemo ? DEMO_ACCOUNTS : PROD_ACCOUNTS;
+  const investmentAccounts = isDemo ? DEMO_INVESTMENT_ACCOUNTS : PROD_INVESTMENT_ACCOUNTS;
 
   return (
     <div>
@@ -78,8 +97,21 @@ export default function InstructionsPage() {
           <div className="flex gap-3">
             <span className="flex-shrink-0 w-7 h-7 rounded-full bg-azul text-white text-sm font-bold flex items-center justify-center">4</span>
             <div>
+              <p className="font-semibold text-warm-charcoal">Clean up transactions with Claude Code</p>
+              <p className="text-sm text-stone mt-1">Open a Claude Code session in this project and ask it to help with:</p>
+              <ul className="text-sm text-stone mt-1 ml-4 list-disc space-y-1">
+                <li><strong>Classify reimbursables</strong> &mdash; tag trips or expenses that will be reimbursed (work trips, business tools, family reimbursements). Claude adds notes like &ldquo;Scott Bay Area Trip - reimbursable&rdquo; or &ldquo;Maria work trip - reimbursable&rdquo;.</li>
+                <li><strong>Detect misclassifications</strong> &mdash; review a category (e.g., &ldquo;show me all Restaurants&rdquo;) and spot transactions that belong elsewhere. Claude can update classification rules in <code className="bg-cool-gray/60 px-1 rounded text-xs">cashflow.py</code> and rerun the pipeline.</li>
+                <li><strong>Handle unclassified expenses</strong> &mdash; ask Claude to &ldquo;show me all unclassified transactions&rdquo;. Together, categorize recurring vendors by adding them to the classification rules; flag individual items with notes.</li>
+                <li><strong>Investigate patterns</strong> &mdash; ask about specific transactions (&ldquo;when did we last pay for X?&rdquo;, &ldquo;is this recurring?&rdquo;) to catch cancelled-but-still-charging subscriptions or unusual charges.</li>
+              </ul>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="flex-shrink-0 w-7 h-7 rounded-full bg-azul text-white text-sm font-bold flex items-center justify-center">5</span>
+            <div>
               <p className="font-semibold text-warm-charcoal">Review the dashboard</p>
-              <p className="text-sm text-stone mt-1">Check the Cash Flow dashboard for the updated numbers. Use the category drill-down to verify classifications. Review &ldquo;Unclassified&rdquo; transactions and create action items for anything that needs investigation.</p>
+              <p className="text-sm text-stone mt-1">Check the Cash Flow dashboard for the updated numbers. Use the category drill-down to verify classifications. Create action items for anything that needs follow-up (email a vendor, cancel a subscription, submit a reimbursement).</p>
             </div>
           </div>
         </div>
@@ -160,23 +192,109 @@ export default function InstructionsPage() {
         </div>
       </section>
 
+      {/* Investment Workflow */}
+      <section className="mb-10">
+        <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Investment Update Workflow</h2>
+        <div className="bg-cool-white rounded-lg border border-cool-gray p-6 space-y-4">
+          <p className="text-sm text-stone">Investments are tracked as <strong>snapshots</strong> — point-in-time exports of all account positions. Typically done quarterly or whenever you want to record progress.</p>
+          <div className="flex gap-3">
+            <span className="flex-shrink-0 w-7 h-7 rounded-full bg-azul text-white text-sm font-bold flex items-center justify-center">1</span>
+            <div>
+              <p className="font-semibold text-warm-charcoal">Export positions from each brokerage/401k</p>
+              <p className="text-sm text-stone mt-1">Log into Chase, SoFi, Empower, Vanguard, etc. and download current holdings CSVs. See the Investment Accounts table below.</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="flex-shrink-0 w-7 h-7 rounded-full bg-azul text-white text-sm font-bold flex items-center justify-center">2</span>
+            <div>
+              <p className="font-semibold text-warm-charcoal">Upload via Investments &rarr; Add Data tab</p>
+              <p className="text-sm text-stone mt-1">Set the snapshot date (typically today), assign each CSV to its account slot, and submit. Files get saved under <code className="bg-cool-gray/60 px-1 rounded text-xs">InvestmentPortfolio/{'{snapshot_date}'}/Investments&amp;Balances/</code>.</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="flex-shrink-0 w-7 h-7 rounded-full bg-azul text-white text-sm font-bold flex items-center justify-center">3</span>
+            <div>
+              <p className="font-semibold text-warm-charcoal">Pipeline runs automatically</p>
+              <p className="text-sm text-stone mt-1">portfolio.py normalizes holdings, computes asset allocation, retirement vs. taxable split, and generates Portfolio_Report.xlsx.</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <span className="flex-shrink-0 w-7 h-7 rounded-full bg-azul text-white text-sm font-bold flex items-center justify-center">4</span>
+            <div>
+              <p className="font-semibold text-warm-charcoal">Review the Investments dashboard</p>
+              <p className="text-sm text-stone mt-1">See <strong>Total Portfolio Value</strong>, <strong>vs Prior Snapshot</strong>, and <strong>YTD change</strong> metrics. Toggle snapshots and compare any two periods via the &ldquo;Compare to&rdquo; dropdown.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investment Accounts */}
+      <section className="mb-10">
+        <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Investment Accounts on File</h2>
+        <div className="overflow-x-auto rounded-lg border border-cool-gray">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-cool-white">
+                <th className="text-left px-4 py-3 font-semibold text-stone">Account (CSV filename)</th>
+                <th className="text-left px-4 py-3 font-semibold text-stone">Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-stone">Owner</th>
+                <th className="text-left px-4 py-3 font-semibold text-stone">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {investmentAccounts.map(a => (
+                <tr key={a.name} className="border-t border-cool-gray hover:bg-cool-white/50">
+                  <td className="px-4 py-2.5 font-medium">{a.name}</td>
+                  <td className="px-4 py-2.5 text-stone">{a.type}</td>
+                  <td className="px-4 py-2.5 text-stone">{a.owner}</td>
+                  <td className="px-4 py-2.5 text-stone">{a.notes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Investment Pipeline Outputs */}
+      <section className="mb-10">
+        <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Investment Pipeline Outputs</h2>
+        <div className="bg-cool-white rounded-lg border border-cool-gray p-6 space-y-3 text-sm">
+          <div>
+            <p className="font-semibold text-warm-charcoal">InvestmentPortfolio/{'{snapshot_date}'}/Investments&amp;Balances/*.csv</p>
+            <p className="text-stone">Raw holdings CSVs per account (saved as uploaded).</p>
+          </div>
+          <div>
+            <p className="font-semibold text-warm-charcoal">InvestmentPortfolio/{'{snapshot_date}'}/Portfolio_Report.xlsx</p>
+            <p className="text-stone">Excel report with total value, asset allocation, account breakdown, retirement vs. taxable split, and snapshot comparisons.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Folder Structure */}
       <section className="mb-10">
         <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-4">Data Folder Structure</h2>
         <div className="bg-cool-white rounded-lg border border-cool-gray p-6 text-sm font-mono text-warm-charcoal">
-          <pre className="whitespace-pre-wrap">{`${isDemo ? "Demo" : "Production"}/CashFlow/
-├── 2025/                          # Annual exports (full year data)
-│   ├── Credit Cards/              # Card transaction CSVs
-│   └── Checking and Savings/      # Bank account CSVs
-├── Jan26/                         # Monthly uploads
-│   ├── Credit Cards/
-│   └── Checking and Savings/
-├── Feb26/
-├── Monthly/                       # AUTO-GENERATED per-month files
-│   ├── 2025/
-│   └── 2026/
-├── all_transactions.csv           # AUTO-GENERATED master file
-└── CashFlow_Report.xlsx           # AUTO-GENERATED Excel report`}</pre>
+          <pre className="whitespace-pre-wrap">{`${isDemo ? "Demo" : "Production"}/
+├── CashFlow/
+│   ├── 2025/                          # Annual exports (full year data)
+│   │   ├── Credit Cards/              # Card transaction CSVs
+│   │   └── Checking and Savings/      # Bank account CSVs
+│   ├── Jan26/                         # Monthly uploads
+│   │   ├── Credit Cards/
+│   │   └── Checking and Savings/
+│   ├── Feb26/
+│   ├── Monthly/                       # AUTO-GENERATED per-month files
+│   │   ├── 2025/
+│   │   └── 2026/
+│   ├── all_transactions.csv           # AUTO-GENERATED master file
+│   └── CashFlow_Report.xlsx           # AUTO-GENERATED Excel report
+└── InvestmentPortfolio/
+    ├── 2026-03-09/                    # Snapshot folder (one per export date)
+    │   ├── Investments&Balances/      # Raw holdings CSVs per account
+    │   └── Portfolio_Report.xlsx      # AUTO-GENERATED report
+    └── 2026-04-14/
+        ├── Investments&Balances/
+        └── Portfolio_Report.xlsx`}</pre>
         </div>
       </section>
     </div>
