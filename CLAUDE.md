@@ -56,4 +56,4 @@ It then classifies `spending` into category and subcategory. Output is `Producti
 1. Work against the current objective in `dev/OBJECTIVE.md`.
 2. Read `dev/ARCHITECTURE.md` for request flow and the module map.
 3. Update `CHANGELOG.md` when you ship a user-visible change.
-4. Branch and open a PR (this is a shared repo). Keep PRs small.
+4. Merging directly to `main` is fine — that is Maria's guidance for both this repo and woffieta-data. Open a PR for bigger or higher-risk changes (preferred but optional). Keep changes small either way.
