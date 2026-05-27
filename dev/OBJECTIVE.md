@@ -10,19 +10,20 @@ This file holds the single objective currently being worked on, in the spirit of
 
 ## Objective
 
-Add a cash-flow projection / scenario view to the dashboard, so the family's forward forecast lives in the app instead of a manual Excel model.
+Reconcile and right-size the family's 2026+ forecast, in three phases. **Source of truth for forecasts is the Excel LIVE model**; mirroring forecasts into this app is optional (phase 3), not required.
 
-> Best-guess objective inferred from the May 2026 finance work (the 2026 burn forecast and the manual refresh of `Wofford_Cashflow_LIVE.xlsx` / `2030_Scenarios.xlsx`). Confirm or replace before building.
+> Note: most of this work happens in the Excel LIVE model and woffieta-data, not in this app. This app's only role is the optional phase-3 mirror. (Placement of this objective is open — see the working notes in woffieta-data.)
 
-**Context / acceptance criteria:**
+### Phase 1 — Compare forecasts (in Excel)
 
-- Project monthly and annual net cash flow forward from the classified `spending` data plus known income.
-- Support a small scenario matrix (market return × income level), mirroring the existing Excel "2026 Summary" view: e.g. bear / base / bull market returns crossed with income levels.
-- Seed inputs from current actuals: Maria's income (Auger, $300k base, started 2026-04-20; ~$215k/yr post-tax), household expenses (~$284k/yr forward, see woffieta-data `FinancialSummary.md`), portfolio $1.62M (non-retirement $1.11M / retirement $0.51M).
-- Surface a runway / worst-case burn figure (income vs expenses, draw on the non-retirement portfolio), matching woffieta-data `May23_2026BurnAnalysis.md`.
-- Maps to the `FeaturesBacklog.md` "Idea" items: "Cash flow projections" and "Investment scenarios tab."
+Compare the **LIVE Excel forecast** against a **naive woffieta-data forecast** built purely from per-month run-rate (recent actual monthly spend + known income, projected forward with no curated assumptions). Goal: surface where LIVE's hand-set assumptions diverge from what the actual data implies.
 
-**Out of scope:**
+### Phase 2 — Port surgical changes to LIVE
 
-- Retiring the Excel models outright (parallel-run first).
-- Tax modeling beyond effective-rate estimates.
+Apply the changes Phase 1 validates (refreshed balances, Maria's Auger income, any run-rate corrections) **into the real Dropbox LIVE files**, surgically. Not a wholesale replacement of the model.
+
+### Phase 3 — Decide the go-forward forecast-management model
+
+Evaluate how to maintain forecasts going forward. **Prior: Excel stays the source of truth**; mirroring or automating into this app is optional / nice-to-have, not a requirement.
+
+**Working inputs (in woffieta-data):** `May23_2026BurnAnalysis.md`, `May27_ExpenseModelReconciliation.md`, and the highlighted working copies in `excel-forecast-refresh-2026-05/` (already hold the refreshed balances + Maria income rebuild ready for the phase-2 port).
