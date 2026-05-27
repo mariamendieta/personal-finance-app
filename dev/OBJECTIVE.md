@@ -10,20 +10,8 @@ This file holds the single objective currently being worked on, in the spirit of
 
 ## Objective
 
-Reconcile and right-size the family's 2026+ forecast, in three phases. **Source of truth for forecasts is the Excel LIVE model**; mirroring forecasts into this app is optional (phase 3), not required.
+_No app-code objective currently set._
 
-> Note: most of this work happens in the Excel LIVE model and woffieta-data, not in this app. This app's only role is the optional phase-3 mirror. (Placement of this objective is open — see the working notes in woffieta-data.)
+The active finance objective (reconcile and right-size the 2026+ forecast) is forecast/data work, so it lives in **woffieta-data `OBJECTIVE.md`**. Set an objective here only for personal-finance-app code work: a new dashboard view, a pipeline change, an API endpoint, or a bug fix. See "Objective placement" in `CLAUDE.md`.
 
-### Phase 1 — Compare forecasts (in Excel)
-
-Compare the **LIVE Excel forecast** against a **naive woffieta-data forecast** built purely from per-month run-rate (recent actual monthly spend + known income, projected forward with no curated assumptions). Goal: surface where LIVE's hand-set assumptions diverge from what the actual data implies.
-
-### Phase 2 — Port surgical changes to LIVE
-
-Apply the changes Phase 1 validates (refreshed balances, Maria's Auger income, any run-rate corrections) **into the real Dropbox LIVE files**, surgically. Not a wholesale replacement of the model.
-
-### Phase 3 — Decide the go-forward forecast-management model
-
-Evaluate how to maintain forecasts going forward. **Prior: Excel stays the source of truth**; mirroring or automating into this app is optional / nice-to-have, not a requirement.
-
-**Working inputs (in woffieta-data):** `May23_2026BurnAnalysis.md`, `May27_ExpenseModelReconciliation.md`, and the highlighted working copies in `excel-forecast-refresh-2026-05/` (already hold the refreshed balances + Maria income rebuild ready for the phase-2 port).
+A related app-code item is on deck if/when the forecast objective reaches phase 3 (optional mirror): build a cash-flow projection / run-rate forecast view in the dashboard. Note Maria already has a local (unpushed) run-rate forecast view — push and build on that rather than starting fresh.
