@@ -57,3 +57,11 @@ It then classifies `spending` into category and subcategory. Output is `Producti
 2. Read `dev/ARCHITECTURE.md` for request flow and the module map.
 3. Update `CHANGELOG.md` when you ship a user-visible change.
 4. Merging directly to `main` is fine — that is Maria's guidance for both this repo and woffieta-data. Open a PR for bigger or higher-risk changes (preferred but optional). Keep changes small either way.
+
+## Objective placement (which repo owns an objective)
+
+Home an objective where its primary artifacts live, so it never has to be asked again:
+
+- **App code** (a dashboard view, pipeline change, API endpoint, bug fix) → this repo's `dev/OBJECTIVE.md`.
+- **Forecasts, data, or analysis** (forecast comparisons, Excel-model work, cost-of-living analysis) → woffieta-data `OBJECTIVE.md`.
+- A **cross-repo** objective is homed by its primary artifacts, with a one-line pointer from the other repo's `OBJECTIVE.md`.
