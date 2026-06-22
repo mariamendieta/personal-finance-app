@@ -538,6 +538,13 @@ def classify_flow_type(row: pd.Series) -> str:
         if CC_PAYMENT_PATTERNS.search(desc):
             return "cc_payment"
 
+    # ── URBARK S.A.S. consulting payments (lump-sum incoming wires) ──
+    # Keep these large one-off payments out of the monthly income totals by
+    # routing them to "other". Checked before the income rule because the
+    # description contains "CHIPS CREDIT", which INCOME_PATTERNS matches.
+    if re.search(r"URBARK", desc, re.I):
+        return "other"
+
     # ── Income (check before internal transfers so CHIPS CREDIT isn't masked) ──
     if INCOME_PATTERNS.search(desc) or INCOME_PATTERNS.search(cat):
         return "income"
