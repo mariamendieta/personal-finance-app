@@ -506,7 +506,7 @@ INTERNAL_TRANSFER_PATTERNS = re.compile(
 
 # Income patterns
 INCOME_PATTERNS = re.compile(
-    r"DIRECT_DEPOSIT|CHECK_DEPOSIT|CARBON DIRECT IN|Interest earned|"
+    r"DIRECT_DEPOSIT|CHECK_DEPOSIT|CARBON DIRECT IN|AUGER INC|Interest earned|"
     r"INTEREST_EARNED|INTEREST PAYMENT|WIRE_INCOMING|CHIPS CREDIT|"
     r"Cash Redemption|Aseltine.*Settlement|BKOFAMERICA ATM.*DEPOSIT|Seattle Network|"
     r"Epoch Artificial|Zelle.*from|CREDIT-TRAVEL REWARD",
@@ -698,7 +698,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"APPLE\.COM/BILL|WAPO\.COM|TWP\*SUB", re.I), "Subscriptions"),
     (re.compile(r"PAYPAL DES:INST XFER ID:DISNEY", re.I), "Subscriptions"),
     (re.compile(r"DROPBOX|BEAUTIFUL\.AI|COPILOT MONEY|CURSOR.*IDE|"
-                r"LinkedInPreB|CANVA|PADDLE\.NET|ST SUBSCRIPTIONS|"
+                r"LinkedIn|CANVA|PADDLE\.NET|ST SUBSCRIPTIONS|"
                 r"SP -ORGANIC LIFE|"
                 r"THE ECONOMIST|WAVE.*KATEAH|Kindle Svcs|BLOOMBERG|"
                 r"Stamps\.com|Stamps Add Funds|D J\*WSJ|Spotify", re.I), "Subscriptions"),
@@ -853,7 +853,8 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"CHARLES SCHWAB", re.I), "Schwab Brokerage"),
     ],
     "Income": [
-        (re.compile(r"CARBON DIRECT", re.I), "Maria Job Income"),
+        (re.compile(r"CARBON DIRECT", re.I), "Maria Job Income (Carbon Direct)"),
+        (re.compile(r"AUGER", re.I), "Maria Job Income (Auger)"),
         (re.compile(r"WA ST EMPLOY SEC", re.I), "Scott's Unemployment"),
         (re.compile(r"VENMO|PAYPAL|Zelle.*from", re.I), "Friends & Family Payments"),
         (re.compile(r"Epoch Artificial", re.I), "Scott's Salary"),
@@ -1047,6 +1048,9 @@ def load_all_transactions() -> pd.DataFrame:
             crystal_desc = combined["description"].str.contains("CRYSTAL MTN|CRYSTAL MOUNTAIN", case=False, na=False, regex=True)
             combined.loc[crystal | crystal_desc, "category"] = "Fun & Entertainment"
             combined.loc[crystal | crystal_desc, "subcategory"] = "Crystal Mountain"
+            # Florida trip → Travel
+            florida = combined["notes"].str.contains("Florida trip", case=False, na=False)
+            combined.loc[florida, "category"] = "Travel"
         else:
             combined["notes"] = ""
     else:
