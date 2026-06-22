@@ -539,6 +539,14 @@ def classify_flow_type(row: pd.Series) -> str:
         if CC_PAYMENT_PATTERNS.search(desc):
             return "cc_payment"
 
+    # ── Gift wires from Maria's family (URBARK S.A.S., Bogotá) ──
+    # Incoming CHIPS wires from Maria's father are a capital gift parked in
+    # savings, not household income. Route to "other" so they're excluded from
+    # income/spending cash-flow totals. Checked before the income rule because
+    # the description contains "CHIPS CREDIT", which INCOME_PATTERNS matches.
+    if re.search(r"URBARK", desc, re.I):
+        return "other"
+
     # ── Income (check before internal transfers so CHIPS CREDIT isn't masked) ──
     if INCOME_PATTERNS.search(desc) or INCOME_PATTERNS.search(cat):
         return "income"
