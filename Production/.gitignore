@@ -10,3 +10,9 @@ __pycache__/
 
 # Excel temp files
 ~$*
+
+# Private financial data (lives in the woffieta-data repo; never commit here)
+CashFlow/
+InvestmentPortfolio/
+*.json
+*.xlsx
