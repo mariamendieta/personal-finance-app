@@ -628,6 +628,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Zelle.*Danna", re.I), "Childcare"),  # Danna = Spanish tutor
     (re.compile(r"MY SPANISH NANNY|LITTLE SPOON|SCHOOL OF ROCK|PRESCHOOL SMILES", re.I), "Childcare"),
     (re.compile(r"SP WOOM BIKES", re.I), "Childcare"),  # kids bikes
+    (re.compile(r"Zelle.*Kami|LESSONSINMUSIC", re.I), "Childcare"),  # Kami = kids' swim instructor; music lessons
 
     # ── House & Maintenance ──
     (re.compile(r"Zelle.*Graciela", re.I), "House & Maintenance"),  # cleaning
@@ -640,7 +641,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── Fitness & Healthcare ──
     (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Fitness & Healthcare"),
     (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy|DENTIS", re.I), "Fitness & Healthcare"),
-    (re.compile(r"PROVIDENCE|BLVD.*RUDY|PAULINE.S NAIL SPA|CLAUDIA PRIETO", re.I), "Fitness & Healthcare"),
+    (re.compile(r"PROVIDENCE|BLVD.*RUDY|RUDYS\b|PAULINE.S NAIL SPA|CLAUDIA PRIETO", re.I), "Fitness & Healthcare"),  # RUDYS = Rudy's Barbershop (haircuts)
     (re.compile(r"PAYPAL \*SEATAC BMX|PP\*SURF BALLARD", re.I), "Fitness & Healthcare"),
 
     # ── Childcare (YMCA = kids programs) ──
@@ -662,7 +663,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"Lodging|RMTLY\*|REMITLY|NEXION|TURO", re.I), "Travel"),
     (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|LYFT\s+\*\d|CLIPPER TRANSIT|ORCA\b|"
                 r"MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI|"
-                r"MTA\*NYCT|TFL TRAVEL|CITIBIK|EMPRESA MALAGUENA|"
+                r"CABIFY|MTA\*NYCT|TFL TRAVEL|CITIBIK|EMPRESA MALAGUENA|"
                 r"WSFERRIES|MARTA TVM|CARCAMOVIL", re.I), "Travel"),
     (re.compile(r"WIFIONBOARD|BA INFLIGHT|"
                 r"Chairs/Carts|Nyx\*SmarteCarte|SmarteCarte|NYX\*PGGroup|"
@@ -693,7 +694,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"TST\*|SQ \*|CAFE TURKO|LIL JON|MARTHA|EL RINCONSITO|"
                 r"LA COSTA MEXICAN|SAL Y LIMON|STARBUCKS|JOECOFFEE|"
                 r"JOHNNY FOLEYS|PANDORA KARAOKE|SQ \*CHUCK|"
-                r"WAFFLE CABIN|GDP\*Waffle|Rudys West Seattle|SFO LITTLE CHIHUAHUA|"
+                r"WAFFLE CABIN|GDP\*Waffle|SFO LITTLE CHIHUAHUA|"
                 r"BURGER AND KABOB|BREWTOP SOCIAL|DFW WHATABURGER|DILETTANTE MOCHA", re.I), "Restaurants"),
     (re.compile(r"CTLP\*AIRCO", re.I), "House & Maintenance"),  # laundry
     (re.compile(r"Dining", re.I), "Restaurants"),
@@ -734,6 +735,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"TM \*|TICKETMASTER|JAZZALLEY|ALBUM COVER GROUP", re.I), "Fun & Entertainment"),
     (re.compile(r"WA PARKSRESERVATIONS|SEATTLEAQUARIUM|GEORGIA AQUAR|"
                 r"MT ST HELENS|HIGHLINE HERITAGE|BIKEINDEX", re.I), "Fun & Entertainment"),
+    (re.compile(r"Zelle.*Walter", re.I), "Fun & Entertainment"),  # one-time gift to a friend
 
     # ── Donations ──
     (re.compile(r"CENTREFOREFFECTIVEALTR", re.I), "Donations"),
@@ -758,7 +760,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"CITY OF FEDERAL WAY", re.I), "Fun & Entertainment"),
     (re.compile(r"VENMO|PAYPAL|Zelle.*Minh|BKOFAMERICA ATM|"
                 r"Zelle.*Esteban|Zelle.*Patricia|Zelle.*Paty|"
-                r"Zelle.*Walter|Seattle Network|"
+                r"Seattle Network|"
                 r"GUSTO|Returned Check|"
                 r"\+BOB\b|RAZ\*SMART|EVALO|EVACOL|EXITO WOW|"
                 r"WWW\.CLASSACTPORTRAITS|CLAUDIA PRIETO|ASTRA FESTUM", re.I), "Unclassified"),
@@ -783,8 +785,9 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"YMCA", re.I), "YMCA Kids Programs"),
         (re.compile(r"MY SPANISH NANNY", re.I), "Nanny"),
         (re.compile(r"LITTLE SPOON", re.I), "Baby Food (Little Spoon)"),
-        (re.compile(r"SCHOOL OF ROCK", re.I), "Music Lessons (School of Rock)"),
+        (re.compile(r"SCHOOL OF ROCK|LESSONSINMUSIC", re.I), "Music Lessons"),
         (re.compile(r"SP WOOM BIKES", re.I), "Kids Bikes"),
+        (re.compile(r"Zelle.*Kami", re.I), "Swimming Lessons (Kami)"),
     ],
     "House & Maintenance": [
         (re.compile(r"Zelle.*Graciela", re.I), "Cleaning (Graciela)"),
@@ -815,7 +818,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
     "Travel": [
         (re.compile(r"ALASKA AIR|UNITED\s|DELTA AIR|FRONTIER AI|COT\*FLT|Airfare|AIR CAN\*|BRITISH A|VUELING|AMERICAN AI|SOUTHWES|TACA AIR", re.I), "Flights"),
         (re.compile(r"AIRBNB|GUESTRS|VIDANTA|ROYAL SOLARIS|EXPERIENCIAS XCARET|Lodging|NEXION", re.I), "Lodging"),
-        (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|CLIPPER TRANSIT|ORCA\b|MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI", re.I), "Rideshare & Transit"),
+        (re.compile(r"UBER\s+\*TRIP|LYFT\s+\*RIDE|CLIPPER TRANSIT|ORCA\b|MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI|CABIFY", re.I), "Rideshare & Transit"),
         (re.compile(r"Stamps\.com|Stamps Add Funds", re.I), "Shipping"),
         (re.compile(r"WIFIONBOARD", re.I), "In-flight WiFi"),
         (re.compile(r"Chairs/Carts|SmarteCarte|Nyx\*SmarteCarte", re.I), "Airport Services"),
@@ -833,6 +836,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Victoria Basketball"),
         (re.compile(r"DENTIST", re.I), "Dental"),
         (re.compile(r"Amazon Pharmacy", re.I), "Pharmacy"),
+        (re.compile(r"RUDYS\b|BLVD.*RUDY|PAULINE", re.I), "Personal Care (haircuts/nails)"),
     ],
     "Therapy & Coaching": [
         (re.compile(r"MARGARITA QUIJANO", re.I), "Therapist (Margarita)"),
@@ -840,6 +844,9 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
     ],
     "Restaurants": [
         (re.compile(r"UBER\s+\*EATS|GRUBHUB|DD \*|DLO\*RAPPI|Rappi", re.I), "Delivery"),
+    ],
+    "Fun & Entertainment": [
+        (re.compile(r"Zelle.*Walter", re.I), "Gifts"),
     ],
     "Pets": [
         (re.compile(r"LAZY DOG CRAZY DOG", re.I), "Doggie Daycare (Chilita)"),
