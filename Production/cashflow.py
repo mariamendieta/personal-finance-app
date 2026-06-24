@@ -666,14 +666,11 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Luthien Expenses ──
     (re.compile(r"UPWORK|LUTHIEN RESEARCH", re.I), "Luthien Expenses"),
-    # Scott's reimbursable work/AI subscriptions, on any card, tagged Luthien per
-    # the recurring-subscriptions sheet (all flagged reimbursable). Tagging by
-    # merchant gives consistent classification (the prior per-month note approach
-    # left ~12 of these inconsistently in Subscriptions). Maria's Claude team plan
-    # is $0/CD-paid so it does not appear as a charge here.
-    (re.compile(r"ANTHROPIC|CLAUDE\.AI|OPENAI|CHATGPT|OTTER\.AI|"
-                r"PLAUD\.AI|PLAUD LLC|LINKEDIN|MICROSOFT|MSFT\b|OFFICE 365",
-                re.I), "Luthien Expenses"),
+    # NOTE: Scott's reimbursable AI/work subscriptions are tagged Luthien in
+    # classify_category() instead, where the rule is CARD-AWARE — it excludes
+    # Maria's personal card (0729). "Luthien Expenses" feeds the loan balance PBC
+    # owes Scott, so over-tagging is a real-money error. The Subscriptions rule
+    # below is the fallback that catches the same merchants on excluded cards.
 
     # ── Therapy & Coaching ──
     (re.compile(r"HOTMART|BEAUTIFUL\.AI|GAMRAY", re.I), "Therapy & Coaching"),  # coaching courses (therapist name rule is in private overrides)
@@ -724,8 +721,12 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Dining", re.I), "Restaurants"),
 
     # ── Subscriptions ──
-    # (AI/work tools moved to Luthien Expenses above — reimbursable.)
-    (re.compile(r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART|"
+    # AI/work tools land here ONLY when classify_category's card-aware Luthien rule
+    # skipped them (i.e., on Maria's personal card 0729). On Scott's cards they're
+    # already tagged Luthien Expenses upstream.
+    (re.compile(r"ANTHROPIC|CLAUDE\.AI|OPENAI|CHATGPT|OTTER\.AI|"
+                r"PLAUD\.AI|PLAUD LLC|LINKEDIN|MICROSOFT|MSFT\b|OFFICE 365|"
+                r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART|"
                 r"X CORP|LOVABLE", re.I), "Subscriptions"),
     (re.compile(r"Netflix|YouTubePremium|YouTube Premiu|Disney|GOOGLE \*Google One|Google One|"
                 r"APPLE\.COM/BILL|WAPO\.COM|TWP\*SUB", re.I), "Subscriptions"),
@@ -966,6 +967,18 @@ def classify_category(row: pd.Series) -> str:
     if "aeroplan" in str(row.get("account", "")).lower() and re.search(
         r"AIR CAN|\bUNITED\b|WIFIONBOARD|AIRBNB|LYFT|UBER|"
         r"NINETEEN.*MISSION|SFO |WISE SONS|CHEZ MAMAN|LITTLE CHIHUAHUA",
+        desc, re.I
+    ):
+        return "Luthien Expenses"
+
+    # Scott's reimbursable AI/work subscriptions → Luthien Expenses, but NOT on
+    # Maria's personal card (0729). "Luthien Expenses" feeds the loan balance PBC
+    # owes Scott, so over-tagging is a real-money error (Scott, 2026-06-24). On
+    # card 0729 these fall through to the Subscriptions rule (Maria's / duplicates).
+    PERSONAL_CARDS = {"0729"}
+    if card_last4 not in PERSONAL_CARDS and re.search(
+        r"ANTHROPIC|CLAUDE\.AI|OPENAI|CHATGPT|OTTER\.AI|PLAUD\.AI|PLAUD LLC|"
+        r"LINKEDIN|MICROSOFT|MSFT\b|OFFICE 365",
         desc, re.I
     ):
         return "Luthien Expenses"
