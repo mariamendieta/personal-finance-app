@@ -955,7 +955,7 @@ def classify_category(row: pd.Series) -> str:
 
     # Luthien Expenses: AI tools charged on card 9430 (Maria's Luthien business card)
     if card_last4 == "9430" and re.search(
-        r"CLAUDE|ANTHROPIC|OPENAI|CHATGPT|OTTER|CURSOR|COPILOT|PLAUD|BEAUTIFUL\.AI",
+        r"CLAUDE|ANTHROPIC|OPENAI|CHATGPT|OTTER|CURSOR|COPILOT(?! MONEY)|PLAUD|BEAUTIFUL\.AI",
         desc, re.I
     ):
         return "Luthien Expenses"
