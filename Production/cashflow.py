@@ -17,6 +17,7 @@ flow_type values:
     other             — fees, uncategorized (review manually)
 """
 
+import json
 import os
 import re
 import pandas as pd
@@ -26,6 +27,27 @@ from pathlib import Path
 
 DATA_ROOT = Path(__file__).parent / "CashFlow"
 OUTPUT_FILE = Path(__file__).parent / "CashFlow" / "all_transactions.csv"
+
+# ── Private classification overrides ─────────────────────────────────────────
+# This repo is PUBLIC. Person-name classification rules (e.g. "Zelle to <name>")
+# live in classification_overrides.json in the private woffieta-data repo, NOT
+# here. The pipeline loads that file (it sits next to this script when the data
+# repo is the working dir) and applies it. If the file is absent (e.g. running
+# from the public checkout), classification falls back to the public rules only.
+#
+# Format:
+#   {"description_rules": [{"pattern": <regex>, "category": <cat>, "subcategory": <sub>}],
+#    "transaction_overrides": [{"date","amount","account"?,"category","subcategory"?,"note"?}]}
+def _load_overrides() -> dict:
+    path = Path(__file__).parent / "classification_overrides.json"
+    if not path.exists():
+        return {"description_rules": [], "transaction_overrides": []}
+    raw = json.loads(path.read_text())
+    for r in raw.get("description_rules", []):
+        r["_re"] = re.compile(r["pattern"], re.I)
+    return raw
+
+OVERRIDES = _load_overrides()
 
 # ── Parsers for each CSV format ────────────────────────────────────────────
 
@@ -507,7 +529,7 @@ INTERNAL_TRANSFER_PATTERNS = re.compile(
 # Income patterns
 INCOME_PATTERNS = re.compile(
     r"DIRECT_DEPOSIT|CHECK_DEPOSIT|CARBON DIRECT IN|AUGER INC|Interest earned|"
-    r"INTEREST_EARNED|INTEREST PAYMENT|WIRE_INCOMING|CHIPS CREDIT|"
+    r"INTEREST_EARNED|INTEREST PAYMENT|WIRE_INCOMING|CHIPS CREDIT|AUGER|"
     r"Cash Redemption|Aseltine.*Settlement|BKOFAMERICA ATM.*DEPOSIT|Seattle Network|"
     r"Epoch Artificial|Zelle.*from|CREDIT-TRAVEL REWARD",
     re.IGNORECASE,
@@ -625,23 +647,18 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Childcare ──
     (re.compile(r"WORLDKIDS|LINELEADER|RightAtSchool", re.I), "Childcare"),
-    (re.compile(r"Zelle.*Danna", re.I), "Childcare"),  # Danna = Spanish tutor
     (re.compile(r"MY SPANISH NANNY|LITTLE SPOON|SCHOOL OF ROCK|PRESCHOOL SMILES", re.I), "Childcare"),
     (re.compile(r"SP WOOM BIKES", re.I), "Childcare"),  # kids bikes
-    (re.compile(r"Zelle.*Kami|LESSONSINMUSIC", re.I), "Childcare"),  # Kami = kids' swim instructor; music lessons
+    (re.compile(r"LESSONSINMUSIC", re.I), "Childcare"),  # music lessons
 
     # ── House & Maintenance ──
-    (re.compile(r"Zelle.*Graciela", re.I), "House & Maintenance"),  # cleaning
-    (re.compile(r"Zelle.*Iris", re.I), "House & Maintenance"),      # house helper
-    (re.compile(r"Zelle.*Silvia.*Diaz|Zelle.*Silvia Adriana", re.I), "House & Maintenance"),  # former house helper
-    (re.compile(r"Zelle.*Israel", re.I), "House & Maintenance"),     # yard
-    (re.compile(r"Zelle.*Francisco", re.I), "House & Maintenance"),  # contractor
+    # (Zelle-to-person house-help rules live in the private overrides file.)
     (re.compile(r"ECOSHIELD PEST|NUTONE DRY CLEANERS", re.I), "House & Maintenance"),
 
     # ── Fitness & Healthcare ──
     (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Fitness & Healthcare"),
     (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy|DENTIS", re.I), "Fitness & Healthcare"),
-    (re.compile(r"PROVIDENCE|BLVD.*RUDY|RUDYS\b|PAULINE.S NAIL SPA|CLAUDIA PRIETO", re.I), "Fitness & Healthcare"),  # RUDYS = Rudy's Barbershop (haircuts)
+    (re.compile(r"PROVIDENCE|BLVD.*RUDY|RUDYS\b|PAULINE.S NAIL SPA", re.I), "Fitness & Healthcare"),  # RUDYS = Rudy's Barbershop (haircuts)
     (re.compile(r"PAYPAL \*SEATAC BMX|PP\*SURF BALLARD", re.I), "Fitness & Healthcare"),
 
     # ── Childcare (YMCA = kids programs) ──
@@ -651,7 +668,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"UPWORK|LUTHIEN RESEARCH", re.I), "Luthien Expenses"),
 
     # ── Therapy & Coaching ──
-    (re.compile(r"MARGARITA QUIJANO|HOTMART|BEAUTIFUL\.AI|GAMRAY", re.I), "Therapy & Coaching"),  # therapist + coaching courses
+    (re.compile(r"HOTMART|BEAUTIFUL\.AI|GAMRAY", re.I), "Therapy & Coaching"),  # coaching courses (therapist name rule is in private overrides)
     # Standalone PAYPAL (coaching) is handled in classify_category
 
     # ── Travel ──
@@ -684,7 +701,6 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     # ── Restaurants ──
     (re.compile(r"UBER\s+\*EATS|GRUBHUB|DD \*|DLO\*RAPPI|Rappi(?! Bogota)", re.I), "Restaurants"),
     (re.compile(r"Rappi Bogota", re.I), "Restaurants"),
-    (re.compile(r"Zelle.*Katherine.*Pierson", re.I), "Restaurants"),
     (re.compile(r"SUBWAY|CHICK-FIL-A|CHIPOTLE|ALADDIN GYRO|SAIGON DELI|"
                 r"PIZZA ZONE|COLDSTONE|SNACK\*|LAZY DOG RESTAURANT|EATS ON 57|"
                 r"TROPICALIA|OHANA MARBELLA|KUDEDON|HOJAS|"
@@ -735,7 +751,6 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"TM \*|TICKETMASTER|JAZZALLEY|ALBUM COVER GROUP", re.I), "Fun & Entertainment"),
     (re.compile(r"WA PARKSRESERVATIONS|SEATTLEAQUARIUM|GEORGIA AQUAR|"
                 r"MT ST HELENS|HIGHLINE HERITAGE|BIKEINDEX", re.I), "Fun & Entertainment"),
-    (re.compile(r"Zelle.*Walter", re.I), "Fun & Entertainment"),  # one-time gift to a friend
 
     # ── Donations ──
     (re.compile(r"CENTREFOREFFECTIVEALTR", re.I), "Donations"),
@@ -747,8 +762,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Taxes & Tax Fees ──
     (re.compile(r"IRS|tax payment|Pablo|estate planning|"
-                r"M Squared Tax|INTUIT \*TURBOTAX|SEATTLE MUNI INT|Wire Transfer(?! Fee)|"
-                r"Zelle.*Lana.*Kurilova", re.I), "Taxes & Tax Fees"),
+                r"M Squared Tax|INTUIT \*TURBOTAX|SEATTLE MUNI INT|Wire Transfer(?! Fee)", re.I), "Taxes & Tax Fees"),
 
     # ── Donations ──
     (re.compile(r"CENTREFOREFFECTIVEALTR|GOFNDME|GOFUNDME|"
@@ -758,12 +772,14 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Monthly Maintenance Fee|MEMBER FEE|Fee/Interest|"
                 r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee|Miscellaneous Debit", re.I), "Fees & Bank Charges"),
     (re.compile(r"CITY OF FEDERAL WAY", re.I), "Fun & Entertainment"),
-    (re.compile(r"VENMO|PAYPAL|Zelle.*Minh|BKOFAMERICA ATM|"
-                r"Zelle.*Esteban|Zelle.*Patricia|Zelle.*Paty|"
+    # (Zelle-to-person rules that resolve to Unclassified are simply omitted —
+    # they fall through to the default Unclassified below. Person-name rules
+    # that resolve to a real category live in the private overrides file.)
+    (re.compile(r"VENMO|PAYPAL|BKOFAMERICA ATM|"
                 r"Seattle Network|"
                 r"GUSTO|Returned Check|"
                 r"\+BOB\b|RAZ\*SMART|EVALO|EVACOL|EXITO WOW|"
-                r"WWW\.CLASSACTPORTRAITS|CLAUDIA PRIETO|ASTRA FESTUM", re.I), "Unclassified"),
+                r"WWW\.CLASSACTPORTRAITS|ASTRA FESTUM", re.I), "Unclassified"),
 ]
 
 
@@ -781,20 +797,15 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
     "Childcare": [
         (re.compile(r"WORLDKIDS", re.I), "Zoe Daycare (WorldKids)"),
         (re.compile(r"LINELEADER|RightAtSchool", re.I), "Victoria After School (LineLeader)"),
-        (re.compile(r"Zelle.*Danna", re.I), "Spanish Tutor (Danna)"),
         (re.compile(r"YMCA", re.I), "YMCA Kids Programs"),
         (re.compile(r"MY SPANISH NANNY", re.I), "Nanny"),
         (re.compile(r"LITTLE SPOON", re.I), "Baby Food (Little Spoon)"),
         (re.compile(r"SCHOOL OF ROCK|LESSONSINMUSIC", re.I), "Music Lessons"),
         (re.compile(r"SP WOOM BIKES", re.I), "Kids Bikes"),
-        (re.compile(r"Zelle.*Kami", re.I), "Swimming Lessons (Kami)"),
+        # (Zelle-to-person childcare rules live in the private overrides file)
     ],
     "House & Maintenance": [
-        (re.compile(r"Zelle.*Graciela", re.I), "Cleaning (Graciela)"),
-        (re.compile(r"Zelle.*Iris", re.I), "House Helper (Iris)"),
-        (re.compile(r"Zelle.*Silvia.*Diaz|Zelle.*Silvia Adriana", re.I), "House Helper (Silvia)"),
-        (re.compile(r"Zelle.*Israel", re.I), "Yard (Israel)"),
-        (re.compile(r"Zelle.*Francisco", re.I), "Contractor (Francisco)"),
+        # (Zelle-to-person house-help subcategory rules live in private overrides)
         (re.compile(r"CTLP\*AIRCO", re.I), "Laundry"),
         (re.compile(r"ECOSHIELD", re.I), "Pest Control"),
         (re.compile(r"NUTONE", re.I), "Dry Cleaning"),
@@ -839,15 +850,13 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"RUDYS\b|BLVD.*RUDY|PAULINE", re.I), "Personal Care (haircuts/nails)"),
     ],
     "Therapy & Coaching": [
-        (re.compile(r"MARGARITA QUIJANO", re.I), "Therapist (Margarita)"),
+        # Therapist name rule lives in private overrides.
         # PAYPAL coaching is handled in classify_subcategory
     ],
     "Restaurants": [
         (re.compile(r"UBER\s+\*EATS|GRUBHUB|DD \*|DLO\*RAPPI|Rappi", re.I), "Delivery"),
     ],
-    "Fun & Entertainment": [
-        (re.compile(r"Zelle.*Walter", re.I), "Gifts"),
-    ],
+    # ("Fun & Entertainment" gift subcategory rule lives in private overrides)
     "Pets": [
         (re.compile(r"LAZY DOG CRAZY DOG", re.I), "Doggie Daycare (Chilita)"),
         (re.compile(r"METLIFE PET", re.I), "Pet Insurance"),
@@ -858,7 +867,6 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"IRS", re.I), "Federal Tax"),
         (re.compile(r"SEATTLE MUNI INT", re.I), "City Tax"),
         (re.compile(r"M Squared Tax|INTUIT \*TURBOTAX", re.I), "Tax Preparation"),
-        (re.compile(r"Zelle.*Lana.*Kurilova", re.I), "Professional Services"),
         (re.compile(r"Wire Transfer(?! Fee)", re.I), "Estate Planning"),
     ],
     "Investments": [
@@ -901,6 +909,12 @@ def classify_subcategory(row: pd.Series) -> str:
     # Shopping: single transactions > $200 → "Large Purchases"
     if category == "Shopping" and abs(amount) > 200:
         return "Large Purchases"
+
+    # Private overrides (person-name rules): use the matching rule's subcategory
+    # when its category matches the row's assigned category.
+    for r in OVERRIDES["description_rules"]:
+        if r.get("subcategory") and r["category"] == category and r["_re"].search(combined):
+            return r["subcategory"]
 
     rules = SUBCATEGORY_RULES.get(category, [])
     for pattern, subcat in rules:
@@ -947,6 +961,11 @@ def classify_category(row: pd.Series) -> str:
     # Costco always goes to Groceries (overrides Capital One's Gas/Automotive tag)
     if re.search(r"COSTCO|IC\* COSTCO", desc, re.I):
         return "Groceries"
+
+    # Private overrides (person-name rules from the private data repo)
+    for r in OVERRIDES["description_rules"]:
+        if r["_re"].search(combined):
+            return r["category"]
 
     for pattern, category in CATEGORY_RULES:
         if pattern.search(combined):
@@ -1070,6 +1089,22 @@ def load_all_transactions() -> pd.DataFrame:
             combined["notes"] = ""
     else:
         combined["notes"] = ""
+
+    # Transaction-specific overrides from the private data repo (e.g. a SoFi
+    # VENMO top-up that funded a Luthien contractor payment). Matched by date +
+    # amount (+ account if given).
+    for ov in OVERRIDES.get("transaction_overrides", []):
+        mask = (
+            (combined["date"].dt.strftime("%Y-%m-%d") == ov["date"])
+            & (combined["amount"].round(2) == round(float(ov["amount"]), 2))
+        )
+        if ov.get("account"):
+            mask = mask & (combined["account"] == ov["account"])
+        combined.loc[mask, "category"] = ov["category"]
+        if ov.get("subcategory") is not None:
+            combined.loc[mask, "subcategory"] = ov.get("subcategory", "")
+        if ov.get("note"):
+            combined.loc[mask & (combined["notes"] == ""), "notes"] = ov["note"]
 
     return combined
 
