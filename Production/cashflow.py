@@ -744,7 +744,9 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"ACCESSORIZE|M S JAYPORE|Eliza Handicraft|"
                 r"LUCERO HOFMANN|REGALOS RENATA|PALACE SHOP|"
                 r"LA TIENDA DE GUADALUPE|SMOKERS PARADIZE|KTC .INDIA|"
-                r"KALAGRAM|D&D\b|AMZ\*|SWEETWATER", re.I), "Shopping"),
+                r"KALAGRAM|D&D\b|AMZ\*|SWEETWATER|"
+                r"ROTHYS|POSHMARK|PULL ?AND ?BEAR|\bHM ES\b|ETNIA|"
+                r"LA ROCA|CASAS SABATER|OLD RIDEL", re.I), "Shopping"),
 
     # ── Fun & Entertainment ──
     (re.compile(r"SUMMIT RTP|SOUTHGATE ROLLER|XCARET|Entertainment|"
