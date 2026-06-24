@@ -959,6 +959,17 @@ def classify_category(row: pd.Series) -> str:
     ):
         return "Luthien Expenses"
 
+    # Luthien travel on Scott's Aeroplan card. The card also autopays WorldKids
+    # daycare and carries Seattle daily life (parking, errands, local dining,
+    # School of Rock) — those stay personal. Only the trip charges are tagged:
+    # flights, lodging, in-trip transport, and the SF business-trip dining cluster.
+    if "aeroplan" in str(row.get("account", "")).lower() and re.search(
+        r"AIR CAN|\bUNITED\b|WIFIONBOARD|AIRBNB|LYFT|UBER|"
+        r"NINETEEN.*MISSION|SFO |WISE SONS|CHEZ MAMAN|LITTLE CHIHUAHUA",
+        desc, re.I
+    ):
+        return "Luthien Expenses"
+
     # Special case: standalone PAYPAL (not Disney/subscriptions) = Maria's coaching
     if re.match(r"^PAYPAL$", desc, re.I):
         return "Therapy & Coaching"
