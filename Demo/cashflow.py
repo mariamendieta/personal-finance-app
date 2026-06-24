@@ -746,12 +746,14 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Monthly Maintenance Fee|MEMBER FEE|Fee/Interest|"
                 r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee|Miscellaneous Debit", re.I), "Fees & Bank Charges"),
     (re.compile(r"CITY OF FEDERAL WAY", re.I), "Fun & Entertainment"),
-    (re.compile(r"VENMO|PAYPAL|Zelle.*Minh|BKOFAMERICA ATM|"
-                r"Zelle.*Esteban|Zelle.*Patricia|Zelle.*Paty|"
-                r"Zelle.*Walter|Seattle Network|"
+    # ── Cash & ATM ── (cash withdrawals; not a categorizable merchant expense)
+    (re.compile(r"BKOFAMERICA ATM|ATM WITHDRW|ATM CASH WITHDRAWAL|ATM WITHDRAWAL", re.I), "Cash & ATM"),
+    # (Person-name Zelles fall through to the default Unclassified below; real
+    # names are not listed here since this Demo file is public.)
+    (re.compile(r"VENMO|PAYPAL|Seattle Network|"
                 r"GUSTO|Returned Check|"
                 r"\+BOB\b|RAZ\*SMART|EVALO|EVACOL|EXITO WOW|"
-                r"WWW\.CLASSACTPORTRAITS|CLAUDIA PRIETO|ASTRA FESTUM", re.I), "Unclassified"),
+                r"WWW\.CLASSACTPORTRAITS|ASTRA FESTUM", re.I), "Unclassified"),
 ]
 
 

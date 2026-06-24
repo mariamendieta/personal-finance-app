@@ -666,6 +666,14 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Luthien Expenses ──
     (re.compile(r"UPWORK|LUTHIEN RESEARCH", re.I), "Luthien Expenses"),
+    # Scott's reimbursable work/AI subscriptions, on any card, tagged Luthien per
+    # the recurring-subscriptions sheet (all flagged reimbursable). Tagging by
+    # merchant gives consistent classification (the prior per-month note approach
+    # left ~12 of these inconsistently in Subscriptions). Maria's Claude team plan
+    # is $0/CD-paid so it does not appear as a charge here.
+    (re.compile(r"ANTHROPIC|CLAUDE\.AI|OPENAI|CHATGPT|OTTER\.AI|"
+                r"PLAUD\.AI|PLAUD LLC|LINKEDIN|MICROSOFT|MSFT\b|OFFICE 365",
+                re.I), "Luthien Expenses"),
 
     # ── Therapy & Coaching ──
     (re.compile(r"HOTMART|BEAUTIFUL\.AI|GAMRAY", re.I), "Therapy & Coaching"),  # coaching courses (therapist name rule is in private overrides)
@@ -716,14 +724,14 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Dining", re.I), "Restaurants"),
 
     # ── Subscriptions ──
-    (re.compile(r"CLAUDE\.AI|ANTHROPIC|OPENAI|CHATGPT|OTTER\.AI|"
-                r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART|"
-                r"X CORP|PLAUD\.AI|PLAUD LLC|LOVABLE", re.I), "Subscriptions"),
+    # (AI/work tools moved to Luthien Expenses above — reimbursable.)
+    (re.compile(r"BITWARDEN|NUULY|CONSUMERREPORTS|HOTMART|"
+                r"X CORP|LOVABLE", re.I), "Subscriptions"),
     (re.compile(r"Netflix|YouTubePremium|YouTube Premiu|Disney|GOOGLE \*Google One|Google One|"
                 r"APPLE\.COM/BILL|WAPO\.COM|TWP\*SUB", re.I), "Subscriptions"),
     (re.compile(r"PAYPAL DES:INST XFER ID:DISNEY", re.I), "Subscriptions"),
     (re.compile(r"DROPBOX|BEAUTIFUL\.AI|COPILOT MONEY|CURSOR.*IDE|"
-                r"LinkedIn|CANVA|PADDLE\.NET|ST SUBSCRIPTIONS|"
+                r"CANVA|PADDLE\.NET|ST SUBSCRIPTIONS|"
                 r"SP -ORGANIC LIFE|"
                 r"THE ECONOMIST|WAVE.*KATEAH|Kindle Svcs|BLOOMBERG|"
                 r"Stamps\.com|Stamps Add Funds|D J\*WSJ|Spotify", re.I), "Subscriptions"),
@@ -774,10 +782,12 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"Monthly Maintenance Fee|MEMBER FEE|Fee/Interest|"
                 r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee|Miscellaneous Debit", re.I), "Fees & Bank Charges"),
     (re.compile(r"CITY OF FEDERAL WAY", re.I), "Fun & Entertainment"),
+    # ── Cash & ATM ── (cash withdrawals; not a categorizable merchant expense)
+    (re.compile(r"BKOFAMERICA ATM|ATM WITHDRW|ATM CASH WITHDRAWAL|ATM WITHDRAWAL", re.I), "Cash & ATM"),
     # (Zelle-to-person rules that resolve to Unclassified are simply omitted —
     # they fall through to the default Unclassified below. Person-name rules
     # that resolve to a real category live in the private overrides file.)
-    (re.compile(r"VENMO|PAYPAL|BKOFAMERICA ATM|"
+    (re.compile(r"VENMO|PAYPAL|"
                 r"Seattle Network|"
                 r"GUSTO|Returned Check|"
                 r"\+BOB\b|RAZ\*SMART|EVALO|EVACOL|EXITO WOW|"
