@@ -953,7 +953,9 @@ def classify_category(row: pd.Series) -> str:
     combined = f"{desc} {orig_cat}"
     card_last4 = str(row.get("card_last4", ""))
 
-    # Luthien Expenses: AI tools charged on card 9430 (Maria's Luthien business card)
+    # Luthien Expenses: AI/dev tools charged on card 9430. Note: 9430 is a personal
+    # VentureX card (NOT a business card, per Scott 2026-06-24) — so only the
+    # AI/software merchants here are reimbursable, not all charges on the card.
     if card_last4 == "9430" and re.search(
         r"CLAUDE|ANTHROPIC|OPENAI|CHATGPT|OTTER|CURSOR|COPILOT(?! MONEY)|PLAUD|BEAUTIFUL\.AI",
         desc, re.I
