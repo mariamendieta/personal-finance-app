@@ -1,48 +1,83 @@
 """Refresh the Woffieta Forecast Google Sheet from pipeline outputs.
 
 Runs after cashflow.py in the monthly cycle (woffieta-data/CLAUDE.md "Adding a
-month"). Writes ONLY the cells it owns; never touches gray forecast cells,
-formulas, or anything on Summary/Annual:
+month"). Writes ONLY the cells it owns, for ONE month (--month, default: last
+complete month), and flips them to black per the actuals-black/forecast-gray
+convention (woffieta-data/Forecast/requirements.md):
 
-  - Data tab: fully rewritten (category x month rollups, income, balance snapshots)
-  - Monthly row 51 (pipeline spend total, excl Luthien Expenses + Work Travel)
-    for ONE month (--month, default: last complete month); single-month scope
-    so it never silently overwrites earlier hand-reconciled actuals. Note the
-    basis difference: pipeline totals exclude cc payments/transfers and
-    Luthien/work-travel; LIVE's ported hand actuals (Jan-Jun 2026) were entered
-    on a different basis (e.g. April: pipeline 33,260 vs LIVE 56,000). Decide
-    per month which basis wins before re-running over an existing black cell.
-  - Monthly rows 42-46 (Restaurants, Groceries, Subscriptions, Fun, Shopping:
-    the categories that map 1:1 to pipeline categories; see the Sheet's Map tab)
-  - Monthly row 65 (Maria income, desc AUGER INC / CARBON DIRECT)
-  - Monthly rows 81-83 (SoFi checking / savings / total actuals from balances.json)
+  - Monthly expense rows 4-46 via the RULES mapping below (mirrored on the
+    Sheet's hidden Map tab), the Other row (50), and the pipeline total (51:
+    all spending excl Luthien Expenses + Work Travel)
+  - Monthly row 65: ALL pipeline income for the month (matches
+    FinancialSummary's income column and LIVE's historical convention)
+  - Monthly rows 81-83: SoFi checking/savings/total from balances.json
+  - Data tab: fully rewritten (category x month rollups, income, balances)
 
-Written cells are flipped to black (actuals); requirements and the black/gray
-convention: woffieta-data/Forecast/requirements.md.
+Invariant kept: rows 4-46 + Other == row 51 for every written month.
+Single-month scope so it never silently overwrites earlier reconciled actuals.
 
 Usage (gspread not in the app venv, so run via uv):
   uv run --with gspread python refresh_forecast_sheet.py [--data-dir PATH]
       [--month YYYY-MM] [--dry-run]
 
-Phase 2 (not yet built): per-row category mapping from the Map tab
-(house help, childcare splits, utilities), portfolio balances from the
-Wofford Portfolio Asset Allocation Sheet into Summary!D6 and Annual!C93/C96.
+Phase 2 (not yet built): portfolio balances from the Wofford Portfolio Asset
+Allocation Sheet into Summary!D6 and Annual!C93/C96.
 """
 import argparse, csv, json, re, sys
 from pathlib import Path
 
 SHEET_ID = "1ylY5nD6Tfo2KtGeb3s98_A4Qlh6DwgeBng6XnCayUmM"
 TOKEN = Path.home() / ".config/mcp-gdrive/credentials-personal.json"
-EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel"}  # not personal spend
-MARIA_INCOME = re.compile(r"AUGER INC|CARBON DIRECT", re.I)
-# Monthly-tab rows whose pipeline category maps 1:1 (Map tab, status "direct")
-DIRECT_ROWS = {"Restaurants": 42, "Groceries": 43, "Subscriptions": 44,
-               "Fun & Entertainment": 45, "Shopping": 46}
-ROW_PIPELINE_TOTAL, ROW_MARIA = 51, 65
+EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel"}  # reimbursable business
+OTHER_ROW, TOTAL_ROW, MARIA_ROW = 50, 51, 65
 ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 81, 82, 83
+BLACK = {"red": 0, "green": 0, "blue": 0}
+
+# (category, desc-regex or None=category default, Monthly row); first match wins.
+# Mirror of the Sheet's Map tab — update both together.
+RULES = [
+    ("Taxes & Tax Fees", r"refund", 4),
+    ("Taxes & Tax Fees", None, 5),
+    ("Mortgage & Student Loans", r"firstmark", 9),
+    ("Mortgage & Student Loans", None, 8),
+    ("Car", r"jpmorgan|jp morgan", 12),
+    ("Car", r"pemco", 13),
+    ("Car", None, 40),
+    ("Utilities", r"pemco", 13),
+    ("Utilities", r"t-mobile|xfinity|comcast", 15),
+    ("Utilities", r"seattleutil|city light|puget sound energy", 16),
+    ("Utilities", r"southwest suburban", 18),
+    ("Utilities", r"recology", 19),
+    ("Childcare", r"lineleader", 22),
+    ("Childcare", r"danna", 23),
+    ("Childcare", r"city of burien|camp", 24),
+    ("Childcare", r"worldkids|world kids", 25),
+    ("Childcare", r"ymca", 34),
+    ("Childcare", r"kami|music", 35),
+    ("House & Maintenance", r"graciela", 29),
+    ("House & Maintenance", r"iris", 30),
+    ("House & Maintenance", r"israel", 31),
+    ("House & Maintenance", r"francisco", 32),
+    ("Fitness & Healthcare", None, 36),
+    ("Travel", r"delta|alaska|united|american air|avianca|latam|aeroplan|frontier|southwes|air canada", 38),
+    ("Travel", None, 39),
+    ("Restaurants", None, 42),
+    ("Groceries", None, 43),
+    ("Subscriptions", None, 44),
+    ("Fun & Entertainment", None, 45),
+    ("Shopping", None, 46),
+]
+LEAF_ROWS = [4, 5, 6, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26,
+             29, 30, 31, 32, 34, 35, 36, 38, 39, 40, 42, 43, 44, 45, 46]
 MONTH_COL = {m: c for c, m in enumerate(
     ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"], start=2)}
-BLACK = {"red": 0, "green": 0, "blue": 0}
+
+
+def classify(r):
+    for cat, pat, row in RULES:
+        if r["category"] == cat and (pat is None or re.search(pat, r["description"] or "", re.I)):
+            return row
+    return OTHER_ROW
 
 
 def default_data_dir():
@@ -72,34 +107,28 @@ def main():
         month = months[-1] if int(last_txn[8:10]) >= 25 else months[-2]
     if month not in months:
         sys.exit(f"No transactions for {month}")
-    year, closed = month[:4], [month]
 
-    def spend(month, pred):
-        return round(sum(-float(r["amount"]) for r in rows
-                         if r["date"][:7] == month and r["flow_type"] == "spending" and pred(r)), 2)
-
-    def income(month, pred):
-        return round(sum(float(r["amount"]) for r in rows
-                         if r["date"][:7] == month and r["flow_type"] == "income" and pred(r)), 2)
-
-    # ---- assemble Monthly writes: (row, col, value) ----
-    writes = []
-    for m in closed:
-        col = MONTH_COL[m[5:]]
-        writes.append((ROW_PIPELINE_TOTAL, col, spend(m, lambda r: r["category"] not in EXCLUDED_CATEGORIES)))
-        for cat, row in DIRECT_ROWS.items():
-            writes.append((row, col, spend(m, lambda r, cat=cat: r["category"] == cat)))
-        writes.append((ROW_MARIA, col, income(m, lambda r: MARIA_INCOME.search(r["description"] or ""))))
-    # SoFi actuals: latest snapshot per month
-    per_month = {}
-    for d in sorted(balances):
-        per_month[d[:7]] = balances[d]  # latest snapshot wins per month
-    for m, snap in per_month.items():
-        if m != month:
+    per = {row: 0.0 for row in LEAF_ROWS + [OTHER_ROW, TOTAL_ROW]}
+    inc_total = 0.0
+    for r in rows:
+        if r["date"][:7] != month:
             continue
-        col = MONTH_COL[m[5:]]
-        chk = snap.get("SOFI-JointChecking")
-        sav = snap.get("SOFI-JointSavings")
+        if r["flow_type"] == "income":
+            inc_total += float(r["amount"])
+        if r["flow_type"] != "spending" or r["category"] in EXCLUDED_CATEGORIES:
+            continue
+        amt = -float(r["amount"])
+        per[classify(r)] += amt
+        per[TOTAL_ROW] += amt
+    assert abs(sum(per[x] for x in LEAF_ROWS) + per[OTHER_ROW] - per[TOTAL_ROW]) < 0.01
+
+    col = MONTH_COL[month[5:]]
+    writes = [(row, col, round(per[row], 2)) for row in LEAF_ROWS + [OTHER_ROW, TOTAL_ROW]]
+    writes.append((MARIA_ROW, col, round(inc_total, 2)))
+    latest_snap = max((d for d in balances if d[:7] == month), default=None)
+    if latest_snap:
+        chk = balances[latest_snap].get("SOFI-JointChecking")
+        sav = balances[latest_snap].get("SOFI-JointSavings")
         if chk is not None:
             writes.append((ROW_SOFI_CHK, col, round(chk, 2)))
         if sav is not None:
@@ -108,6 +137,14 @@ def main():
             writes.append((ROW_SOFI_TOT, col, round(chk + sav, 2)))
 
     # ---- Data tab (full rewrite) ----
+    def spend(m, pred):
+        return round(sum(-float(r["amount"]) for r in rows
+                         if r["date"][:7] == m and r["flow_type"] == "spending" and pred(r)), 2)
+
+    def income(m, pred):
+        return round(sum(float(r["amount"]) for r in rows
+                         if r["date"][:7] == m and r["flow_type"] == "income" and pred(r)), 2)
+
     cats = sorted({r["category"] for r in rows if r["flow_type"] == "spending"})
     data_tab = [[f"Pipeline rollups, written by refresh_forecast_sheet.py; do not hand-edit. Source: CashFlow/all_transactions.csv + balances.json, written at the {month} close."],
                 ["Spending by category ($/mo, flow_type=spending)"], ["Category"] + months]
@@ -119,10 +156,6 @@ def main():
     data_tab.append([])
     data_tab.append(["Income ($/mo, flow_type=income)"])
     data_tab.append(["Total income"] + [income(m, lambda r: True) for m in months])
-    data_tab.append(["Maria income (desc: AUGER INC / Carbon Direct)"]
-                    + [income(m, lambda r: MARIA_INCOME.search(r["description"] or "")) for m in months])
-    data_tab.append(["Other income"]
-                    + [income(m, lambda r: not MARIA_INCOME.search(r["description"] or "")) for m in months])
     data_tab.append([])
     data_tab.append(["Balance snapshots (balances.json)"])
     accts = sorted({a for d in balances.values() for a in d})
@@ -131,7 +164,7 @@ def main():
         sofi = sum(v for k, v in balances[d].items() if k.startswith("SOFI"))
         data_tab.append([d] + [balances[d].get(a, "") for a in accts] + [round(sofi, 2)])
 
-    print(f"Monthly writes for {closed} ({len(writes)} cells):")
+    print(f"Monthly writes for {month} ({len(writes)} cells):")
     for r, c, v in writes:
         print(f"  R{r}C{c} = {v}")
     if args.dry_run:
@@ -155,8 +188,8 @@ def main():
         for r, c, _ in writes]})
     data_ws.clear()
     data_ws.update(range_name="A1", values=data_tab, value_input_option="USER_ENTERED")
-    print(f"Wrote {len(writes)} Monthly cells + Data tab. "
-          f"Check the yellow-flag items by hand: income rows other than Maria's, taxes, investments.")
+    print(f"Wrote {len(writes)} Monthly cells + Data tab. Hand-check afterward: "
+          f"Scott income (row 62), reimbursements (63), gifts (67), investments (57-59).")
 
 
 if __name__ == "__main__":
