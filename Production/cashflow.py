@@ -514,6 +514,22 @@ CC_PAYMENT_PATTERNS = re.compile(
     re.IGNORECASE,
 )
 
+# BoA-specific payment descriptions that CC_PAYMENT_PATTERNS misses.
+# Card side: payments received from checking ("ONLINE/MOBILE RECURRING",
+# "PAYMENT FROM CHK ...") and returned payments ("TRANSFER PAYMENT RETURN" —
+# the reversal of a payment, not spending). Bank side: BoA billpay to own
+# cards ("Online Scheduled Payment to ACCT# ...", "Online Banking payment
+# to CRD ..."). Both legs must be cc_payment or spending double-counts.
+CC_PAYMENT_CARD_SIDE = re.compile(
+    r"ONLINE/MOBILE PAYMENT|ONLINE/MOBILE RECURRING|"
+    r"ONLINE/MOBILE TRANSFER PAYMENT RETURN|PAYMENT FROM CHK",
+    re.IGNORECASE,
+)
+CC_PAYMENT_BANK_SIDE = re.compile(
+    r"Online Scheduled Payment to ACCT#|Online Banking payment to CRD",
+    re.IGNORECASE,
+)
+
 # Patterns for internal transfers between own accounts
 INTERNAL_TRANSFER_PATTERNS = re.compile(
     r"From Savings|To Checking|From Checking|To Savings|"
@@ -553,12 +569,12 @@ def classify_flow_type(row: pd.Series) -> str:
 
     # ── Credit card side: payments received ──
     if acct_type == "credit_card":
-        if CC_PAYMENT_PATTERNS.search(desc):
+        if CC_PAYMENT_PATTERNS.search(desc) or CC_PAYMENT_CARD_SIDE.search(desc):
             return "cc_payment"
 
     # ── Bank side: payments to credit cards ──
     if acct_type in ("checking", "savings"):
-        if CC_PAYMENT_PATTERNS.search(desc):
+        if CC_PAYMENT_PATTERNS.search(desc) or CC_PAYMENT_BANK_SIDE.search(desc):
             return "cc_payment"
 
     # ── Gift wires from Maria's family (URBARK S.A.S., Bogotá) ──
@@ -1076,6 +1092,28 @@ def load_all_transactions() -> pd.DataFrame:
         print(f"  Excluding {spillover.sum()} spillover transaction(s) from incomplete month(s)")
     combined = combined[~spillover].copy()
 
+    # ── Cross-file dedup ──
+    # The same transaction arrives twice when downloads overlap (statement +
+    # current-transactions pulls, re-downloads, over-wide date ranges). Two
+    # identical rows WITHIN one file are kept (real same-day repeat
+    # purchases); an identical row from a DIFFERENT file for the same account
+    # is an overlap artifact and is dropped. "_slot" is the row's occurrence
+    # index within its own file, so within-file repeats occupy distinct slots
+    # and only cross-file copies of the same slot collide.
+    dedup_cols = [c for c in ("account", "date", "post_date", "description",
+                              "original_category", "amount", "card_last4")
+                  if c in combined.columns]
+    combined["_slot"] = combined.groupby(
+        dedup_cols + ["source_file"], dropna=False).cumcount()
+    cross_file_dupe = combined.duplicated(subset=dedup_cols + ["_slot"], keep="first")
+    if cross_file_dupe.any():
+        for _, r in combined[cross_file_dupe].iterrows():
+            print(f"  ⚠ Dropping cross-file duplicate: {r['account']} "
+                  f"{r['post_date'].date()} {str(r['description'])[:40]!r} "
+                  f"{r['amount']} (in {r['source_file']})")
+    combined = combined[~cross_file_dupe].drop(columns="_slot")
+
+
     # Classify flow types
     combined["flow_type"] = combined.apply(classify_flow_type, axis=1)
 
@@ -1089,6 +1127,18 @@ def load_all_transactions() -> pd.DataFrame:
 
     # Sort by date
     combined = combined.sort_values("date").reset_index(drop=True)
+
+    # ── Staleness warning ──
+    # Flag a recently-active account that has gone quiet: transactions in
+    # the last 120 days but none in the last 40 (a monthly download was
+    # probably missed). Long-dormant accounts (Barclays, Citi, ...) fall out
+    # of the 120-day window and stay quiet.
+    now = pd.Timestamp.now()
+    latest = combined.groupby("account")["date"].max()
+    for acct, last in latest.items():
+        if (now - pd.Timedelta(days=120)) < last < (now - pd.Timedelta(days=40)):
+            print(f"  ⚠ {acct}: recently active but no transactions since "
+                  f"{last.date()} — is a monthly download missing?")
 
     # Merge transaction notes
     notes_file = Path(__file__).parent / "transaction_notes.json"
