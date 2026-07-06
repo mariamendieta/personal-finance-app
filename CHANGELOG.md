@@ -26,3 +26,4 @@ Notable changes to the app. Newest first. Add an entry when you ship a user-visi
 ## 2026-03-10
 
 - Initial finance dashboard with code and demo data; sidebar nav, time-period filter, features backlog.
+- 2026-07-06: Add Production/refresh_forecast_sheet.py — writes one closed month of pipeline actuals + SoFi balances into the Woffieta Forecast Google Sheet (run after cashflow.py; see woffieta-data/Forecast/requirements.md).
