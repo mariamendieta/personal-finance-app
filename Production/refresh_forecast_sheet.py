@@ -5,15 +5,15 @@ month"). Writes ONLY the cells it owns, for ONE month (--month, default: last
 complete month), and flips them to black per the actuals-black/forecast-gray
 convention (woffieta-data/Forecast/requirements.md):
 
-  - Monthly expense rows 4-46 via the RULES mapping below (mirrored on the
-    Sheet's hidden Map tab), the Other row (50), and the pipeline total (51:
+  - Monthly expense rows 4-48 via the RULES mapping below (mirrored on the
+    Sheet's hidden Map tab), the Other row (52), and the pipeline total (53:
     all spending excl Luthien Expenses + Work Travel)
-  - Monthly row 65: ALL pipeline income for the month (matches
+  - Monthly row 67: ALL pipeline income for the month (matches
     FinancialSummary's income column and LIVE's historical convention)
-  - Monthly rows 81-83: SoFi checking/savings/total from balances.json
+  - Monthly rows 83-85: SoFi checking/savings/total from balances.json
   - Data tab: fully rewritten (category x month rollups, income, balances)
 
-Invariant kept: rows 4-46 + Other == row 51 for every written month.
+Invariant kept: rows 4-48 + Other == row 53 for every written month.
 Single-month scope so it never silently overwrites earlier reconciled actuals.
 
 Usage (gspread not in the app venv, so run via uv):
@@ -29,8 +29,8 @@ from pathlib import Path
 SHEET_ID = "1ylY5nD6Tfo2KtGeb3s98_A4Qlh6DwgeBng6XnCayUmM"
 TOKEN = Path.home() / ".config/mcp-gdrive/credentials-personal.json"
 EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel"}  # reimbursable business
-OTHER_ROW, TOTAL_ROW, MARIA_ROW = 50, 51, 65
-ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 81, 82, 83
+OTHER_ROW, TOTAL_ROW, MARIA_ROW = 52, 53, 67
+ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 83, 84, 85
 BLACK = {"red": 0, "green": 0, "blue": 0}
 
 # (category, desc-regex or None=category default, Monthly row); first match wins.
@@ -42,7 +42,7 @@ RULES = [
     ("Mortgage & Student Loans", None, 8),
     ("Car", r"jpmorgan|jp morgan", 12),
     ("Car", r"pemco", 13),
-    ("Car", None, 40),
+    ("Car", None, 41),
     ("Utilities", r"pemco", 13),
     ("Utilities", r"t-mobile|xfinity|comcast", 15),
     ("Utilities", r"seattleutil|city light|puget sound energy", 16),
@@ -59,16 +59,18 @@ RULES = [
     ("House & Maintenance", r"israel", 31),
     ("House & Maintenance", r"francisco", 32),
     ("Fitness & Healthcare", None, 36),
-    ("Travel", r"delta|alaska|united|american air|avianca|latam|aeroplan|frontier|southwes|air canada", 38),
-    ("Travel", None, 39),
-    ("Restaurants", None, 42),
-    ("Groceries", None, 43),
-    ("Subscriptions", None, 44),
-    ("Fun & Entertainment", None, 45),
-    ("Shopping", None, 46),
+    ("Therapy & Coaching", None, 37),
+    ("Travel", r"delta|alaska|united|american air|avianca|latam|aeroplan|frontier|southwes|air canada", 39),
+    ("Travel", None, 40),
+    ("Restaurants", None, 43),
+    ("Groceries", None, 44),
+    ("Subscriptions", None, 45),
+    ("Fees & Bank Charges", None, 46),
+    ("Fun & Entertainment", None, 47),
+    ("Shopping", None, 48),
 ]
 LEAF_ROWS = [4, 5, 6, 8, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26,
-             29, 30, 31, 32, 34, 35, 36, 38, 39, 40, 42, 43, 44, 45, 46]
+             29, 30, 31, 32, 34, 35, 36, 37, 39, 40, 41, 43, 44, 45, 46, 47, 48]
 MONTH_COL = {m: c for c, m in enumerate(
     ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"], start=2)}
 
@@ -151,7 +153,7 @@ def main():
     for c in cats:
         tag = " (excluded from personal total)" if c in EXCLUDED_CATEGORIES else ""
         data_tab.append([c + tag] + [spend(m, lambda r, c=c: r["category"] == c) for m in months])
-    data_tab.append(["Personal spend total (Monthly row 51 basis)"]
+    data_tab.append(["Personal spend total (Monthly row 53 basis)"]
                     + [spend(m, lambda r: r["category"] not in EXCLUDED_CATEGORIES) for m in months])
     data_tab.append([])
     data_tab.append(["Income ($/mo, flow_type=income)"])
@@ -189,7 +191,7 @@ def main():
     data_ws.clear()
     data_ws.update(range_name="A1", values=data_tab, value_input_option="USER_ENTERED")
     print(f"Wrote {len(writes)} Monthly cells + Data tab. Hand-check afterward: "
-          f"Scott income (row 62), reimbursements (63), gifts (67), investments (57-59).")
+          f"Scott income (row 64), reimbursements (65), gifts (69), investments (59-61).")
 
 
 if __name__ == "__main__":
