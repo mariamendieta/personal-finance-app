@@ -10,7 +10,12 @@ convention (woffieta-data/Forecast/requirements.md):
     all spending excl Luthien Expenses + Work Travel)
   - Monthly row 67: Maria's income (desc AUGER INC / CARBON DIRECT) and
     row 69: all other pipeline income (interest, Venmo, misc deposits)
-  - Monthly rows 84-86: SoFi checking/savings/total from balances.json
+  - Monthly rows 82-83: SoFi checking/savings history from balances.json.
+    These rows hold FIRST-of-month balances (Scott also hand-enters them), so
+    closing month M writes the snapshot nearest the M+1 month boundary
+    (within 3 days) into the M+1 column, and only if that cell is empty —
+    never clobbering a hand-entered balance. Row 84 is the =SUM(82:83)
+    total formula on the Sheet; never write it.
   - Data tab: fully rewritten (category x month rollups, income, balances)
 
 Invariant kept: rows 4-48 + Other == row 53 for every written month.
@@ -35,7 +40,7 @@ TOKEN = Path.home() / ".config/mcp-gdrive/credentials-personal.json"
 EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel", "Investments"}  # not personal spend
 OTHER_ROW, TOTAL_ROW, MARIA_ROW, OTHER_INCOME_ROW = 52, 53, 67, 69
 MARIA_INCOME = re.compile(r"AUGER INC|CARBON DIRECT", re.I)
-ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 84, 85, 86
+ROW_SOFI_CHK, ROW_SOFI_SAV = 82, 83  # row 84 = SUM formula on the Sheet; row 86 = Other Liquidity Buckets — never write either
 BLACK = {"red": 0, "green": 0, "blue": 0}
 
 # (category, desc-regex or None=category default, Monthly row); first match wins.
@@ -136,16 +141,26 @@ def main():
     writes = [(row, col, round(per[row], 2)) for row in LEAF_ROWS + [OTHER_ROW, TOTAL_ROW]]
     writes.append((MARIA_ROW, col, round(inc_maria, 2)))
     writes.append((OTHER_INCOME_ROW, col, round(inc_other, 2)))
-    latest_snap = max((d for d in balances if d[:7] == month), default=None)
-    if latest_snap:
-        chk = balances[latest_snap].get("SOFI-JointChecking")
-        sav = balances[latest_snap].get("SOFI-JointSavings")
-        if chk is not None:
-            writes.append((ROW_SOFI_CHK, col, round(chk, 2)))
-        if sav is not None:
-            writes.append((ROW_SOFI_SAV, col, round(sav, 2)))
-        if chk is not None and sav is not None:
-            writes.append((ROW_SOFI_TOT, col, round(chk + sav, 2)))
+
+    # SoFi first-of-month balance: closing month M records the balance at the
+    # M+1 boundary. Use the snapshot within 3 days of that boundary (if any),
+    # target the M+1 column, and defer to any hand-entered value already there.
+    from datetime import date, timedelta
+    y, m = int(month[:4]), int(month[5:7])
+    sofi_writes = []
+    if m < 12:  # Dec close boundary is next year's Jan; no column for it
+        boundary = date(y, m + 1, 1)
+        bcol = MONTH_COL[f"{m + 1:02d}"]
+        near = [d for d in balances
+                if abs((date(*map(int, d.split("-"))) - boundary).days) <= 3]
+        if near:
+            snap = min(near, key=lambda d: abs((date(*map(int, d.split("-"))) - boundary).days))
+            chk = balances[snap].get("SOFI-JointChecking")
+            sav = balances[snap].get("SOFI-JointSavings")
+            if chk is not None:
+                sofi_writes.append((ROW_SOFI_CHK, bcol, round(chk, 2)))
+            if sav is not None:
+                sofi_writes.append((ROW_SOFI_SAV, bcol, round(sav, 2)))
 
     # ---- Data tab (full rewrite) ----
     def spend(m, pred):
@@ -178,6 +193,8 @@ def main():
     print(f"Monthly writes for {month} ({len(writes)} cells):")
     for r, c, v in writes:
         print(f"  R{r}C{c} = {v}")
+    for r, c, v in sofi_writes:
+        print(f"  R{r}C{c} = {v} (SoFi first-of-month, skipped if hand-entered)")
     if args.dry_run:
         print("dry run; nothing written")
         return
@@ -187,6 +204,13 @@ def main():
     gc = gspread.authorize(Credentials.from_authorized_user_file(str(TOKEN)))
     sh = gc.open_by_key(SHEET_ID)
     mon, data_ws = sh.worksheet("Monthly"), sh.worksheet("Data")
+
+    for r, c, v in sofi_writes:
+        existing = mon.cell(r, c).value
+        if existing in (None, ""):
+            writes.append((r, c, v))
+        else:
+            print(f"  R{r}C{c}: kept hand-entered {existing}, skipped {v}")
 
     mon.batch_update([{"range": gspread.utils.rowcol_to_a1(r, c), "values": [[v]]} for r, c, v in writes],
                      value_input_option="USER_ENTERED")
