@@ -56,7 +56,7 @@ RULES = [
     ("Childcare", r"ymca", 34),
     ("Childcare", r"kami|music", 35),
     ("House & Maintenance", r"graciela", 29),
-    ("House & Maintenance", r"iris", 30),
+    ("House & Maintenance", r"iris|adriana", 30),  # row renamed "Iris + Adriana" 2026-07-06; covers Silvia Adriana Zelles
     ("House & Maintenance", r"israel", 31),
     ("House & Maintenance", r"francisco", 32),
     ("Fitness & Healthcare", None, 36),
