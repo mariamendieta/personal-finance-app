@@ -653,7 +653,8 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"SDOT PAYBYPHONE|CTLP\*CSC SERVICEWORKS|Gas/Automotive|"
                 r"PIKE PLACE MARKET PDA|WA STATE DOL|WA DOL LIC|"
                 r"SPOTHERO|DIAMOND PARKING|HONK PARKING|ParkWhiz|"
-                r"TESLA SUPERCHARGER|CHARGEPOINT|SPNW Seattle Citations", re.I), "Car"),
+                r"TESLA SUPERCHARGER|CHARGEPOINT|SPNW Seattle Citations|"
+                r"SPEEDWAY|PREMIUM PARKING", re.I), "Car"),
 
     # ── Utilities ──
     (re.compile(r"T-MOBILE PARK", re.I), "Fun & Entertainment"),
@@ -669,11 +670,12 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── House & Maintenance ──
     # (Zelle-to-person house-help rules live in the private overrides file.)
-    (re.compile(r"ECOSHIELD PEST|NUTONE DRY CLEANERS", re.I), "House & Maintenance"),
+    (re.compile(r"ECOSHIELD PEST|NUTONE DRY CLEANERS|DUANE.S GARDEN PATCH", re.I), "House & Maintenance"),
 
     # ── Fitness & Healthcare ──
     (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Fitness & Healthcare"),
-    (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy|DENTIS", re.I), "Fitness & Healthcare"),
+    (re.compile(r"DENTIST|Amazon Pharmacy|AMZNPharma|THERAPIST|Health Care|A\.Z\. Pharmacy|DENTIS", re.I), "Fitness & Healthcare"),
+    (re.compile(r"BIG 5 SPORTING", re.I), "Fitness & Healthcare"),  # sports gear (Scott's call 2026-07-06)
     (re.compile(r"PROVIDENCE|BLVD.*RUDY|RUDYS\b|PAULINE.S NAIL SPA", re.I), "Fitness & Healthcare"),  # RUDYS = Rudy's Barbershop (haircuts)
     (re.compile(r"PAYPAL \*SEATAC BMX|PP\*SURF BALLARD", re.I), "Fitness & Healthcare"),
 
@@ -703,6 +705,13 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"MERPAGO\*TRANSPORTE|MERPAGO\*UBALDO|MERPAGO\*TOURSELSI|"
                 r"CABIFY|MTA\*NYCT|TFL TRAVEL|CITIBIK|EMPRESA MALAGUENA|"
                 r"WSFERRIES|MARTA TVM|CARCAMOVIL", re.I), "Travel"),
+    (re.compile(r"TSA PRECHECK|WI-FI ONBOARD|SJC MI CASA", re.I), "Travel"),  # SJC = San Jose airport meal (Scott's call 2026-07-06)
+    # May 2026 Spain-trip tail. SUMUP is a generic EU payment processor — keep it
+    # scoped to the known merchant (bare SUMUP would steal SUMUP *MR GS CAFE from
+    # Restaurants). HM ES = H&M Spain; the store-numbered form (HM ES0200) escapes
+    # the old Shopping \bHM ES\b boundary, so the merchant lives here now.
+    (re.compile(r"H\. BARCELONA|FLORENCIA RAMBLA|\bHM ES|SUMUP.*MARIE CHRISTIANE|"
+                r"ESPASA CALPE|BACALLANERIES", re.I), "Travel"),
     (re.compile(r"WIFIONBOARD|BA INFLIGHT|"
                 r"Chairs/Carts|Nyx\*SmarteCarte|SmarteCarte|NYX\*PGGroup|"
                 r"Goldcar|TIDES OF ANACORTES|ACE OF ANACORTES", re.I), "Travel"),
@@ -728,6 +737,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"MEAL TRAIN|STK DENVER|EMERALD CITY SMOOTHIE|MARKETIME FOODS|"
                 r"JACK IN THE BOX|POTBELLY|CASABLANCA EXPRESS|"
                 r"SHACK N STACK|TAQUERIA EL RINCON|7-ELEVEN", re.I), "Restaurants"),
+    (re.compile(r"DELAURENTI", re.I), "Restaurants"),
     (re.compile(r"TST\*|SQ \*|CAFE TURKO|LIL JON|MARTHA|EL RINCONSITO|"
                 r"LA COSTA MEXICAN|SAL Y LIMON|STARBUCKS|JOECOFFEE|"
                 r"JOHNNY FOLEYS|PANDORA KARAOKE|SQ \*CHUCK|"
@@ -751,14 +761,15 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"CANVA|PADDLE\.NET|ST SUBSCRIPTIONS|"
                 r"SP -ORGANIC LIFE|"
                 r"THE ECONOMIST|WAVE.*KATEAH|Kindle Svcs|BLOOMBERG|"
-                r"Stamps\.com|Stamps Add Funds|D J\*WSJ|Spotify", re.I), "Subscriptions"),
+                r"Stamps\.com|Stamps Add Funds|D J\*WSJ|Spotify|"
+                r"Prime Video|Google Ultimate Guita|GODADDY", re.I), "Subscriptions"),
 
     # ── Shopping ──
     (re.compile(r"AMAZON|Amazon\.com|Amazon Pharmacy", re.I), "Shopping"),
     (re.compile(r"TARGET|REI\s|REI\.COM|SKECHERS|SEAHAWKS.*RETAIL|"
                 r"GREGG.S GREENLAKE|SP RYZESUPERFOODS|"
                 r"HOME DEPOT|B&N-BOOKS|BARNES.*NOBLE|FIREWORKS SEATAC|"
-                r"SP BASECAMP", re.I), "Shopping"),
+                r"SP BASECAMP|OFFICE DEPOT|BOOKISH", re.I), "Shopping"),
     (re.compile(r"IKEA|H&M|GAP US|ARITZIA|ROSS STORE|GOODWILL|"
                 r"UNIQLO|BIBA FASHION|SHOPPERS STOP|SPEEDO|"
                 r"SP ALLBIRDS|SP KUT FROM|JOANN STORES|SP NORTHWEST YARNS|"
@@ -770,7 +781,7 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
                 r"LUCERO HOFMANN|REGALOS RENATA|PALACE SHOP|"
                 r"LA TIENDA DE GUADALUPE|SMOKERS PARADIZE|KTC .INDIA|"
                 r"KALAGRAM|D&D\b|AMZ\*|SWEETWATER|"
-                r"ROTHYS|POSHMARK|PULL ?AND ?BEAR|\bHM ES\b|ETNIA|"
+                r"ROTHYS|POSHMARK|PULL ?AND ?BEAR|ETNIA|"
                 r"LA ROCA|CASAS SABATER|OLD RIDEL", re.I), "Shopping"),
 
     # ── Fun & Entertainment ──
@@ -797,7 +808,9 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
 
     # ── Catch-alls ──
     (re.compile(r"Monthly Maintenance Fee|MEMBER FEE|Fee/Interest|"
-                r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee|Miscellaneous Debit", re.I), "Fees & Bank Charges"),
+                r"ANNUAL FEE|CASH EQUIVALENT.*FEE|Wire Transfer Fee|Miscellaneous Debit|"
+                r"LATE FEE FOR PAYMENT DUE|INTEREST CHARGED ON PURCHASES|"
+                r"ANNUAL MEMBERSHIP FEE|\bUSPS\b", re.I), "Fees & Bank Charges"),
     (re.compile(r"CITY OF FEDERAL WAY", re.I), "Fun & Entertainment"),
     # ── Cash & ATM ── (cash withdrawals; not a categorizable merchant expense)
     (re.compile(r"BKOFAMERICA ATM|ATM WITHDRW|ATM CASH WITHDRAWAL|ATM WITHDRAWAL", re.I), "Cash & ATM"),
