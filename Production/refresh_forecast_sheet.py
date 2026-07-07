@@ -20,8 +20,12 @@ Usage (gspread not in the app venv, so run via uv):
   uv run --with gspread python refresh_forecast_sheet.py [--data-dir PATH]
       [--month YYYY-MM] [--dry-run]
 
-Phase 2 (not yet built): portfolio balances from the Wofford Portfolio Asset
-Allocation Sheet into Summary!D6 and Annual!C93/C96.
+Portfolio balances (phase 2, done 2026-07-06, no script involvement): the
+Forecast Sheet's own LIVE-Investments tab is the source of truth for
+investment balances (the separate Asset Allocation Sheet is an archived
+snapshot). Summary!D6 and Annual!C93/C96 are live formulas off that tab
+(B69 retirement + B70 non-retirement-excl-SoFi, in $k) — do not overwrite
+them from this script.
 """
 import argparse, csv, json, re, sys
 from pathlib import Path
