@@ -8,9 +8,9 @@ convention (woffieta-data/Forecast/requirements.md):
   - Monthly expense rows 4-48 via the RULES mapping below (mirrored on the
     Sheet's hidden Map tab), the Other row (52), and the pipeline total (53:
     all spending excl Luthien Expenses + Work Travel)
-  - Monthly row 67: ALL pipeline income for the month (matches
-    FinancialSummary's income column and LIVE's historical convention)
-  - Monthly rows 83-85: SoFi checking/savings/total from balances.json
+  - Monthly row 67: Maria's income (desc AUGER INC / CARBON DIRECT) and
+    row 69: all other pipeline income (interest, Venmo, misc deposits)
+  - Monthly rows 84-86: SoFi checking/savings/total from balances.json
   - Data tab: fully rewritten (category x month rollups, income, balances)
 
 Invariant kept: rows 4-48 + Other == row 53 for every written month.
@@ -29,8 +29,9 @@ from pathlib import Path
 SHEET_ID = "1ylY5nD6Tfo2KtGeb3s98_A4Qlh6DwgeBng6XnCayUmM"
 TOKEN = Path.home() / ".config/mcp-gdrive/credentials-personal.json"
 EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel", "Investments"}  # not personal spend
-OTHER_ROW, TOTAL_ROW, MARIA_ROW = 52, 53, 67
-ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 83, 84, 85
+OTHER_ROW, TOTAL_ROW, MARIA_ROW, OTHER_INCOME_ROW = 52, 53, 67, 69
+MARIA_INCOME = re.compile(r"AUGER INC|CARBON DIRECT", re.I)
+ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 84, 85, 86
 BLACK = {"red": 0, "green": 0, "blue": 0}
 
 # (category, desc-regex or None=category default, Monthly row); first match wins.
@@ -111,12 +112,15 @@ def main():
         sys.exit(f"No transactions for {month}")
 
     per = {row: 0.0 for row in LEAF_ROWS + [OTHER_ROW, TOTAL_ROW]}
-    inc_total = 0.0
+    inc_maria = inc_other = 0.0
     for r in rows:
         if r["date"][:7] != month:
             continue
         if r["flow_type"] == "income":
-            inc_total += float(r["amount"])
+            if MARIA_INCOME.search(r["description"] or ""):
+                inc_maria += float(r["amount"])
+            else:
+                inc_other += float(r["amount"])
         if r["flow_type"] != "spending" or r["category"] in EXCLUDED_CATEGORIES:
             continue
         amt = -float(r["amount"])
@@ -126,7 +130,8 @@ def main():
 
     col = MONTH_COL[month[5:]]
     writes = [(row, col, round(per[row], 2)) for row in LEAF_ROWS + [OTHER_ROW, TOTAL_ROW]]
-    writes.append((MARIA_ROW, col, round(inc_total, 2)))
+    writes.append((MARIA_ROW, col, round(inc_maria, 2)))
+    writes.append((OTHER_INCOME_ROW, col, round(inc_other, 2)))
     latest_snap = max((d for d in balances if d[:7] == month), default=None)
     if latest_snap:
         chk = balances[latest_snap].get("SOFI-JointChecking")
@@ -191,7 +196,7 @@ def main():
     data_ws.clear()
     data_ws.update(range_name="A1", values=data_tab, value_input_option="USER_ENTERED")
     print(f"Wrote {len(writes)} Monthly cells + Data tab. Hand-check afterward: "
-          f"Scott income (row 64), reimbursements (65), gifts (69), investments (59-61).")
+          f"Scott income (row 64), reimbursements (65), gifts (70), investments (59-61).")
 
 
 if __name__ == "__main__":
