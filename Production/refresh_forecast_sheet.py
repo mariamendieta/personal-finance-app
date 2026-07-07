@@ -28,7 +28,7 @@ from pathlib import Path
 
 SHEET_ID = "1ylY5nD6Tfo2KtGeb3s98_A4Qlh6DwgeBng6XnCayUmM"
 TOKEN = Path.home() / ".config/mcp-gdrive/credentials-personal.json"
-EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel"}  # reimbursable business
+EXCLUDED_CATEGORIES = {"Luthien Expenses", "Work Travel", "Investments"}  # not personal spend
 OTHER_ROW, TOTAL_ROW, MARIA_ROW = 52, 53, 67
 ROW_SOFI_CHK, ROW_SOFI_SAV, ROW_SOFI_TOT = 83, 84, 85
 BLACK = {"red": 0, "green": 0, "blue": 0}
