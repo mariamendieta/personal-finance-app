@@ -95,7 +95,6 @@ DISPLAY_CATEGORY_ORDER = [
 
 VENDOR_RULES = [
     (re.compile(r"JPMORGAN CHASE|JPMorgan Chase", re.I), "JPMorgan Chase"),
-    (re.compile(r"WORLDKIDS", re.I), "Worldkids School"),
     (re.compile(r"IC\*.*COSTCO|IC\*.*INSTACAR|IC\* INSTACART|INSTACART", re.I), "Instacart"),
     (re.compile(r"COSTCO WHSE|COSTCO GAS", re.I), "Costco"),
     (re.compile(r"UBER\s+\*EATS", re.I), "Uber Eats"),
@@ -115,7 +114,6 @@ VENDOR_RULES = [
     (re.compile(r"NORBU THE MONTANNA", re.I), "Norbu The Montanna"),
     (re.compile(r"AIRBNB", re.I), "Airbnb"),
     (re.compile(r"VIDANTA", re.I), "Vidanta"),
-    (re.compile(r"LINELEADER", re.I), "LineLeader"),
     (re.compile(r"YMCA", re.I), "YMCA"),
     (re.compile(r"SAFEWAY", re.I), "Safeway"),
     (re.compile(r"QFC", re.I), "QFC"),
@@ -127,8 +125,24 @@ VENDOR_RULES = [
 ]
 
 
+def _load_private_vendor_rules() -> list:
+    """Household-specific vendor names (kids' programs etc.) live in the private
+    data repo's classification_overrides.json ("vendor_rules"), not in this
+    public repo. Missing file or key means no extra rules."""
+    path = DATA_DIR / "classification_overrides.json"
+    if not path.exists():
+        return []
+    import json
+    rules = json.loads(path.read_text()).get("vendor_rules", [])
+    return [(re.compile(r["pattern"], re.I), r["name"]) for r in rules]
+
+
+PRIVATE_VENDOR_RULES = _load_private_vendor_rules()
+
+
 def normalize_vendor(desc: str) -> str:
-    for pattern, name in VENDOR_RULES:
+    # Private rules first so household-specific names win over generic ones.
+    for pattern, name in PRIVATE_VENDOR_RULES + VENDOR_RULES:
         if pattern.search(desc):
             return name
     return desc

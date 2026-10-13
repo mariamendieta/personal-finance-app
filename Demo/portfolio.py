@@ -248,7 +248,7 @@ def parse_sofi_brokerage(filepath: Path, account_name: str) -> pd.DataFrame:
 
 
 
-def parse_marias_roth(filepath: Path) -> pd.DataFrame:
+def parse_roth_ira(filepath: Path) -> pd.DataFrame:
     """Parse Viviana's Roth IRA (Symbol, Name, Price, Quantity, Current Balance)."""
     df = pd.read_csv(filepath, on_bad_lines="skip")
     rows = []
@@ -343,8 +343,6 @@ def load_all_holdings() -> pd.DataFrame:
     chase_files = {
         "ChaseTaxableBrokerage.csv": "Chase Taxable Brokerage",
         "ChaseParametric.csv": "Chase Parametric",
-        "ScottsRothIRA_Chase.csv": "Michael's Roth IRA",
-        "ScottsTraditionalIRA.csv": "Michael's Traditional IRA",
         # Demo accounts
         "JointBrokerage.csv": "Joint Brokerage",
         "MichaelsRothIRA.csv": "Michael's Roth IRA",
@@ -373,15 +371,14 @@ def load_all_holdings() -> pd.DataFrame:
             frames.append(df)
             print(f"  Loaded SoFi Self-Directed: {len(df)} holdings, ${df['value'].sum():,.2f}")
 
-    # Roth IRA accounts (marias_roth parser format)
+    # Roth IRA accounts (roth_ira parser format)
     roth_files = {
-        "Marias Roth IRA.csv": "Viviana's Roth IRA",
         "Vivianas Roth IRA.csv": "Viviana's Roth IRA",  # Demo
     }
     for filename, account in roth_files.items():
         fp = DATA_DIR / filename
         if fp.exists():
-            df = parse_marias_roth(fp)
+            df = parse_roth_ira(fp)
             if not df.empty:
                 df["account"] = account
                 df["account_type"] = ACCOUNT_TYPES.get(account, "Roth IRA")
@@ -390,7 +387,6 @@ def load_all_holdings() -> pd.DataFrame:
 
     # 401k accounts (simple Investment/Balance format)
     simple_401k_files = {
-        "Maria Carbon Direct 401k.csv": "Viviana 401k",
         "Michaels 401k.csv": "Michael's 401k",  # Demo
     }
     for filename, account in simple_401k_files.items():
@@ -403,7 +399,6 @@ def load_all_holdings() -> pd.DataFrame:
 
     # 401k accounts (Vanguard format)
     vanguard_401k_files = {
-        "Maria Accrue LevelTen 401k.csv": "Viviana Secondary 401k",
         "Vivianas 401k.csv": "Viviana's 401k",  # Demo
     }
     for filename, account in vanguard_401k_files.items():

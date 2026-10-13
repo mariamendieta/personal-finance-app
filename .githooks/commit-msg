@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Block commit messages that contain private household terms (see CLAUDE.md).
+exec "$(git rev-parse --show-toplevel)/scripts/check-public-denylist.sh" --msg "$1"

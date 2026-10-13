@@ -146,7 +146,7 @@ DEMO_MICHAEL_401K = [
     ("FID GROWTH CO POOL CL 3", 4000),
 ]
 
-# 4. Viviana's Roth IRA (marias_roth format)
+# 4. Viviana's Roth IRA (roth_ira format)
 DEMO_VIVIANA_ROTH = [
     ("VBTLX", "Vanguard Total Bond Market Index Fund", 9.81, 800),
     ("VFIAX", "Vanguard 500 Index Fund", 628.68, 15),
@@ -549,8 +549,8 @@ def generate_sofi_brokerage_csv(filepath, holdings, scale):
                         f"${gain:,.2f}", f"${value:,.2f}"])
 
 
-def generate_marias_roth_csv(filepath, holdings, scale):
-    """Generate Maria's Roth IRA CSV."""
+def generate_roth_ira_csv(filepath, holdings, scale):
+    """Generate a Roth IRA CSV."""
     filepath.parent.mkdir(parents=True, exist_ok=True)
     total = 0
     rows = []
@@ -717,7 +717,7 @@ def main():
     generate_401k_simple_csv(inv_dir / "Michaels 401k.csv", DEMO_MICHAEL_401K, scale)
 
     # 4. Viviana's Roth IRA
-    generate_marias_roth_csv(inv_dir / "Vivianas Roth IRA.csv", DEMO_VIVIANA_ROTH, scale)
+    generate_roth_ira_csv(inv_dir / "Vivianas Roth IRA.csv", DEMO_VIVIANA_ROTH, scale)
 
     # 5. Viviana's 401k
     generate_401k_vanguard_csv(inv_dir / "Vivianas 401k.csv", DEMO_VIVIANA_401K, scale)

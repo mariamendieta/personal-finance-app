@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Block staged changes that add private household terms (see CLAUDE.md).
+exec "$(git rev-parse --show-toplevel)/scripts/check-public-denylist.sh"

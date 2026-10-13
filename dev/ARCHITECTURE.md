@@ -22,7 +22,7 @@ CSV exports (bank/CC)  ─┐
 ## Data directory resolution
 
 `config.py` reads `DATA_MODE` (`demo` | `production`), then sets:
-- `DATA_DIR` → `Demo/` or `Production/`
+- `DATA_DIR` → `Demo/` or `PRODUCTION_DATA_DIR` (the private data repo clone)
 - `CASHFLOW_ROOT`, `CASHFLOW_MONTHLY`, `PORTFOLIO_ROOT` under it
 - `FAMILY_NAME`, `IS_DEMO` for display
 
@@ -53,6 +53,6 @@ So the same code serves synthetic demo data or the real private data, chosen ent
 
 ## Known constraints
 
-- Pipeline scripts are duplicated in `Demo/` and `Production/`.
+- Pipeline scripts are duplicated: generic copies in `Demo/`, household copies in the private data repo.
 - No automated test suite yet.
 - CORS is open to `localhost:3000/3001` only (local-first app).

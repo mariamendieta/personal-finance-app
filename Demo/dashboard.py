@@ -606,7 +606,6 @@ if section == "cashflow":
 
             VENDOR_RULES = [
                 (_re.compile(r"JPMORGAN CHASE|JPMorgan Chase", _re.I), "JPMorgan Chase"),
-                (_re.compile(r"WORLDKIDS", _re.I), "Worldkids School"),
                 (_re.compile(r"IC\*.*COSTCO|IC\*.*INSTACAR|IC\* INSTACART|INSTACART", _re.I), "Instacart"),
                 (_re.compile(r"COSTCO WHSE|COSTCO GAS", _re.I), "Costco"),
                 (_re.compile(r"UBER\s+\*EATS", _re.I), "Uber Eats"),
@@ -626,7 +625,6 @@ if section == "cashflow":
                 (_re.compile(r"NORBU THE MONTANNA", _re.I), "Norbu The Montanna"),
                 (_re.compile(r"AIRBNB", _re.I), "Airbnb"),
                 (_re.compile(r"VIDANTA", _re.I), "Vidanta"),
-                (_re.compile(r"LINELEADER", _re.I), "LineLeader"),
                 (_re.compile(r"YMCA", _re.I), "YMCA"),
                 (_re.compile(r"SAFEWAY", _re.I), "Safeway"),
                 (_re.compile(r"QFC", _re.I), "QFC"),
@@ -1001,11 +999,10 @@ elif section == "investments":
         PORTFOLIO_FILES = [
             ("Chase Taxable Brokerage", "ChaseTaxableBrokerage.csv"),
             ("Chase Parametric", "ChaseParametric.csv"),
-            ("Michael's Roth IRA (Chase)", "ScottsRothIRA_Chase.csv"),
-            ("Michael's Traditional IRA", "ScottsTraditionalIRA.csv"),
+            ("Michael's Roth IRA", "MichaelsRothIRA.csv"),
             ("SoFi Joint", "SOFI_Joint.csv"),
             ("SoFi Self-Directed", "SOFI_SelfDirected.csv"),
-            ("Viviana's Roth IRA", "Marias Roth IRA.csv"),
+            ("Viviana's Roth IRA", "Vivianas Roth IRA.csv"),
             ("Viviana 401k", "Viviana 401k.csv"),
             ("Viviana Secondary 401k", "Viviana Secondary 401k.csv"),
         ]

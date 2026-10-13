@@ -1,7 +1,7 @@
 date,post_date,description,original_category,amount,account,account_type,source_file,month_folder,flow_type,category,subcategory,transaction_date,notes
 2025-12-01,2025-12-01,GREENTECH SOLUTIONS DIRECT_DEPOSIT,DIRECT_DEPOSIT,2781.33,SoFi-JointChecking,checking,SOFI-JointChecking_Dec25.csv,Dec25,income,Income,Michael Salary,2025-12-01,
 2025-12-01,2025-12-01,PACIFIC NORTHWEST CONSULTING DIRECT_DEPOSIT,DIRECT_DEPOSIT,1524.7,SoFi-JointChecking,checking,SOFI-JointChecking_Dec25.csv,Dec25,income,Income,Viviana Salary,2025-12-01,
-2025-12-02,2025-12-02,ATM WITHDRAWAL,DEBIT,-67.43,Chase Checking,checking,Chase-Checking_Dec25.csv,Dec25,spending,Unclassified,,2025-12-02,
+2025-12-02,2025-12-02,ATM WITHDRAWAL,DEBIT,-67.43,Chase Checking,checking,Chase-Checking_Dec25.csv,Dec25,spending,Cash & ATM,,2025-12-02,
 2025-12-03,2025-12-03,H&M US ONLINE,Shopping,-106.93,Aeroplan,credit_card,Aeroplan_Dec25.CSV,Dec25,spending,Shopping,,2025-12-02,
 2025-12-03,2025-12-03,ALDI STORE 09876,Groceries,-92.51,Aeroplan,credit_card,Aeroplan_Dec25.CSV,Dec25,spending,Groceries,,2025-12-02,
 2025-12-03,2025-12-03,THAI BAMBOO REST,Food & Drink,-19.87,Aeroplan,credit_card,Aeroplan_Dec25.CSV,Dec25,spending,Unclassified,,2025-12-02,
@@ -20,7 +20,7 @@ date,post_date,description,original_category,amount,account,account_type,source_
 2025-12-09,2025-12-09,ROSS STORES #567,Shopping,-106.32,Aeroplan,credit_card,Aeroplan_Dec25.CSV,Dec25,spending,Shopping,,2025-12-06,
 2025-12-10,2025-12-10,POS PURCHASE,,-84.74,BoA-Checking,checking,BoA-Checking_Dec25.csv,Dec25,spending,Unclassified,,2025-12-10,
 2025-12-10,2025-12-10,CHASE CREDIT CRD AUTOPAY,DIRECT_PAY,-1267.98,SoFi-JointChecking,checking,SOFI-JointChecking_Dec25.csv,Dec25,cc_payment,cc_payment,,2025-12-10,
-2025-12-10,2025-12-10,JPMORGAN CHASE,DIRECT_PAY,-268.32,SoFi-JointChecking,checking,SOFI-JointChecking_Dec25.csv,Dec25,spending,Car,Subaru Lease,2025-12-10,
+2025-12-10,2025-12-10,JPMORGAN CHASE,DIRECT_PAY,-268.32,SoFi-JointChecking,checking,SOFI-JointChecking_Dec25.csv,Dec25,spending,Car,Car Lease,2025-12-10,
 2025-12-12,2025-12-12,Zelle Payment to Alex,ZELLE,-78.19,SoFi-JointChecking,checking,SOFI-JointChecking_Dec25.csv,Dec25,spending,Unclassified,,2025-12-12,
 2025-12-12,2025-12-12,ZELLE PAYMENT TO ALEX,DEBIT,-103.45,Chase Checking,checking,Chase-Checking_Dec25.csv,Dec25,spending,Unclassified,,2025-12-12,
 2025-12-13,2025-12-13,PHO BAC SUP SHOP,Food & Drink,-29.54,Aeroplan,credit_card,Aeroplan_Dec25.CSV,Dec25,spending,Unclassified,,2025-12-11,

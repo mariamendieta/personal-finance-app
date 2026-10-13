@@ -53,24 +53,26 @@ This app supports a separate private data repo so you can keep your financial da
 git clone https://github.com/mariamendieta/personal-finance-app.git
 cd personal-finance-app
 
-# 2. Clone your data repo into Production/
-git clone https://github.com/YOUR_USER/YOUR_DATA_REPO.git Production
+# 2. Clone your private data repo next to the app, and copy the generic
+#    pipeline scripts into it as a starting point (customize them there)
+git clone https://github.com/YOUR_USER/YOUR_DATA_REPO.git ../my-finance-data
+cp Demo/*.py ../my-finance-data/
 
 # 3. Run the cash flow pipeline
-cd Production && python3 cashflow.py && cd ..
+(cd ../my-finance-data && python3 cashflow.py)
 
 # 4. Start the app in production mode
-DATA_MODE=production python3 -m uvicorn backend.app.main:app --port 8000 &
+DATA_MODE=production PRODUCTION_DATA_DIR=../my-finance-data python3 -m uvicorn backend.app.main:app --port 8000 &
 cd frontend && npm run dev -- -p 3001
 ```
 
 ### Production data structure
 
-Your private data repo should have this structure inside `Production/`:
+Your private data repo should have this structure:
 
 ```
-Production/
-├── cashflow.py                 ← cash flow pipeline script
+my-finance-data/
+├── cashflow.py                 ← your pipeline script (customized copy of Demo/cashflow.py)
 ├── ActionItems.md              ← action items table
 ├── accounts.json               ← account definitions
 ├── transaction_notes.json      ← notes on individual transactions
@@ -121,15 +123,14 @@ personal-finance-app/
 │   ├── cashflow.py
 │   ├── CashFlow/
 │   └── InvestmentPortfolio/
-├── Production/                 ← .gitignored (private data repo)
 └── BrandGuidelines/
 ```
 
 ## Monthly Update Workflow
 
 1. Download CSV exports from all bank/credit card accounts
-2. Upload them via the app's upload page, or place them in `Production/CashFlow/{MonthYear}/`
-3. Run the pipeline: `cd Production && python3 cashflow.py`
+2. Upload them via the app's upload page, or place them in `CashFlow/{MonthYear}/` in your data repo
+3. Run the pipeline: `python3 cashflow.py` in your data repo
 4. Restart the backend to pick up new data
 5. Review the dashboard for any unclassified transactions
 

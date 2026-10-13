@@ -1,4 +1,6 @@
-# Production data (lives in separate private repo: woffieta-data)
+# Production data AND the household pipeline scripts live in the private
+# woffieta-data repo. Never commit anything under Production/ here.
+Production/
 Production/CashFlow/
 Production/InvestmentPortfolio/
 Production/ActionItems.md

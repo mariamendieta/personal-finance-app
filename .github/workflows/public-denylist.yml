@@ -1,0 +1,30 @@
+# Public-repo check in CI. The denylist comes from the repository secret
+# PUBLIC_DENYLIST (one term per line) so it is never published. Output names
+# only line positions, never matched text, because Actions logs are public.
+# Skips with a notice until the secret is set.
+name: public-repo check
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  denylist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan new commits for private household terms
+        env:
+          DENYLIST: ${{ secrets.PUBLIC_DENYLIST }}
+          BEFORE: ${{ github.event.before || github.event.pull_request.base.sha }}
+          AFTER: ${{ github.sha }}
+        run: |
+          if [ -z "$DENYLIST" ]; then
+            echo "::notice::PUBLIC_DENYLIST secret not set; skipping."
+            exit 0
+          fi
+          printf '%s\n' "$DENYLIST" > "$RUNNER_TEMP/denylist.txt"
+          # A force-push or first push can leave BEFORE unknown; fall back to the last commit.
+          if git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then range="$BEFORE..$AFTER"; else range="$AFTER~1..$AFTER"; fi
+          PUBLIC_DENYLIST="$RUNNER_TEMP/denylist.txt" bash scripts/check-public-denylist.sh --range "$range" --quiet

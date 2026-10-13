@@ -1,5 +1,5 @@
 """
-Cash Flow Compiler — Mendieta-Umana Family Finances
+Cash Flow Compiler — Demo Family Finances
 
 Reads all checking, savings, and credit card CSV exports from:
     Data/CashFlow/<MonthYY>/Credit Cards/*.csv
@@ -450,7 +450,7 @@ def detect_parser(filepath: Path):
         return parse_capital_one, "VentureX"
     elif "ventureone" in name:
         return parse_capital_one, "VentureOne"
-    elif "scott" in name and "alaska" in name:
+    elif "michael" in name and "alaska" in name:
         return parse_alaska_card, "Alaska-Michael"
     elif "cash-rewards" in name or "cashrewards" in name:
         return parse_alaska_card, "CashRewards-Michael"
@@ -505,10 +505,10 @@ INTERNAL_TRANSFER_PATTERNS = re.compile(
 
 # Income patterns
 INCOME_PATTERNS = re.compile(
-    r"DIRECT_DEPOSIT|CHECK_DEPOSIT|CARBON DIRECT IN|Interest earned|"
+    r"DIRECT_DEPOSIT|CHECK_DEPOSIT|Interest earned|"
     r"INTEREST_EARNED|INTEREST PAYMENT|WIRE_INCOMING|CHIPS CREDIT|"
-    r"Cash Redemption|Aseltine.*Settlement|BKOFAMERICA ATM.*DEPOSIT|Seattle Network|"
-    r"Epoch Artificial|Zelle.*from|CREDIT-TRAVEL REWARD",
+    r"Cash Redemption|BKOFAMERICA ATM.*DEPOSIT|"
+    r"Zelle.*from|CREDIT-TRAVEL REWARD",
     re.IGNORECASE,
 )
 
@@ -537,13 +537,6 @@ def classify_flow_type(row: pd.Series) -> str:
     if acct_type in ("checking", "savings"):
         if CC_PAYMENT_PATTERNS.search(desc):
             return "cc_payment"
-
-    # ── URBARK S.A.S. consulting payments (lump-sum incoming wires) ──
-    # Keep these large one-off payments out of the monthly income totals by
-    # routing them to "other". Checked before the income rule because the
-    # description contains "CHIPS CREDIT", which INCOME_PATTERNS matches.
-    if re.search(r"URBARK", desc, re.I):
-        return "other"
 
     # ── Income (check before internal transfers so CHIPS CREDIT isn't masked) ──
     if INCOME_PATTERNS.search(desc) or INCOME_PATTERNS.search(cat):
@@ -621,21 +614,11 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"PEMCO MUTUAL|PEMCO Mutual", re.I), "Utilities"),  # umbrella/home insurance
 
     # ── Childcare ──
-    (re.compile(r"WORLDKIDS|LINELEADER|RightAtSchool", re.I), "Childcare"),
-    (re.compile(r"Zelle.*Danna", re.I), "Childcare"),  # Danna = Spanish tutor
-    (re.compile(r"MY SPANISH NANNY|LITTLE SPOON|SCHOOL OF ROCK|PRESCHOOL SMILES", re.I), "Childcare"),
-    (re.compile(r"SP WOOM BIKES", re.I), "Childcare"),  # kids bikes
 
     # ── House & Maintenance ──
-    (re.compile(r"Zelle.*Graciela", re.I), "House & Maintenance"),  # cleaning
-    (re.compile(r"Zelle.*Iris", re.I), "House & Maintenance"),      # house helper
-    (re.compile(r"Zelle.*Silvia.*Diaz|Zelle.*Silvia Adriana", re.I), "House & Maintenance"),  # former house helper
-    (re.compile(r"Zelle.*Israel", re.I), "House & Maintenance"),     # yard
-    (re.compile(r"Zelle.*Francisco", re.I), "House & Maintenance"),  # contractor
     (re.compile(r"ECOSHIELD PEST|NUTONE DRY CLEANERS", re.I), "House & Maintenance"),
 
     # ── Fitness & Healthcare ──
-    (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Fitness & Healthcare"),
     (re.compile(r"DENTIST|Amazon Pharmacy|THERAPIST|Health Care|A\.Z\. Pharmacy", re.I), "Fitness & Healthcare"),
     (re.compile(r"PROVIDENCE|BLVD.*RUDY|PAULINE.S NAIL SPA", re.I), "Fitness & Healthcare"),
     (re.compile(r"PAYPAL \*SEATAC BMX|PP\*SURF BALLARD", re.I), "Fitness & Healthcare"),
@@ -749,10 +732,8 @@ CATEGORY_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"BKOFAMERICA ATM|ATM WITHDRW|ATM CASH WITHDRAWAL|ATM WITHDRAWAL", re.I), "Cash & ATM"),
     # (Person-name Zelles fall through to the default Unclassified below; real
     # names are not listed here since this Demo file is public.)
-    (re.compile(r"VENMO|PAYPAL|Seattle Network|"
-                r"GUSTO|Returned Check|"
-                r"\+BOB\b|RAZ\*SMART|EVALO|EVACOL|EXITO WOW|"
-                r"WWW\.CLASSACTPORTRAITS|ASTRA FESTUM", re.I), "Unclassified"),
+    (re.compile(r"VENMO|PAYPAL|"
+                r"GUSTO|Returned Check", re.I), "Unclassified"),
 ]
 
 
@@ -768,27 +749,15 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"PEMCO", re.I), "Insurance (PEMCO)"),
     ],
     "Childcare": [
-        (re.compile(r"WORLDKIDS", re.I), "Zoe Daycare (WorldKids)"),
-        (re.compile(r"LINELEADER|RightAtSchool", re.I), "Victoria After School (LineLeader)"),
-        (re.compile(r"Zelle.*Danna", re.I), "Spanish Tutor (Danna)"),
         (re.compile(r"YMCA", re.I), "YMCA Kids Programs"),
-        (re.compile(r"MY SPANISH NANNY", re.I), "Nanny"),
-        (re.compile(r"LITTLE SPOON", re.I), "Baby Food (Little Spoon)"),
-        (re.compile(r"SCHOOL OF ROCK", re.I), "Music Lessons (School of Rock)"),
-        (re.compile(r"SP WOOM BIKES", re.I), "Kids Bikes"),
     ],
     "House & Maintenance": [
-        (re.compile(r"Zelle.*Graciela", re.I), "Cleaning (Graciela)"),
-        (re.compile(r"Zelle.*Iris", re.I), "House Helper (Iris)"),
-        (re.compile(r"Zelle.*Silvia.*Diaz|Zelle.*Silvia Adriana", re.I), "House Helper (Silvia)"),
-        (re.compile(r"Zelle.*Israel", re.I), "Yard (Israel)"),
-        (re.compile(r"Zelle.*Francisco", re.I), "Contractor (Francisco)"),
         (re.compile(r"CTLP\*AIRCO", re.I), "Laundry"),
         (re.compile(r"ECOSHIELD", re.I), "Pest Control"),
         (re.compile(r"NUTONE", re.I), "Dry Cleaning"),
     ],
     "Car": [
-        (re.compile(r"JPMORGAN CHASE|JPMorgan Chase", re.I), "Subaru Lease"),
+        (re.compile(r"JPMORGAN CHASE|JPMorgan Chase", re.I), "Car Lease"),
         (re.compile(r"SAFEWAY FUEL|76 -|TESLA SUPERCHARGER|CHARGEPOINT|"
                     r"CHEVRON|ARCO|SHELL OIL|COSTCO GAS|E\.S AEROPUERTO|"
                     r"7-ELEVEN|WEST COAST PETROLEUM|AUTOPISTA DEL SOL", re.I), "Gas"),
@@ -821,7 +790,6 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"CANVA", re.I), "AI Subscriptions"),
     ],
     "Fitness & Healthcare": [
-        (re.compile(r"PUGET SOUND BASKETBALL", re.I), "Victoria Basketball"),
         (re.compile(r"DENTIST", re.I), "Dental"),
         (re.compile(r"Amazon Pharmacy", re.I), "Pharmacy"),
     ],
@@ -851,10 +819,7 @@ SUBCATEGORY_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
         (re.compile(r"CHARLES SCHWAB", re.I), "Schwab Brokerage"),
     ],
     "Income": [
-        (re.compile(r"CARBON DIRECT", re.I), "Viviana Job Income"),
-        (re.compile(r"WA ST EMPLOY SEC", re.I), "Michael's Unemployment"),
         (re.compile(r"VENMO|PAYPAL|Zelle.*from", re.I), "Friends & Family Payments"),
-        (re.compile(r"Epoch Artificial", re.I), "Michael's Salary"),
         (re.compile(r"CREDIT-TRAVEL REWARD", re.I), "Credit Card Rewards"),
         (re.compile(r"Manual CR-Bkrg|SOFI SECURITIES", re.I), "Investment Withdrawals"),
         # Demo income sources
@@ -875,10 +840,10 @@ def classify_subcategory(row: pd.Series) -> str:
     if re.match(r"^PAYPAL$", desc, re.I):
         return "Coaching"
 
-    # JPMorgan Chase: $519.50 = car loan, $563.99 = Subaru lease
+    # JPMorgan Chase car payments: the loan amount vs. everything else (lease)
     amount = row.get("amount", 0)
     if category == "Car" and re.search(r"JPMORGAN CHASE|JPMorgan Chase", desc, re.I):
-        return "Car Loan" if abs(abs(amount) - 519.50) < 1 else "Subaru Lease"
+        return "Car Loan" if abs(abs(amount) - 519.50) < 1 else "Car Lease"
 
     rules = SUBCATEGORY_RULES.get(category, [])
     for pattern, subcat in rules:
@@ -907,7 +872,7 @@ def classify_category(row: pd.Series) -> str:
     if re.match(r"^PAYPAL$", desc, re.I):
         return "Therapy & Coaching"
 
-    # JPMorgan Chase: ~$7,246 = mortgage, ~$564 = Subaru auto lease
+    # JPMorgan Chase: large payments = mortgage, small = car
     if re.search(r"JPMORGAN CHASE|JPMorgan Chase", desc, re.I):
         if abs(row["amount"]) > 1000:
             return "Mortgage & Student Loans"
