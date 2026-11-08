@@ -50,20 +50,20 @@ export default function CashFlowPage() {
     queryFn: api.getConfig,
   });
   const { data: summary, isLoading: loadingSummary } = useQuery({
-    queryKey: ["cashflow-summary"],
-    queryFn: () => api.getCashFlowSummary(12),
+    queryKey: ["cashflow-summary", detailMonths],
+    queryFn: () => api.getCashFlowSummary(detailMonths),
   });
   const { data: expenses } = useQuery({
-    queryKey: ["monthly-expenses"],
-    queryFn: () => api.getMonthlyExpenses(12),
+    queryKey: ["monthly-expenses", detailMonths],
+    queryFn: () => api.getMonthlyExpenses(detailMonths),
   });
   const { data: income } = useQuery({
-    queryKey: ["monthly-income"],
-    queryFn: () => api.getMonthlyIncome(12),
+    queryKey: ["monthly-income", detailMonths],
+    queryFn: () => api.getMonthlyIncome(detailMonths),
   });
   const { data: netIncome } = useQuery({
-    queryKey: ["net-income"],
-    queryFn: () => api.getNetIncome(12),
+    queryKey: ["net-income", detailMonths],
+    queryFn: () => api.getNetIncome(detailMonths),
   });
   const { data: categories } = useQuery({
     queryKey: ["spending-by-category", detailMonths],
@@ -96,6 +96,7 @@ export default function CashFlowPage() {
   const filteredNetCashFlow = filteredTotalInflows - filteredTotalOutflows;
   const hasFilters = hiddenOutflows.size > 0 || hiddenInflows.size > 0;
   const filterSuffix = hasFilters ? " (filtered)" : "";
+  const periodLabel = PERIOD_OPTIONS.find(o => o.key === selectedPeriodKey)?.label || "";
 
   return (
     <div>
@@ -119,11 +120,30 @@ export default function CashFlowPage() {
             </div>
           ) : (
             <>
+              <div className="flex items-center gap-3 mb-6">
+                <label className="text-sm font-medium text-stone">Time Period:</label>
+                <div className="flex gap-1 bg-cool-white rounded-lg p-1 border border-cool-gray">
+                  {PERIOD_OPTIONS.map(opt => (
+                    <button
+                      key={opt.key}
+                      onClick={() => { setDetailMonths(opt.value); setSelectedPeriodKey(opt.key); }}
+                      className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                        selectedPeriodKey === opt.key
+                          ? "bg-azul text-white font-medium"
+                          : "text-stone hover:text-warm-charcoal hover:bg-cool-gray"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {summary && (
                 <div className="grid grid-cols-3 gap-6 mb-8">
-                  <MetricCard label={`Total Inflows (12 mo)${filterSuffix}`} value={formatCurrency(filteredTotalInflows)} accent="azul" />
-                  <MetricCard label={`Total Outflows (12 mo)${filterSuffix}`} value={formatCurrency(filteredTotalOutflows)} accent="coral" />
-                  <MetricCard label={`Net Cash Flow (12 mo)${filterSuffix}`} value={formatCurrency(filteredNetCashFlow)} accent="verde" />
+                  <MetricCard label={`Total Inflows (${periodLabel})${filterSuffix}`} value={formatCurrency(filteredTotalInflows)} accent="azul" />
+                  <MetricCard label={`Total Outflows (${periodLabel})${filterSuffix}`} value={formatCurrency(filteredTotalOutflows)} accent="coral" />
+                  <MetricCard label={`Net Cash Flow (${periodLabel})${filterSuffix}`} value={formatCurrency(filteredNetCashFlow)} accent="verde" />
                 </div>
               )}
 
@@ -148,25 +168,6 @@ export default function CashFlowPage() {
               {netIncome && <NetIncomeChart data={netIncome} incomeData={income} expenseData={expenses} />}
 
               <hr className="border-cool-gray my-8" />
-
-              <div className="flex items-center gap-3 mb-6">
-                <label className="text-sm font-medium text-stone">Time Period:</label>
-                <div className="flex gap-1 bg-cool-white rounded-lg p-1 border border-cool-gray">
-                  {PERIOD_OPTIONS.map(opt => (
-                    <button
-                      key={opt.key}
-                      onClick={() => { setDetailMonths(opt.value); setSelectedPeriodKey(opt.key); }}
-                      className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                        selectedPeriodKey === opt.key
-                          ? "bg-azul text-white font-medium"
-                          : "text-stone hover:text-warm-charcoal hover:bg-cool-gray"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <div>{categories && <SpendingTable data={categories} periodLabel={PERIOD_OPTIONS.find(o => o.value === detailMonths)?.label || ""} selectedCategory={selectedCategory} onCategoryClick={(cat) => { setSelectedCategory(cat === selectedCategory ? null : cat); setSelectedSubcategory(null); }} />}</div>

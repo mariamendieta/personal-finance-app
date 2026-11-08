@@ -4,6 +4,7 @@ Notable changes to the app. Newest first. Add an entry when you ship a user-visi
 
 ## Unreleased
 
+- Cash Flow dashboard: the Time Period selector (YTD / last month / 3mo / 6mo / 12mo) now controls the summary cards and the main charts (Monthly Outflows, Income by Source, Net Income), not just the detail tables below. Previously those were hardcoded to a fixed 12-month window regardless of the selector.
 - The household pipeline scripts moved out of this public repo into the private woffieta-data repo; `Production/` is no longer tracked. `Demo/` scripts scrubbed of household-specific rules (demo output unchanged except the car-lease subcategory label). Household vendor names now load from the private `classification_overrides.json` (`vendor_rules`). Added a public-repo denylist check (`scripts/check-public-denylist.sh`, hooks in `.githooks/`).
 - Added contributor/agent docs: `CLAUDE.md`, `dev/ARCHITECTURE.md`, `dev/OBJECTIVE.md`, and this changelog.
 
