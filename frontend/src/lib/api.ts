@@ -133,6 +133,17 @@ export interface AccountsList {
   bank_accounts: Account[];
 }
 
+export interface CoverageAccount {
+  name: string;
+  subfolder: "Credit Cards" | "Checking and Savings";
+}
+
+export interface CashflowCoverage {
+  months: string[];
+  accounts: CoverageAccount[];
+  coverage: Record<string, string[]>;
+}
+
 export interface ActionItem {
   task: string;
   assignee: string;
@@ -242,6 +253,8 @@ export const api = {
     fetchAPI<{ "Credit Cards": string[]; "Checking and Savings": string[] }>("/api/upload/cashflow/list", { month_folder }),
   deleteCashflowFile: (month_folder: string, subfolder: string, filename: string) =>
     deleteAPI<{ deleted?: string; error?: string }>("/api/upload/cashflow/file", { month_folder, subfolder, filename }),
+  getCashflowCoverage: () =>
+    fetchAPI<CashflowCoverage>("/api/upload/cashflow/coverage"),
 
   // Action Items
   getActionItems: () => fetchAPI<ActionItem[]>("/api/action-items/"),

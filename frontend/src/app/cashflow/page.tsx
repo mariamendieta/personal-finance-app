@@ -12,6 +12,7 @@ import NetIncomeChart from "@/components/cashflow/NetIncomeChart";
 import SpendingTable from "@/components/cashflow/SpendingTable";
 import TopVendorsChart from "@/components/cashflow/TopVendorsChart";
 import AddCashFlowTab from "@/components/cashflow/AddCashFlowTab";
+import CoverageTab from "@/components/cashflow/CoverageTab";
 
 const ytdMonths = new Date().getMonth() || 1; // Completed months this year (Mar=2: Jan+Feb, Jan defaults to 1)
 
@@ -111,7 +112,7 @@ export default function CashFlowPage() {
         </p>
       </div>
 
-      <Tabs tabs={["Dashboard", "Add Data"]}>
+      <Tabs tabs={["Dashboard", "Add Data", "Coverage"]}>
         {/* Dashboard tab */}
         <div>
           {loadingSummary ? (
@@ -275,6 +276,9 @@ export default function CashFlowPage() {
 
         {/* Add Data tab */}
         <AddCashFlowTab />
+
+        {/* Coverage tab */}
+        <CoverageTab />
       </Tabs>
     </div>
   );

@@ -1,7 +1,9 @@
 """File upload and pipeline execution endpoints."""
 
 import asyncio
+import importlib.util
 import re
+import types
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, UploadFile
@@ -91,8 +93,8 @@ def _has_any_csv(d: Path) -> bool:
     return any(f.name != ".placeholder.csv" for f in d.rglob("*.csv"))
 
 
-@router.get("/cashflow/months")
-async def list_cashflow_months():
+def _parsed_month_folders() -> list[tuple[int, int, str]]:
+    """Every real (non-empty) month folder, as (year, month, folder_name)."""
     if not CASHFLOW_ROOT.is_dir():
         return []
 
@@ -110,9 +112,64 @@ async def list_cashflow_months():
             month = MONTH_ABBR_TO_NUM.get(m.group(1).capitalize())
             if month and _has_any_csv(d):
                 entries.append((2000 + int(m.group(2)), month, d.name))
+    return entries
 
-    entries.sort(key=lambda e: (e[0], e[1]), reverse=True)
+
+@router.get("/cashflow/months")
+async def list_cashflow_months():
+    entries = sorted(_parsed_month_folders(), key=lambda e: (e[0], e[1]), reverse=True)
     return [name for _, _, name in entries]
+
+
+def _load_cashflow_module():
+    module_path = DATA_DIR / "cashflow.py"
+    spec = importlib.util.spec_from_file_location("cashflow", str(module_path))
+    mod = types.ModuleType("cashflow")
+    mod.__file__ = str(module_path)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@router.get("/cashflow/coverage")
+async def cashflow_coverage():
+    """For every real month folder and every account cashflow.py recognizes,
+    whether at least one file for that account exists in that month — lets
+    the UI show gaps across the whole history, not just one month at a time.
+    """
+    entries = sorted(_parsed_month_folders(), key=lambda e: (e[0], e[1]))
+    months = [name for _, _, name in entries]
+
+    cf = _load_cashflow_module()
+
+    # account_name -> subfolder it was found in ("Credit Cards" / "Checking and Savings")
+    account_subfolder: dict[str, str] = {}
+    # account_name -> set of month folders that have at least one file for it
+    coverage: dict[str, set[str]] = {}
+
+    for month in months:
+        for subfolder in ("Credit Cards", "Checking and Savings"):
+            sub_path = CASHFLOW_ROOT / month / subfolder
+            if not sub_path.is_dir():
+                continue
+            for f in sub_path.iterdir():
+                if not f.is_file() or f.name.startswith("."):
+                    continue
+                parser, account_name = cf.detect_parser(f)
+                if parser is None:
+                    continue
+                account_subfolder.setdefault(account_name, subfolder)
+                coverage.setdefault(account_name, set()).add(month)
+
+    accounts = sorted(
+        account_subfolder.keys(),
+        key=lambda a: (account_subfolder[a] != "Credit Cards", a.lower()),
+    )
+
+    return {
+        "months": months,
+        "accounts": [{"name": a, "subfolder": account_subfolder[a]} for a in accounts],
+        "coverage": {a: sorted(coverage[a]) for a in accounts},
+    }
 
 
 @router.get("/cashflow/list")
