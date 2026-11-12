@@ -4,8 +4,10 @@ import asyncio
 import importlib.util
 import re
 import types
+from datetime import date
 from pathlib import Path
 
+import pandas as pd
 from fastapi import APIRouter, File, Form, UploadFile
 from pydantic import BaseModel
 
@@ -132,23 +134,25 @@ def _load_cashflow_module():
 
 @router.get("/cashflow/coverage")
 async def cashflow_coverage():
-    """For every real month folder and every account cashflow.py recognizes,
-    whether at least one file for that account exists in that month — lets
-    the UI show gaps across the whole history, not just one month at a time.
+    """For every account cashflow.py recognizes, which real calendar months
+    have at least one actual transaction — based on parsed transaction
+    dates, not which folder a file happens to sit in. Uploads commonly lag
+    a month or more behind, so a file sitting in e.g. "Nov26" often holds
+    October-dated (or earlier) transactions; grouping by folder name would
+    misreport that as November coverage.
     """
-    entries = sorted(_parsed_month_folders(), key=lambda e: (e[0], e[1]))
-    months = [name for _, _, name in entries]
-
+    folders = [name for _, _, name in _parsed_month_folders()]
     cf = _load_cashflow_module()
 
     # account_name -> subfolder it was found in ("Credit Cards" / "Checking and Savings")
     account_subfolder: dict[str, str] = {}
-    # account_name -> set of month folders that have at least one file for it
-    coverage: dict[str, set[str]] = {}
+    # account_name -> set of (year, month) with at least one real transaction
+    coverage: dict[str, set[tuple[int, int]]] = {}
+    all_months: set[tuple[int, int]] = set()
 
-    for month in months:
+    for folder in folders:
         for subfolder in ("Credit Cards", "Checking and Savings"):
-            sub_path = CASHFLOW_ROOT / month / subfolder
+            sub_path = CASHFLOW_ROOT / folder / subfolder
             if not sub_path.is_dir():
                 continue
             for f in sub_path.iterdir():
@@ -157,8 +161,34 @@ async def cashflow_coverage():
                 parser, account_name = cf.detect_parser(f)
                 if parser is None:
                     continue
+                try:
+                    fdf = parser(f, account_name)
+                except Exception:
+                    continue
+                if fdf is None or fdf.empty or "post_date" not in fdf.columns:
+                    continue
                 account_subfolder.setdefault(account_name, subfolder)
-                coverage.setdefault(account_name, set()).add(month)
+                dates = pd.to_datetime(fdf["post_date"])
+                months = {(d.year, d.month) for d in dates}
+                coverage.setdefault(account_name, set()).update(months)
+                all_months.update(months)
+
+    today = date.today()
+    all_months.add((today.year, today.month))
+
+    if not all_months:
+        return {"months": [], "accounts": [], "coverage": {}}
+
+    start = min(all_months)
+    end = max(all_months)
+    months_sorted: list[tuple[int, int]] = []
+    y, m = start
+    while (y, m) <= end:
+        months_sorted.append((y, m))
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
 
     accounts = sorted(
         account_subfolder.keys(),
@@ -166,9 +196,12 @@ async def cashflow_coverage():
     )
 
     return {
-        "months": months,
+        "months": [f"{y:04d}-{m:02d}" for y, m in months_sorted],
         "accounts": [{"name": a, "subfolder": account_subfolder[a]} for a in accounts],
-        "coverage": {a: sorted(coverage[a]) for a in accounts},
+        "coverage": {
+            a: [f"{y:04d}-{m:02d}" for y, m in sorted(coverage[a])]
+            for a in accounts
+        },
     }
 
 

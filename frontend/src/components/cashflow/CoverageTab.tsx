@@ -3,13 +3,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
-function formatMonthLabel(folder: string) {
-  // "2026-10_Oct" -> "Oct 26"; "Nov26" -> "Nov 26"
-  const long = folder.match(/^(\d{4})-\d{2}_([A-Za-z]+)$/);
-  if (long) return `${long[2].slice(0, 3)} ${long[1].slice(-2)}`;
-  const short = folder.match(/^([A-Za-z]{3})(\d{2})$/);
-  if (short) return `${short[1]} ${short[2]}`;
-  return folder;
+const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function formatMonthLabel(yyyyMm: string) {
+  // "2026-10" -> "Oct 26"
+  const [y, m] = yyyyMm.split("-").map(Number);
+  return `${MONTH_ABBR[m - 1]} ${String(y).slice(-2)}`;
 }
 
 function CoverageRow({
@@ -95,7 +94,7 @@ export default function CoverageTab() {
     <div>
       <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-1">Upload Coverage</h2>
       <p className="text-sm text-stone mb-6">
-        Every account that has ever appeared in an uploaded file, and which months have at least one file for it. ✓ = a file exists; — = a gap.
+        Every account that has ever appeared in an uploaded file, and which calendar months actually have a transaction dated that month — based on real transaction dates, not which folder a file sits in. ✓ = at least one transaction that month; — = a gap.
       </p>
       {renderSection("Credit Cards", creditCards)}
       {renderSection("Checking & Savings", bankAccounts)}
