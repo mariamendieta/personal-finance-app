@@ -468,9 +468,16 @@ export default function AddCashFlowTab() {
                   {savedFiles[subfolder].length === 0 && (
                     <p className="text-xs text-stone">None yet</p>
                   )}
-                  {savedFiles[subfolder].map(filename => (
+                  {savedFiles[subfolder].map(({ filename, date_range }) => (
                     <div key={filename} className="flex items-center justify-between text-sm bg-cool-white rounded px-3 py-1.5 border border-cool-gray">
-                      <span className="truncate text-warm-charcoal">{filename}</span>
+                      <span className="truncate text-warm-charcoal">
+                        {filename}
+                        {date_range && (
+                          <span className="text-xs text-stone ml-2">
+                            ({date_range[0]} – {date_range[1]})
+                          </span>
+                        )}
+                      </span>
                       <button
                         onClick={() => handleDeleteSavedFile(subfolder, filename)}
                         disabled={deletingFile === filename}

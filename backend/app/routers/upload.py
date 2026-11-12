@@ -224,16 +224,29 @@ async def set_coverage_ignored(request: SetCoverageIgnoredRequest):
 
 @router.get("/cashflow/list")
 async def list_cashflow_files(month_folder: str):
-    result: dict[str, list[str]] = {}
+    cf = _load_cashflow_module()
+    result: dict[str, list[dict]] = {}
     for subfolder in ("Credit Cards", "Checking and Savings"):
         dest = CASHFLOW_ROOT / month_folder / subfolder
         if not dest.is_dir():
             result[subfolder] = []
             continue
-        result[subfolder] = sorted(
-            f.name for f in dest.iterdir()
-            if f.is_file() and f.name != ".placeholder.csv"
-        )
+        files = []
+        for f in sorted(dest.iterdir()):
+            if not f.is_file() or f.name == ".placeholder.csv":
+                continue
+            date_range = None
+            parser, account_name = cf.detect_parser(f)
+            if parser is not None:
+                try:
+                    fdf = parser(f, account_name)
+                    if fdf is not None and not fdf.empty and "post_date" in fdf.columns:
+                        dates = pd.to_datetime(fdf["post_date"])
+                        date_range = [str(dates.min().date()), str(dates.max().date())]
+                except Exception:
+                    pass
+            files.append({"filename": f.name, "date_range": date_range})
+        result[subfolder] = files
     return result
 
 

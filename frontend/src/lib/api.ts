@@ -133,6 +133,11 @@ export interface AccountsList {
   bank_accounts: Account[];
 }
 
+export interface SavedCashflowFile {
+  filename: string;
+  date_range: [string, string] | null;
+}
+
 export interface CoverageAccount {
   name: string;
   subfolder: "Credit Cards" | "Checking and Savings";
@@ -251,7 +256,7 @@ export const api = {
   // Cash Flow uploads (saved files on disk for a month)
   listCashflowMonths: () => fetchAPI<string[]>("/api/upload/cashflow/months"),
   listCashflowFiles: (month_folder: string) =>
-    fetchAPI<{ "Credit Cards": string[]; "Checking and Savings": string[] }>("/api/upload/cashflow/list", { month_folder }),
+    fetchAPI<{ "Credit Cards": SavedCashflowFile[]; "Checking and Savings": SavedCashflowFile[] }>("/api/upload/cashflow/list", { month_folder }),
   deleteCashflowFile: (month_folder: string, subfolder: string, filename: string) =>
     deleteAPI<{ deleted?: string; error?: string }>("/api/upload/cashflow/file", { month_folder, subfolder, filename }),
   getCashflowCoverage: () =>
