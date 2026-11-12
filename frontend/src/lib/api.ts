@@ -136,6 +136,7 @@ export interface AccountsList {
 export interface CoverageAccount {
   name: string;
   subfolder: "Credit Cards" | "Checking and Savings";
+  ignored: boolean;
 }
 
 export interface CashflowCoverage {
@@ -255,6 +256,8 @@ export const api = {
     deleteAPI<{ deleted?: string; error?: string }>("/api/upload/cashflow/file", { month_folder, subfolder, filename }),
   getCashflowCoverage: () =>
     fetchAPI<CashflowCoverage>("/api/upload/cashflow/coverage"),
+  setCoverageIgnored: (account_name: string, ignored: boolean) =>
+    putAPI<{ ignored: string[] }>("/api/upload/cashflow/coverage/ignore", { account_name, ignored }),
 
   // Action Items
   getActionItems: () => fetchAPI<ActionItem[]>("/api/action-items/"),

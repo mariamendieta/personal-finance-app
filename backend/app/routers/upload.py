@@ -12,7 +12,7 @@ from fastapi import APIRouter, File, Form, UploadFile
 from pydantic import BaseModel
 
 from ..config import CASHFLOW_ROOT, DATA_DIR, PORTFOLIO_ROOT
-from ..services import cashflow_service, portfolio_service
+from ..services import cashflow_service, coverage_service, portfolio_service
 
 router = APIRouter(prefix="/api/upload", tags=["upload"])
 
@@ -31,6 +31,11 @@ class DeleteCashflowFileRequest(BaseModel):
     month_folder: str
     subfolder: str
     filename: str
+
+
+class SetCoverageIgnoredRequest(BaseModel):
+    account_name: str
+    ignored: bool
 
 
 @router.post("/cashflow")
@@ -194,15 +199,27 @@ async def cashflow_coverage():
         account_subfolder.keys(),
         key=lambda a: (account_subfolder[a] != "Credit Cards", a.lower()),
     )
+    ignored = coverage_service.get_ignored()
 
     return {
         "months": [f"{y:04d}-{m:02d}" for y, m in months_sorted],
-        "accounts": [{"name": a, "subfolder": account_subfolder[a]} for a in accounts],
+        "accounts": [
+            {"name": a, "subfolder": account_subfolder[a], "ignored": a in ignored}
+            for a in accounts
+        ],
         "coverage": {
             a: [f"{y:04d}-{m:02d}" for y, m in sorted(coverage[a])]
             for a in accounts
         },
     }
+
+
+@router.put("/cashflow/coverage/ignore")
+async def set_coverage_ignored(request: SetCoverageIgnoredRequest):
+    """Mark an account as not currently used, so the Coverage tab stops
+    flagging its missing months as gaps."""
+    ignored = coverage_service.set_ignored(request.account_name, request.ignored)
+    return {"ignored": sorted(ignored)}
 
 
 @router.get("/cashflow/list")
