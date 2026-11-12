@@ -87,6 +87,10 @@ async def upload_cashflow(
     return {"saved": saved, "saved_count": len(saved), "pipeline_results": results}
 
 
+def _has_any_csv(d: Path) -> bool:
+    return any(f.name != ".placeholder.csv" for f in d.rglob("*.csv"))
+
+
 @router.get("/cashflow/months")
 async def list_cashflow_months():
     if not CASHFLOW_ROOT.is_dir():
@@ -98,12 +102,13 @@ async def list_cashflow_months():
             continue
         m = MONTH_FOLDER_LONG.match(d.name)
         if m:
-            entries.append((int(m.group(1)), int(m.group(2)), d.name))
+            if _has_any_csv(d):
+                entries.append((int(m.group(1)), int(m.group(2)), d.name))
             continue
         m = MONTH_FOLDER_SHORT.match(d.name)
         if m:
             month = MONTH_ABBR_TO_NUM.get(m.group(1).capitalize())
-            if month:
+            if month and _has_any_csv(d):
                 entries.append((2000 + int(m.group(2)), month, d.name))
 
     entries.sort(key=lambda e: (e[0], e[1]), reverse=True)
