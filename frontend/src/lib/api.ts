@@ -237,6 +237,7 @@ export const api = {
     putAPI<AccountsList>("/api/accounts/toggle", { account_type, file_prefix, hidden }),
 
   // Cash Flow uploads (saved files on disk for a month)
+  listCashflowMonths: () => fetchAPI<string[]>("/api/upload/cashflow/months"),
   listCashflowFiles: (month_folder: string) =>
     fetchAPI<{ "Credit Cards": string[]; "Checking and Savings": string[] }>("/api/upload/cashflow/list", { month_folder }),
   deleteCashflowFile: (month_folder: string, subfolder: string, filename: string) =>

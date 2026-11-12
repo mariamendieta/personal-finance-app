@@ -14,6 +14,14 @@ router = APIRouter(prefix="/api/upload", tags=["upload"])
 
 SAFE_FILENAME = re.compile(r"^[\w\-. ()'&,]+\.csv$", re.I)
 
+# Two month-folder naming conventions coexist in the data: the current
+# "YYYY-MM_Mon" convention, and an older "MonYY" short form.
+MONTH_FOLDER_LONG = re.compile(r"^(\d{4})-(\d{2})_[A-Za-z]+$")
+MONTH_FOLDER_SHORT = re.compile(r"^([A-Za-z]{3})(\d{2})$")
+MONTH_ABBR_TO_NUM = {abbr: i for i, abbr in enumerate(
+    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], start=1
+)}
+
 
 class DeleteCashflowFileRequest(BaseModel):
     month_folder: str
@@ -77,6 +85,29 @@ async def upload_cashflow(
             })
 
     return {"saved": saved, "saved_count": len(saved), "pipeline_results": results}
+
+
+@router.get("/cashflow/months")
+async def list_cashflow_months():
+    if not CASHFLOW_ROOT.is_dir():
+        return []
+
+    entries: list[tuple[int, int, str]] = []
+    for d in CASHFLOW_ROOT.iterdir():
+        if not d.is_dir():
+            continue
+        m = MONTH_FOLDER_LONG.match(d.name)
+        if m:
+            entries.append((int(m.group(1)), int(m.group(2)), d.name))
+            continue
+        m = MONTH_FOLDER_SHORT.match(d.name)
+        if m:
+            month = MONTH_ABBR_TO_NUM.get(m.group(1).capitalize())
+            if month:
+                entries.append((2000 + int(m.group(2)), month, d.name))
+
+    entries.sort(key=lambda e: (e[0], e[1]), reverse=True)
+    return [name for _, _, name in entries]
 
 
 @router.get("/cashflow/list")

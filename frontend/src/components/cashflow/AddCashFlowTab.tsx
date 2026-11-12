@@ -11,16 +11,29 @@ function todayStr() {
   return new Date().toISOString().split("T")[0];
 }
 
-function getMonthFolder() {
+function currentMonthFolder() {
   const today = new Date();
   const monthAbbr = today.toLocaleDateString("en-US", { month: "short" });
   return `${monthAbbr}${String(today.getFullYear()).slice(-2)}`;
 }
 
 export default function AddCashFlowTab() {
-  const monthFolder = getMonthFolder();
+  const thisMonth = currentMonthFolder();
+  const [monthFolder, setMonthFolder] = useState(thisMonth);
   const balanceDate = todayStr();
   const queryClient = useQueryClient();
+
+  // Real month folders already on disk, most recent first. The two naming
+  // conventions in use ("2026-10_Oct" and "Nov26") are resolved server-side,
+  // so this always points at the actual folder for that month, never a
+  // disconnected duplicate.
+  const { data: existingMonths } = useQuery({
+    queryKey: ["cashflow-months"],
+    queryFn: () => api.listCashflowMonths(),
+  });
+  const monthOptions = existingMonths?.includes(thisMonth)
+    ? existingMonths
+    : [thisMonth, ...(existingMonths ?? [])];
 
   // Load accounts from API
   const { data: accountsData } = useQuery({
@@ -38,6 +51,14 @@ export default function AddCashFlowTab() {
   const [ccFiles, setCcFiles] = useState<Map<string, File[]>>(new Map());
   const [bankFiles, setBankFiles] = useState<Map<string, File[]>>(new Map());
   const [otherFiles, setOtherFiles] = useState<File[]>([]);
+
+  const handleMonthChange = (newMonth: string) => {
+    setMonthFolder(newMonth);
+    // Pending (not-yet-uploaded) selections are for the old month's folder — drop them.
+    setCcFiles(new Map());
+    setBankFiles(new Map());
+    setOtherFiles([]);
+  };
   const [otherType, setOtherType] = useState<"Credit Cards" | "Checking and Savings">("Credit Cards");
   const [runPipeline, setRunPipeline] = useState(true);
   const [runReport, setRunReport] = useState(true);
@@ -238,9 +259,23 @@ export default function AddCashFlowTab() {
   return (
     <div>
       <h2 className="font-[Lora,serif] text-xl text-warm-charcoal mb-1">Upload Cash Flow Data</h2>
-      <p className="text-sm text-stone mb-6">
+      <p className="text-sm text-stone mb-4">
         Upload CSV exports, enter account balances, and run the pipeline.
       </p>
+
+      <div className="flex items-center gap-2 mb-6">
+        <label htmlFor="month-folder-select" className="text-sm font-medium text-warm-charcoal">Month:</label>
+        <select
+          id="month-folder-select"
+          value={monthFolder}
+          onChange={e => handleMonthChange(e.target.value)}
+          className="border border-cool-gray rounded px-2 py-1 text-sm focus:outline-none focus:border-azul"
+        >
+          {monthOptions.map(m => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+      </div>
 
       {/* Manage Accounts */}
       <div className="mb-6">
