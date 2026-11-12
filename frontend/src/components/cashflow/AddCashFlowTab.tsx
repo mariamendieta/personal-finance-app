@@ -35,8 +35,8 @@ export default function AddCashFlowTab() {
   const ccAccounts = allCreditCards.filter(a => !a.hidden);
   const bankAccounts = allBankAccounts.filter(a => !a.hidden);
 
-  const [ccFiles, setCcFiles] = useState<Map<string, File>>(new Map());
-  const [bankFiles, setBankFiles] = useState<Map<string, File>>(new Map());
+  const [ccFiles, setCcFiles] = useState<Map<string, File[]>>(new Map());
+  const [bankFiles, setBankFiles] = useState<Map<string, File[]>>(new Map());
   const [otherFiles, setOtherFiles] = useState<File[]>([]);
   const [otherType, setOtherType] = useState<"Credit Cards" | "Checking and Savings">("Credit Cards");
   const [runPipeline, setRunPipeline] = useState(true);
@@ -77,7 +77,26 @@ export default function AddCashFlowTab() {
     }
   }, [existingBalances]);
 
-  const totalFiles = ccFiles.size + bankFiles.size + otherFiles.length;
+  // Files already saved to disk for this month (from a previous upload)
+  const { data: savedFiles } = useQuery({
+    queryKey: ["cashflow-files", monthFolder],
+    queryFn: () => api.listCashflowFiles(monthFolder),
+  });
+  const [deletingFile, setDeletingFile] = useState<string | null>(null);
+
+  const handleDeleteSavedFile = async (subfolder: "Credit Cards" | "Checking and Savings", filename: string) => {
+    if (!window.confirm(`Delete ${filename}? This removes it from disk — you'll need to re-upload it if that was a mistake.`)) {
+      return;
+    }
+    setDeletingFile(filename);
+    await api.deleteCashflowFile(monthFolder, subfolder, filename);
+    queryClient.invalidateQueries({ queryKey: ["cashflow-files", monthFolder] });
+    setDeletingFile(null);
+  };
+
+  const pendingFileCount = (map: Map<string, File[]>) =>
+    Array.from(map.values()).reduce((sum, files) => sum + files.length, 0);
+  const totalFiles = pendingFileCount(ccFiles) + pendingFileCount(bankFiles) + otherFiles.length;
   const hasBalances = Object.values(balances).some(v => v && parseFloat(v) > 0);
 
   const handleAddCC = async () => {
@@ -124,28 +143,35 @@ export default function AddCashFlowTab() {
       setBalancesSaved(true);
     }
 
-    // Upload credit card files
-    for (const [prefix, file] of ccFiles) {
-      const formData = new FormData();
-      formData.append("month_folder", monthFolder);
-      formData.append("subfolder", "Credit Cards");
-      formData.append("run_pipeline", "false");
-      formData.append("run_report", "false");
-      const renamedFile = new File([file], `${prefix}_${monthFolder}.csv`, { type: file.type });
-      formData.append("files", renamedFile);
-      await fetch(`${API_BASE}/api/upload/cashflow`, { method: "POST", body: formData });
+    // Upload credit card files — multiple files per account get distinct names
+    // (prefix_month.csv, prefix_month_2.csv, ...) so they don't overwrite each other.
+    for (const [prefix, files] of ccFiles) {
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append("month_folder", monthFolder);
+        formData.append("subfolder", "Credit Cards");
+        formData.append("run_pipeline", "false");
+        formData.append("run_report", "false");
+        const suffix = i === 0 ? "" : `_${i + 1}`;
+        const renamedFile = new File([files[i]], `${prefix}_${monthFolder}${suffix}.csv`, { type: files[i].type });
+        formData.append("files", renamedFile);
+        await fetch(`${API_BASE}/api/upload/cashflow`, { method: "POST", body: formData });
+      }
     }
 
-    // Upload bank files
-    for (const [prefix, file] of bankFiles) {
-      const formData = new FormData();
-      formData.append("month_folder", monthFolder);
-      formData.append("subfolder", "Checking and Savings");
-      formData.append("run_pipeline", "false");
-      formData.append("run_report", "false");
-      const renamedFile = new File([file], `${prefix}_${monthFolder}.csv`, { type: file.type });
-      formData.append("files", renamedFile);
-      await fetch(`${API_BASE}/api/upload/cashflow`, { method: "POST", body: formData });
+    // Upload bank files — same multi-file naming as above
+    for (const [prefix, files] of bankFiles) {
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append("month_folder", monthFolder);
+        formData.append("subfolder", "Checking and Savings");
+        formData.append("run_pipeline", "false");
+        formData.append("run_report", "false");
+        const suffix = i === 0 ? "" : `_${i + 1}`;
+        const renamedFile = new File([files[i]], `${prefix}_${monthFolder}${suffix}.csv`, { type: files[i].type });
+        formData.append("files", renamedFile);
+        await fetch(`${API_BASE}/api/upload/cashflow`, { method: "POST", body: formData });
+      }
     }
 
     // Upload other files
@@ -162,6 +188,10 @@ export default function AddCashFlowTab() {
     }
 
     setSavedCount(totalFiles);
+    setCcFiles(new Map());
+    setBankFiles(new Map());
+    setOtherFiles([]);
+    queryClient.invalidateQueries({ queryKey: ["cashflow-files", monthFolder] });
 
     // Run pipeline
     if (runPipeline || runReport) {
@@ -178,7 +208,7 @@ export default function AddCashFlowTab() {
     }
 
     setIsRunning(false);
-  }, [ccFiles, bankFiles, otherFiles, otherType, monthFolder, runPipeline, runReport, totalFiles, balances, balanceDate]);
+  }, [ccFiles, bankFiles, otherFiles, otherType, monthFolder, runPipeline, runReport, totalFiles, balances, balanceDate, queryClient]);
 
   const renderAccountToggle = (account: Account, accountType: string) => (
     <div
@@ -273,16 +303,35 @@ export default function AddCashFlowTab() {
         {ccAccounts.map(({ label, filePrefix }) => (
           <div key={filePrefix} className="border border-cool-gray rounded-lg px-4 py-3">
             <label className="text-sm text-warm-charcoal font-medium block mb-2">{label}</label>
-            <input type="file" accept=".csv"
+            <input type="file" accept=".csv" multiple
               onChange={e => {
-                const f = e.target.files?.[0];
+                const newFiles = Array.from(e.target.files || []);
+                if (newFiles.length === 0) return;
                 setCcFiles(prev => {
                   const next = new Map(prev);
-                  f ? next.set(filePrefix, f) : next.delete(filePrefix);
+                  next.set(filePrefix, [...(next.get(filePrefix) || []), ...newFiles]);
                   return next;
                 });
+                e.target.value = "";
               }}
               className="text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-cool-white file:text-stone hover:file:bg-cool-gray" />
+            {(ccFiles.get(filePrefix) || []).length > 0 && (
+              <ul className="mt-2 space-y-1">
+                {(ccFiles.get(filePrefix) || []).map((f, i) => (
+                  <li key={`${f.name}-${i}`} className="flex items-center justify-between text-xs text-stone bg-cool-white rounded px-2 py-1">
+                    <span className="truncate">{f.name}</span>
+                    <button
+                      onClick={() => setCcFiles(prev => {
+                        const next = new Map(prev);
+                        const remaining = (next.get(filePrefix) || []).filter((_, idx) => idx !== i);
+                        remaining.length > 0 ? next.set(filePrefix, remaining) : next.delete(filePrefix);
+                        return next;
+                      })}
+                      className="text-coral hover:text-coral/70 ml-2 font-semibold">×</button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         ))}
       </div>
@@ -316,16 +365,35 @@ export default function AddCashFlowTab() {
         {bankAccounts.map(({ label, filePrefix }) => (
           <div key={filePrefix} className="border border-cool-gray rounded-lg px-4 py-3">
             <label className="text-sm text-warm-charcoal font-medium block mb-2">{label}</label>
-            <input type="file" accept=".csv"
+            <input type="file" accept=".csv" multiple
               onChange={e => {
-                const f = e.target.files?.[0];
+                const newFiles = Array.from(e.target.files || []);
+                if (newFiles.length === 0) return;
                 setBankFiles(prev => {
                   const next = new Map(prev);
-                  f ? next.set(filePrefix, f) : next.delete(filePrefix);
+                  next.set(filePrefix, [...(next.get(filePrefix) || []), ...newFiles]);
                   return next;
                 });
+                e.target.value = "";
               }}
               className="text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-cool-white file:text-stone hover:file:bg-cool-gray mb-2" />
+            {(bankFiles.get(filePrefix) || []).length > 0 && (
+              <ul className="mb-2 space-y-1">
+                {(bankFiles.get(filePrefix) || []).map((f, i) => (
+                  <li key={`${f.name}-${i}`} className="flex items-center justify-between text-xs text-stone bg-cool-white rounded px-2 py-1">
+                    <span className="truncate">{f.name}</span>
+                    <button
+                      onClick={() => setBankFiles(prev => {
+                        const next = new Map(prev);
+                        const remaining = (next.get(filePrefix) || []).filter((_, idx) => idx !== i);
+                        remaining.length > 0 ? next.set(filePrefix, remaining) : next.delete(filePrefix);
+                        return next;
+                      })}
+                      className="text-coral hover:text-coral/70 ml-2 font-semibold">×</button>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="flex items-center gap-2">
               <label className="text-xs text-stone">Current Balance:</label>
               <span className="text-xs text-stone">$</span>
@@ -352,6 +420,36 @@ export default function AddCashFlowTab() {
           <option>Checking and Savings</option>
         </select>
       </div>
+
+      {/* Already saved files */}
+      {savedFiles && (savedFiles["Credit Cards"].length > 0 || savedFiles["Checking and Savings"].length > 0) && (
+        <div className="mb-8">
+          <h3 className="font-semibold text-warm-charcoal mb-3">Already Saved This Month</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {(["Credit Cards", "Checking and Savings"] as const).map(subfolder => (
+              <div key={subfolder}>
+                <h4 className="text-sm font-semibold text-warm-charcoal mb-2">{subfolder}</h4>
+                <div className="space-y-1">
+                  {savedFiles[subfolder].length === 0 && (
+                    <p className="text-xs text-stone">None yet</p>
+                  )}
+                  {savedFiles[subfolder].map(filename => (
+                    <div key={filename} className="flex items-center justify-between text-sm bg-cool-white rounded px-3 py-1.5 border border-cool-gray">
+                      <span className="truncate text-warm-charcoal">{filename}</span>
+                      <button
+                        onClick={() => handleDeleteSavedFile(subfolder, filename)}
+                        disabled={deletingFile === filename}
+                        className="text-coral hover:text-coral/70 text-xs font-medium ml-2 disabled:opacity-40">
+                        {deletingFile === filename ? "Deleting..." : "Remove"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <hr className="border-cool-gray mb-6" />
 

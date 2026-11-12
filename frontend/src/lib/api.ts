@@ -236,6 +236,12 @@ export const api = {
   toggleAccount: (account_type: string, file_prefix: string, hidden: boolean) =>
     putAPI<AccountsList>("/api/accounts/toggle", { account_type, file_prefix, hidden }),
 
+  // Cash Flow uploads (saved files on disk for a month)
+  listCashflowFiles: (month_folder: string) =>
+    fetchAPI<{ "Credit Cards": string[]; "Checking and Savings": string[] }>("/api/upload/cashflow/list", { month_folder }),
+  deleteCashflowFile: (month_folder: string, subfolder: string, filename: string) =>
+    deleteAPI<{ deleted?: string; error?: string }>("/api/upload/cashflow/file", { month_folder, subfolder, filename }),
+
   // Action Items
   getActionItems: () => fetchAPI<ActionItem[]>("/api/action-items/"),
   addActionItem: (task: string, assignee: string, category: string, date_created: string) =>

@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, UploadFile
+from pydantic import BaseModel
 
 from ..config import CASHFLOW_ROOT, DATA_DIR, PORTFOLIO_ROOT
 from ..services import cashflow_service, portfolio_service
@@ -12,6 +13,12 @@ from ..services import cashflow_service, portfolio_service
 router = APIRouter(prefix="/api/upload", tags=["upload"])
 
 SAFE_FILENAME = re.compile(r"^[\w\-. ()'&,]+\.csv$", re.I)
+
+
+class DeleteCashflowFileRequest(BaseModel):
+    month_folder: str
+    subfolder: str
+    filename: str
 
 
 @router.post("/cashflow")
@@ -70,6 +77,37 @@ async def upload_cashflow(
             })
 
     return {"saved": saved, "saved_count": len(saved), "pipeline_results": results}
+
+
+@router.get("/cashflow/list")
+async def list_cashflow_files(month_folder: str):
+    result: dict[str, list[str]] = {}
+    for subfolder in ("Credit Cards", "Checking and Savings"):
+        dest = CASHFLOW_ROOT / month_folder / subfolder
+        if not dest.is_dir():
+            result[subfolder] = []
+            continue
+        result[subfolder] = sorted(
+            f.name for f in dest.iterdir()
+            if f.is_file() and f.name != ".placeholder.csv"
+        )
+    return result
+
+
+@router.delete("/cashflow/file")
+async def delete_cashflow_file(request: DeleteCashflowFileRequest):
+    if request.subfolder not in ("Credit Cards", "Checking and Savings"):
+        return {"error": "Invalid subfolder"}
+    if not request.filename or not SAFE_FILENAME.match(request.filename):
+        return {"error": "Invalid filename"}
+
+    dest_dir = (CASHFLOW_ROOT / request.month_folder / request.subfolder).resolve()
+    filepath = (dest_dir / request.filename).resolve()
+    if dest_dir not in filepath.parents or not filepath.is_file():
+        return {"error": "File not found"}
+
+    filepath.unlink()
+    return {"deleted": request.filename}
 
 
 @router.post("/portfolio")
